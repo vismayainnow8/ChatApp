@@ -1,14 +1,7 @@
 import 'react-native-gesture-handler';
 import React, {useState, useEffect} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-// import {
-//     createMaterialTopTabNavigator,
-//     MaterialTopTabBar
-// } from '@react-navigation/material-top-tabs';
-import {TextInput, View} from 'react-native';
-import Calls from '../Screens/Calls';
-import Chats from '../Screens/Chats';
-import Status from '../Screens/Status';
+import {View} from 'react-native';
 import Contacts from '../Screens/Contacts';
 import Message from '../Screens/Message';
 import Profile from '../Screens/Profile';
@@ -32,13 +25,6 @@ import ChatScene from '../Screens/ChatScene';
 import Camera from '../Screens/Camera';
 import CallingScreen from '../Screens/CallingScreen';
 import VideoCalling from '../Screens/VideoCalling';
-import {consts} from '../Assets/Consts';
-import {Store} from '../StateManagement';
-import {
-  TABSTATE,
-  SET_SEARCHPRESSED,
-  TEXTINPUT,
-} from '../StateManagement/Actions/types';
 import {useSelector} from 'react-redux';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
@@ -46,162 +32,52 @@ import {TabView} from './homeTabs';
 
 const Stack = createStackNavigator();
 
-export const AppStack = () => {
-  const [searchPressedState, setSearchPressedState] = useState(false);
-  const [tabState, setTabState] = useState(false);
-  const [contactSearchpress] = useState(false);
-  const [textInput, setTextInput] = useState(false);
-
-  const searchPressed = useSelector(
-    (state) => state.searchPressed.searchPressed,
+const homeRightButtons = () => {
+  return (
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 10,
+      }}>
+      <Feather
+        name="search"
+        size={24}
+        color="#FFF"
+        style={{
+          paddingRight: 20,
+        }}
+      />
+      <Entypo
+        name="dots-three-vertical"
+        size={24}
+        color="#FFF"
+        style={{
+          paddingLeft: 15,
+        }}
+      />
+    </View>
   );
-  var tab = useSelector((state) => state.searchPressed.tabState);
+};
 
-  useEffect(() => {
-    setSearchPressedState(searchPressed);
-    setTabState(tab);
-    console.log('searchPressedv', searchPressedState);
-    console.log('tabStatev', tabState);
-  }, [searchPressed, searchPressedState, tab, tabState]);
-
-  const goBack = () => {
-    Store.dispatch({type: SET_SEARCHPRESSED, data: false});
-    Store.dispatch({type: TABSTATE, data: 'Chats'});
-  };
-  const submitTextInput = () => {
-    Store.dispatch({type: TEXTINPUT, data: textInput});
-  };
-  const clearTextInput = () => {
-    setTextInput(null);
-    Store.dispatch({type: TEXTINPUT, data: null});
-  };
+export const AppStack = () => {
   return (
     <Stack.Navigator initialRouteName="WhatsApp">
       <Stack.Screen
         name="WhatsApp"
-        component={
-          !searchPressed
-            ? TabView
-            : searchPressed && tabState === 'Chats'
-            ? Chats
-            : searchPressed && tabState === 'Status'
-            ? Status
-            : searchPressed && tabState === 'Calls'
-            ? Calls
-            : TabView
-        }
-        options={
-          searchPressed == true
-            ? {
-                headerShown: searchPressed == true ? true : false,
-                headerTitle: null,
-                //   headerTitleAlign: 'center',
-                headerLeft: () => {
-                  return (
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        paddingHorizontal: 10,
-                        backgroundColor: 'white',
-                        borderBottomWidth: 1,
-                        borderBottomColor: 'lightgray',
-                        flex: 1,
-                      }}>
-                      <Feather
-                        onPress={() => goBack()}
-                        name="arrow-left"
-                        size={24}
-                        color="#128c7e"
-                        style={{
-                          paddingRight: 20,
-                        }}
-                      />
-                      <TextInput
-                        placeholder="Search..."
-                        onChangeText={setTextInput}
-                        value={textInput}
-                        onSubmitEditing={() => submitTextInput()}
-                        style={{
-                          //   backgroundColor: 'yellow',
-                          width: consts.ScreenWidth / 1.35,
-                        }}
-                      />
-                      <Entypo
-                        onPress={() => clearTextInput()}
-                        name="cross"
-                        size={24}
-                        color="#128c7e"
-                        style={{
-                          paddingLeft: 15,
-                        }}
-                      />
-                    </View>
-                  );
-                },
-                headerRight: () => {
-                  return null;
-                },
-                headerStyle: {
-                  backgroundColor: 'white',
-                  elevation: 0,
-                },
-                headerTintColor: 'green',
-              }
-            : {
-                headerStyle: {
-                  backgroundColor: '#075e54',
-                  elevation: 0,
-                },
-                headerTintColor: '#fff',
-                headerTitleStyle: {
-                  fontWeight: 'bold',
-                },
-                headerShown: true,
-                headerTitleAlign: 'left',
-                headerTitle: 'WhatsApp',
-                headerLeft: () => {
-                  return null;
-                },
-              }
-        }
-      />
-
-      <Stack.Screen
-        name="Chats"
-        component={Chats}
-        initialRouteParams={{search: textInput}}
-        navigationOptions={{
-          params: {
-            search: textInput,
-          },
-        }}
+        component={TabView}
         options={{
-          headerShown:
-            searchPressed == true && tabState == 'Calls' ? true : false,
-        }}
-      />
-      <Stack.Screen name="Calls" component={Calls} />
-      <Stack.Screen name="Status" component={Status} />
-      <Stack.Screen name="Profile" component={Profile} />
-      <Stack.Screen
-        name="Select contact"
-        component={Contacts}
-        options={{
-          title: contactSearchpress ? null : 'Select contact',
+          headerShown: true,
           headerStyle: {
-            borderBottomWidth: 1,
-            borderBottomColor: 'grey',
-            backgroundColor: contactSearchpress ? 'white' : '#075e54',
+            backgroundColor: '#075e54',
             elevation: 0,
           },
-
-          headerTintColor: contactSearchpress ? 'red' : 'yellow',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
+          headerTitleAlign: 'left',
+          headerRight: homeRightButtons,
         }}
       />
+      <Stack.Screen name="Profile" component={Profile} />
+      <Stack.Screen name="Select contact" component={Contacts} />
       <Stack.Screen name="Message" component={Message} />
       <Stack.Screen name="NewBroadCast" component={NewBroadCast} />
       <Stack.Screen name="NewGroup" component={NewGroup} />
