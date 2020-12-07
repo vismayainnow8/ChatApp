@@ -1,7 +1,14 @@
 import 'react-native-gesture-handler';
-import React, {useState, useEffect} from 'react';
+import {consts} from '../Assets/Consts';
+import React, {useState} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import {View} from 'react-native';
+import {
+  View,
+  TextInput,
+  UIManager,
+  LayoutAnimation,
+  Platform,
+} from 'react-native';
 import Contacts from '../Screens/Contacts';
 import Message from '../Screens/Message';
 import Profile from '../Screens/Profile';
@@ -25,14 +32,13 @@ import ChatScene from '../Screens/ChatScene';
 import Camera from '../Screens/Camera';
 import CallingScreen from '../Screens/CallingScreen';
 import VideoCalling from '../Screens/VideoCalling';
-import {useSelector} from 'react-redux';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 import {TabView} from './homeTabs';
 
 const Stack = createStackNavigator();
 
-const homeRightButtons = () => {
+const HomeRightButtons = ({openSearch}) => {
   return (
     <View
       style={{
@@ -41,6 +47,7 @@ const homeRightButtons = () => {
         paddingHorizontal: 10,
       }}>
       <Feather
+        onPress={openSearch}
         name="search"
         size={24}
         color="#FFF"
@@ -61,52 +68,118 @@ const homeRightButtons = () => {
 };
 
 export const AppStack = () => {
+  const [searchbarVisible, setSearchbarVisible] = useState(false);
   return (
-    <Stack.Navigator initialRouteName="WhatsApp">
-      <Stack.Screen
-        name="WhatsApp"
-        component={TabView}
-        options={{
-          headerShown: true,
-          headerStyle: {
-            backgroundColor: '#075e54',
-            elevation: 0,
-          },
-          headerTitleAlign: 'left',
-          headerRight: homeRightButtons,
-        }}
+    <>
+      <Stack.Navigator initialRouteName="WhatsApp">
+        <Stack.Screen
+          name="WhatsApp"
+          component={TabView}
+          options={{
+            headerShown: !searchbarVisible,
+            headerStyle: {
+              backgroundColor: '#075e54',
+              elevation: 0,
+            },
+            headerTitleAlign: 'left',
+            headerRight: () => (
+              <HomeRightButtons openSearch={() => setSearchbarVisible(true)} />
+            ),
+          }}
+        />
+        <Stack.Screen name="Profile" component={Profile} />
+        <Stack.Screen name="Select contact" component={Contacts} />
+        <Stack.Screen name="Message" component={Message} />
+        <Stack.Screen name="NewBroadCast" component={NewBroadCast} />
+        <Stack.Screen name="NewGroup" component={NewGroup} />
+        <Stack.Screen name="WhatsAppWeb" component={WhatsAppWeb} />
+        <Stack.Screen name="Settings" component={Settings} />
+        <Stack.Screen name="Account" component={Account} />
+        <Stack.Screen name="ChatSettings" component={ChatSettings} />
+        <Stack.Screen name="Notifications" component={Notifications} />
+        <Stack.Screen name="DataStorageUsage" component={DataStorageUsage} />
+        <Stack.Screen name="Help" component={Help} />
+        <Stack.Screen name="Security" component={Security} />
+        <Stack.Screen name="ChangeNumber" component={ChangeNumber} />
+        <Stack.Screen name="StarredMessages" component={StarredMessages} />
+        <Stack.Screen name="Privacy" component={Privacy} />
+        <Stack.Screen
+          name="TwoStepVerification"
+          component={TwoStepVerification}
+        />
+        <Stack.Screen
+          name="RequestAccountInfo"
+          component={RequestAccountInfo}
+        />
+        <Stack.Screen name="DeleteAccount" component={DeleteAccount} />
+        <Stack.Screen name="ChatScene" component={ChatScene} />
+        <Stack.Screen name="Contacts" component={Contacts} />
+        <Stack.Screen
+          name="Camera"
+          component={Camera}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen name="CallingScreen" component={CallingScreen} />
+        <Stack.Screen name="VideoCalling" component={VideoCalling} />
+      </Stack.Navigator>
+      <SearchBar
+        visible={searchbarVisible}
+        closeSearch={() => setSearchbarVisible(false)}
       />
-      <Stack.Screen name="Profile" component={Profile} />
-      <Stack.Screen name="Select contact" component={Contacts} />
-      <Stack.Screen name="Message" component={Message} />
-      <Stack.Screen name="NewBroadCast" component={NewBroadCast} />
-      <Stack.Screen name="NewGroup" component={NewGroup} />
-      <Stack.Screen name="WhatsAppWeb" component={WhatsAppWeb} />
-      <Stack.Screen name="Settings" component={Settings} />
-      <Stack.Screen name="Account" component={Account} />
-      <Stack.Screen name="ChatSettings" component={ChatSettings} />
-      <Stack.Screen name="Notifications" component={Notifications} />
-      <Stack.Screen name="DataStorageUsage" component={DataStorageUsage} />
-      <Stack.Screen name="Help" component={Help} />
-      <Stack.Screen name="Security" component={Security} />
-      <Stack.Screen name="ChangeNumber" component={ChangeNumber} />
-      <Stack.Screen name="StarredMessages" component={StarredMessages} />
-      <Stack.Screen name="Privacy" component={Privacy} />
-      <Stack.Screen
-        name="TwoStepVerification"
-        component={TwoStepVerification}
-      />
-      <Stack.Screen name="RequestAccountInfo" component={RequestAccountInfo} />
-      <Stack.Screen name="DeleteAccount" component={DeleteAccount} />
-      <Stack.Screen name="ChatScene" component={ChatScene} />
-      <Stack.Screen name="Contacts" component={Contacts} />
-      <Stack.Screen
-        name="Camera"
-        component={Camera}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen name="CallingScreen" component={CallingScreen} />
-      <Stack.Screen name="VideoCalling" component={VideoCalling} />
-    </Stack.Navigator>
+    </>
+  );
+};
+
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
+const SearchBar = ({visible, closeSearch}) => {
+  LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+
+  return (
+    <>
+      {visible && (
+        <View
+          style={{
+            position: 'absolute',
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingHorizontal: 10,
+            backgroundColor: 'white',
+            borderBottomWidth: 1,
+            borderBottomColor: 'lightgray',
+          }}>
+          <Feather
+            onPress={closeSearch}
+            name="arrow-left"
+            size={24}
+            color="#128c7e"
+            style={{
+              paddingRight: 20,
+            }}
+          />
+          <TextInput
+            placeholder="Search..."
+            style={{
+              //   backgroundColor: 'yellow',
+              width: consts.ScreenWidth / 1.35,
+            }}
+          />
+          <Entypo
+            onPress={closeSearch}
+            name="cross"
+            size={24}
+            color="#128c7e"
+            style={{
+              paddingLeft: 15,
+            }}
+          />
+        </View>
+      )}
+    </>
   );
 };
