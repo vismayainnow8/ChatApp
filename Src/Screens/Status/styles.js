@@ -26,6 +26,17 @@ const styles = StyleSheet.create({
         flex: 6,
         backgroundColor: 'blue'
     },
+    contactsbuttonContainer: {
+        bottom: 20,
+        right: 10,
+        position: 'absolute',
+        width: 50,
+        height: 50,
+        borderRadius: 50 / 2,
+        backgroundColor: '#25d366',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
     logoText: {
         color: 'white',
         fontWeight: 'bold',

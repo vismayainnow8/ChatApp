@@ -144,7 +144,7 @@ const Chats = (props) => {
 
     useEffect(() => {
         console.log('gotreduxonaschatstate', props.textInput);
-        alert(props.textInput);
+        // alert(props.textInput);
     }, [props.textInput]);
 
     const onPressed = (selectedItem) => {

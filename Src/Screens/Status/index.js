@@ -14,6 +14,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { connect } from 'react-redux';
 import IconFontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { consts } from '../../Assets/Consts';
+import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import { useNavigation } from '@react-navigation/native';
 
 import styles from './styles';
@@ -62,7 +64,7 @@ const Status = (props) => {
 
     useEffect(() => {
         console.log('gotreduxonaschatstate', props.textInput);
-        alert(props.textInput);
+        // alert(props.textInput);
     }, [props.textInput]);
 
     const Item = ({
@@ -177,6 +179,17 @@ const Status = (props) => {
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id.toString()}
             />
+            <TouchableOpacity
+                style={styles.contactsbuttonContainer}
+                onPress={() => navigation.navigate('Select contact')}
+            >
+                <IconMaterialCommunityIcons
+                    name="android-messages"
+                    color="white"
+                    size={23}
+                    style={{ padding: 5 }}
+                />
+            </TouchableOpacity>
         </ScrollView>
     );
 };

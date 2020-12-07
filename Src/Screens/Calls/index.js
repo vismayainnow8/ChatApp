@@ -11,6 +11,8 @@ import { connect } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import styles from './styles';
 import { consts } from '../../Assets/Consts';
+import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import { useNavigation } from '@react-navigation/native';
 const DATA = [
     {
@@ -115,7 +117,7 @@ const Calls = (props) => {
 
     useEffect(() => {
         console.log('gotreduxonaschatstate', props.textInput);
-        alert(props.textInput);
+        // alert(props.textInput);
     }, [props.textInput]);
 
     const Item = ({ image, first_name, missed, time, date }) => (
@@ -187,6 +189,17 @@ const Calls = (props) => {
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id.toString()}
             />
+            <TouchableOpacity
+                style={styles.contactsbuttonContainer}
+                onPress={() => navigation.navigate('Select contact')}
+            >
+                <IconMaterialCommunityIcons
+                    name="android-messages"
+                    color="white"
+                    size={23}
+                    style={{ padding: 5 }}
+                />
+            </TouchableOpacity>
         </View>
     );
 };
