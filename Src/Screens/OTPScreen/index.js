@@ -15,7 +15,9 @@ import styles from './styles';
 const OTPScreen = (props) => {
   const CELL_COUNT = 6;
   const [value, setValue] = useState('');
-  const ref = useBlurOnFulfill({value, cellCount: CELL_COUNT});
+  const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
+  const [confirm, setConfirm] = useState(props.route.params.confirmation);
+  
   const [propsValue, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
     setValue,
@@ -28,10 +30,13 @@ const OTPScreen = (props) => {
 
     try {
       await confirm.confirm(code);
+// navigation.navigate('WhatsApp')
       alert('confirm')
     } catch (error) {
       console.log('Invalid code.',error);
       alert('Invalidconfirm')
+// navigation.navigate('WhatsApp')
+
 
     }
   }
@@ -128,7 +133,7 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const mapStateToProps = (state) => {
-  console.log('reduxSTate', state);
+  // console.log('reduxSTate', state);
   return {
     confirmation: state,
   };
