@@ -9,7 +9,7 @@ const Stack = createStackNavigator();
 
 export const SignInStack = () => {
   return (
-    <Stack.Navigator initialRouteName="WelcomeScreen">
+    <Stack.Navigator initialRouteName="ChooseCountry">
       <Stack.Screen
         name="WelcomeScreen"
         component={WelcomeScreen}

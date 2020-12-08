@@ -1,6 +1,6 @@
 import {connect} from 'react-redux';
-import React, {useLayoutEffect, useState} from 'react';
-import {View, Text, Alert, TouchableOpacity, TextInput} from 'react-native';
+import React, {useLayoutEffect, useEffect,useState} from 'react';
+import {View, Text, Alert, TouchableOpacity,ActivityIndicator, TextInput} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -9,6 +9,8 @@ import {setConfirmation} from '../../StateManagement/Actions';
 import styles from './styles';
 import {back} from 'react-native/Libraries/Animated/src/Easing';
 import Menu, {MenuItem, MenuDivider} from 'react-native-material-menu';
+// import { useEffect } from 'react/cjs/react.production.min';
+import {consts} from '../../Assets/Consts';
 
 const Login = (props) => {
   const [number, setNumber] = useState(null);
@@ -17,7 +19,9 @@ const Login = (props) => {
   const [borderBottomWidthCode, setBorderBottomWidthCode] = useState(1);
   const [borderBottomWidthPhone, setBorderBottomWidthPhone] = useState(1);
   const [settingsPressed, setSettingsPressed] = useState(false);
-  const [countryName, setCountryName] = useState('India');
+  // const [countryName, setCountryName] = useState('props.route.params.name');
+  // const [countryCode, setCountryCode] = useState('props.route.params.code');
+  const [loading, setLoading] = useState(false);
   const [menuState, setMenuState] = useState(ChatMenu);
   var _menu = null;
 
@@ -28,6 +32,15 @@ const Login = (props) => {
   const showMenu = () => {
     _menu.show();
   };
+
+
+  // useEffect(() => {
+  //   setCountryName(props.countryName)
+  //   setCountryCode(props.countryCode)
+  //   // console.log('props', props.route.params.code);
+  // }, [props.countryName,props.countryCode]);
+
+
   useLayoutEffect(() => {
     props.navigation.setOptions({
       headerTitle: 'Enter your phone number',
@@ -62,6 +75,7 @@ const Login = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   });
   const signInWithPhoneNumber = async () => {
+    setLoading(true)
     if (number) {
       const phoneNumber = number;
 
@@ -83,100 +97,88 @@ const Login = (props) => {
     }
   };
   const submitPhoneNumber = () => {
-    // navigation.navigate('OTPScreen')
     signInWithPhoneNumber();
   };
+
   const onPressCountry = () => {
     setBorderBottomWidthCountry(2);
     props.navigation.navigate('ChooseCountry');
   };
+
   const ChatMenu = (
     <View style={{backgroundColor: 'white'}}>
       <MenuItem onPress={() => navigation.navigate('NewGroup')}>Help</MenuItem>
     </View>
   );
+//   useEffect(() => {
+//   console.log('number',number)
+// },[number])
   return (
-    <View style={styles.mainContainer}>
-      <Text style={styles.firstLine}>
-        Whatsapp will send an SMS message to verify your phone number.{' '}
-        <Text style={styles.firstBlueLine}>What's my number ?</Text>
-      </Text>
+<View style={{flex:1}}>
+      {loading ?
+        <ActivityIndicator color='#016AAE' size={consts.textSizes(20)} style={{ flex: 1, paddingVertical: 30 }} /> :
+        <View style={styles.mainContainer}>
+          <Text style={styles.firstLine}>
+            Whatsapp will send an SMS message to verify your phone number.{' '}
+            <Text style={styles.firstBlueLine}>What's my number ?</Text>
+          </Text>
 
-      <TouchableOpacity
-        style={[
-          styles.countryContainer,
-          {borderBottomWidth: borderBottomWidthCountry},
-        ]}
-        onPress={() => onPressCountry()}>
-        <Text>{countryName}</Text>
+          <TouchableOpacity
+            style={[
+              styles.countryContainer,
+              { borderBottomWidth: borderBottomWidthCountry },
+            ]}
+            onPress={() => onPressCountry()}>
+            <Text>{props.countryName}</Text>
 
-        <AntDesign
-          name="caretdown"
-          color="#128c7e"
-          size={15}
-          style={{
-            position: 'absolute',
-            right: 0,
-          }}
-        />
-      </TouchableOpacity>
-      <View style={styles.secondContainer}>
-        <View
-          style={[
-            styles.countryCodeContainer,
-            {borderBottomWidth: borderBottomWidthCode},
-          ]}>
-          <Text style={styles.plus}>+</Text>
-          <TextInput
-            placeholder="91"
-            style={{padding: 0}}
-            onFocus={() => setBorderBottomWidthCode(2)}
+            <AntDesign
+              name="caretdown"
+              color="#128c7e"
+              size={15}
+              style={{
+                position: 'absolute',
+                right: 0,
+              }}
+            />
+          </TouchableOpacity>
+          <View style={styles.secondContainer}>
+            <View
+              style={[
+                styles.countryCodeContainer,
+                { borderBottomWidth: borderBottomWidthCode },
+              ]}>
+              
+              <Text >{ props.countryCode}</Text>
+              {/* <TextInput
+                placeholder={props.countryCode}
+                placeholderStyle={{color:"black"}}
+                style={{ padding: 0,color:"black" }}
+                onFocus={() => setBorderBottomWidthCode(2)}
+              /> */}
+            </View>
+            <TextInput
+              style={[
+                styles.phoneNumberContainer,
+                {
+                  borderBottomWidth: borderBottomWidthPhone,
+                },
+              ]}
+              placeholder="phone number"
+              onChangeText={(text)=>setNumber(props.countryCode+text)}
+              onFocus={() => setBorderBottomWidthPhone(2)}
+              onSubmitEditing={() => submitPhoneNumber()}
+            />
+          </View>
+          <Text style={styles.plus}>Carrier SMS charges may apply</Text>
+          <SmallButton
+            title="NEXT"
+            labelStyle={styles.labelStyle}
+            style={styles.style}
+            onPress={() => signInWithPhoneNumber()}
           />
+      
         </View>
-        <TextInput
-          style={[
-            styles.phoneNumberContainer,
-            {
-              borderBottomWidth: borderBottomWidthPhone,
-            },
-          ]}
-          placeholder="phone number"
-          onChangeText={setNumber}
-          onFocus={() => setBorderBottomWidthPhone(2)}
-          onSubmitEditing={() => submitPhoneNumber()}
-        />
-      </View>
-      <Text style={styles.plus}>Carrier SMS charges may apply</Text>
-      <SmallButton
-        title="NEXT"
-        labelStyle={styles.labelStyle}
-        style={styles.style}
-        onPress={() => signInWithPhoneNumber()}
-      />
-      {/* {settingsPressed ? (
-                <View>
-                    <Menu
-                        ref={(ref) => setMenuRef(ref)}
-                        button={
-                            <TouchableOpacity
-                                style={{
-                                    backgroundColor: '#075e54',
-                                    position: 'relative'
-                                }}
-                            >
-                                <Icon
-                                    onPress={() => showMenu()}
-                                    name="dots-three-vertical"
-                                    size={24}
-                                    color="white"
-                                />
-                            </TouchableOpacity>
-                        }
-                    >
-                        {menuState}
-                    </Menu>
-                </View>
-            ) : null} */}
+      }
     </View>
   );
 };
@@ -187,4 +189,11 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(Login);
+const mapStateToProps = (state,props) => {
+  return {
+    countryCode: state.country.countryName.countryCode,
+    countryName: state.country.countryCode.countryName,
+    ...props
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

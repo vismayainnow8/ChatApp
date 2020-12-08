@@ -5,7 +5,7 @@ import {AppStack} from './appStack';
 
 export default function AppNavigation() {
   const loggedIn = false;
-  if (!!loggedIn) {
+  if (!loggedIn) {
     return <SignInStack />;
   }
   return <AppStack />;

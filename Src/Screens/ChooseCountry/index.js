@@ -1,4 +1,5 @@
-import React, {useState, useRef, useLayoutEffect} from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
+import {connect} from 'react-redux';
 import {
   FlatList,
   View,
@@ -11,29 +12,17 @@ import {
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from './styles';
+import {setCountryName,setCountryCode} from '../../StateManagement/Actions';
+import {countryList} from '../../Assets/Consts';
 
-const DATA = [
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    title: 'First Item',
-  },
-  {
-    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-    title: 'Second Item',
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d72',
-    title: 'Third Item',
-  },
-];
-
-const ChooseCountry = ({navigation}) => {
+const ChooseCountry = (props) => {
   const [selectedId, setSelectedId] = useState(null);
-  const [selected, setSelected] = useState(null);
+  const [countryListArray, setCountryArrayList] = useState(null);
   const phone = useRef(null);
 
+ 
   useLayoutEffect(() => {
-    navigation.setOptions({
+    props.navigation.setOptions({
       headerTitle: 'Choose a country',
       headerRight: () => {
         return (
@@ -55,29 +44,46 @@ const ChooseCountry = ({navigation}) => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   });
+
+  function onPressItem  (item)  {
+      name = {
+            countryName: item.name
+    };
+    code = {
+      countryCode: item.code
+    };
+        props.setCountryName(name);
+    props.setCountryCode(code);
+    console.log("dispatchvariables",code,name)
+    
+    props.navigation.navigate('Login')
+
+  }
   const renderItem = ({item}) => {
-    // const selectedOne = item.id === selectedId ? '#6e3b6e' : '#f9c2ff';
     const Item = ({item, onPress, style}) => (
       <TouchableOpacity
         style={styles.detailedlistItemContainer}
-        onPress={() => setSelectedId(item.id)}>
+        // onPress={() => alert('item.code')}
+        onPress={() => onPressItem(item)}
+
+      >
         <View style={styles.flagContainer}>
-          <Entypo
+          {/* <Entypo
             name="flag"
             color="#128c7e"
             size={23}
             style={{paddingVertical: 5}}
-          />
+          /> */}
         </View>
         <View style={styles.detailednameContainer}>
-          <Text style={styles.nameText}>India</Text>
-          <Text style={styles.statusText}>rtyguhkjl</Text>
+          <Text style={styles.nameText}>{item.name}</Text>
+          {/* <Text style={styles.statusText}>{item.code}</Text> */}
         </View>
         <View style={styles.numberContainer}>
-          <Text style={styles.nameText}>+91</Text>
+          <Text style={styles.nameText}>{item.code}</Text>
         </View>
         <View style={styles.tickContainer}>
-          {item.id == selectedId ? (
+          {item.code == selectedId ? (
             <Entypo
               name="check"
               color="#128c7e"
@@ -91,7 +97,7 @@ const ChooseCountry = ({navigation}) => {
     return (
       <Item
         item={item}
-        onPress={() => setSelectedId(item.id)}
+        // onPress={() => setSelectedId(item.code)}
         // style={{ backgroundColor }}
       />
     );
@@ -104,13 +110,21 @@ const ChooseCountry = ({navigation}) => {
         // barStyle="dark-content"
       />
       <FlatList
-        data={DATA}
+        data={countryList}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        // keyExtractor={(item) => item.code}
         extraData={selectedId}
       />
     </SafeAreaView>
   );
 };
 
-export default ChooseCountry;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setCountryCode: (data) => dispatch(setCountryCode(data)),
+    setCountryName: (data) => dispatch(setCountryName(data)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(ChooseCountry);
+

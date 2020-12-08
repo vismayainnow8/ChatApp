@@ -41,11 +41,22 @@ const styles = StyleSheet.create({
   },
   plus: {
     color: 'grey',
-    paddingVertical: 10,
+    textAlign: "center",
+    // paddingVertical: ss,
     paddingBottom: 20,
   },
   grey: {
     color: 'grey',
+  },
+  codeInputStyle: {
+    borderBottomColor: "red",
+    borderLeftColor: "white",
+    borderRightColor: "white",
+    borderBottomColor: "red",
+    // borderTopWidth:0,
+    // borderLeftWidth:0,
+    // borderRightidth:0,
+    // borderBoottomWidth:1,
   },
   root: {flex: 1, padding: 20},
   title: {textAlign: 'center', fontSize: 30},

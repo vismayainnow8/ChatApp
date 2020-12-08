@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     // borderBottomWidth: 0.25,
   },
   detailedlistItemContainer: {
-    flex: 1,
+    // flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     // paddingHorizontal: 25,
