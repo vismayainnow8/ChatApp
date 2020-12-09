@@ -10,10 +10,10 @@ const Tab = createMaterialTopTabNavigator();
 export const TabView = () => {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Status" component={Status} />
-      <Tab.Screen name="Chats" component={Chats} />
-      <Tab.Screen name="Status2" component={Status} />
-      <Tab.Screen name="Calls" component={Calls} />
+      <Tab.Screen name="CAMERA" component={Status} />
+      <Tab.Screen name="CHATS" component={Chats} />
+      <Tab.Screen name="STATUS" component={Status} />
+      <Tab.Screen name="CALLS" component={Calls} />
     </Tab.Navigator>
   );
 };

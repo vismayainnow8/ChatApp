@@ -34,34 +34,32 @@ const Login = (props) => {
   };
 
 
-  // useEffect(() => {
-  //   setCountryName(props.countryName)
-  //   setCountryCode(props.countryCode)
-  //   // console.log('props', props.route.params.code);
-  // }, [props.countryName,props.countryCode]);
+  useEffect(() => {
+    setLoading(false)
+  }, );
 
 
   useLayoutEffect(() => {
     props.navigation.setOptions({
       headerTitle: 'Enter your phone number',
       headerTitleAlign: 'center',
-      headerRight: () => {
-        return (
-          <Menu
-            ref={(ref) => setMenuRef(ref)}
-            button={
-              <Entypo
-                onPress={() => showMenu()}
-                name="dots-three-vertical"
-                size={24}
-                color="#128c7e"
-                style={{paddingRight: 10}}
-              />
-            }>
-            {menuState}
-          </Menu>
-        );
-      },
+      // headerRight: () => {
+      //   return (
+      //     // <Menu
+      //     //   ref={(ref) => setMenuRef(ref)}
+      //     //   button={
+      //     //     <Entypo
+      //     //       onPress={() => showMenu()}
+      //     //       name="dots-three-vertical"
+      //     //       size={24}
+      //     //       color="#128c7e"
+      //     //       style={{paddingRight: 10}}
+      //     //     />
+      //     //   }>
+      //     //   {menuState}
+      //     // </Menu>
+      //   );
+      // },
       headerTitleStyle: {
         fontWeight: 'bold',
         fontSize: 18,
@@ -77,9 +75,10 @@ const Login = (props) => {
   const signInWithPhoneNumber = async () => {
     setLoading(true)
     if (number) {
-      const phoneNumber = number;
+      const phoneNumber = props.countryCode+number;
 
       const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
+      console.log('confirmation',confirmation)
       if (confirmation) {
         setConfirm(confirmation);
         // actionData = {
@@ -88,12 +87,19 @@ const Login = (props) => {
         // setConfirmation(actionData);
         props.navigation.navigate('OTPScreen', {
           confirmation: confirmation,
+          number:phoneNumber
         });
       }
-    } else {
-      Alert.alert('Please enter your phone number', [
-        {text: 'OK', onPress: console.log('Cancel Pressed')},
-      ]);
+    }
+    else {
+     
+      Alert.alert(
+        '',
+        'Please enter your phone number',
+        [
+          { text: "OK", onPress: () => console.log('Cancel Pressed'), }
+        ]
+      )
     }
   };
   const submitPhoneNumber = () => {
@@ -116,11 +122,11 @@ const Login = (props) => {
   return (
 <View style={{flex:1}}>
       {loading ?
-        <ActivityIndicator color='#016AAE' size={consts.textSizes(20)} style={{ flex: 1, paddingVertical: 30 }} /> :
+        <ActivityIndicator color='#128c7e' size={consts.textSizes(20)} style={{ flex: 1, paddingVertical: 30 }} /> :
         <View style={styles.mainContainer}>
           <Text style={styles.firstLine}>
             Whatsapp will send an SMS message to verify your phone number.{' '}
-            <Text style={styles.firstBlueLine}>What's my number ?</Text>
+            {/* <Text style={styles.firstBlueLine}>What's my number ?</Text> */}
           </Text>
 
           <TouchableOpacity
@@ -164,7 +170,7 @@ const Login = (props) => {
                 },
               ]}
               placeholder="phone number"
-              onChangeText={(text)=>setNumber(props.countryCode+text)}
+              onChangeText={(text)=>setNumber(text)}
               onFocus={() => setBorderBottomWidthPhone(2)}
               onSubmitEditing={() => submitPhoneNumber()}
             />
@@ -189,7 +195,7 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-const mapStateToProps = (state,props) => {
+const mapStateToProps = (state, props) => {
   return {
     countryCode: state.country.countryName.countryCode,
     countryName: state.country.countryCode.countryName,

@@ -12,53 +12,57 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Entypo from 'react-native-vector-icons/Entypo';
 import CodeInput from 'react-native-confirmation-code-input'
 import styles from './styles';
+import {AppStack} from '../../Router/appStack';
+// import  from './';
 const OTPScreen = (props) => {
   const CELL_COUNT = 6;
   const [value, setValue] = useState('');
-  const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
+  // const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
   const [confirm, setConfirm] = useState(props.route.params.confirmation);
+  const [number, setNumber] = useState(props.route.params.number);
   
-  const [propsValue, getCellOnLayoutHandler] = useClearByFocusCell({
-    value,
-    setValue,
-  });
-  useEffect(() => {
-    console.log('propsssssssssssssss', props.route.params.confirmation);
-  }, []);
+  // const [propsValue, getCellOnLayoutHandler] = useClearByFocusCell({
+  //   value,
+  //   setValue,
+  // });
+  // useEffect(() => {
+    console.log('propsssssssssssssss', props);
+    // alert('propsssssssssssssss', props);
+  // }, []);
   // async function confirmCode() {
   const confirmCode = async (code) => {
-
+    // return <AppStack />;
+props.navigation.navigate('AppStack')
     try {
       await confirm.confirm(code);
-// navigation.navigate('WhatsApp')
-      alert('confirm')
     } catch (error) {
-      console.log('Invalid code.',error);
-      alert('Invalidconfirm')
-// navigation.navigate('WhatsApp')
-
-
+      console.log('Invalid code.', error);
+props.navigation.replace('AppStack')
     }
   }
   
   
   useLayoutEffect(() => {
     props.navigation.setOptions({
-      headerTitle: 'Verify 123456678910',
-      headerRight: () => {
-        return (
-          <Entypo
-            onPress={() => alert('search')}
-            name="dots-three-vertical"
-            size={24}
-            color="#128c7e"
-            style={{paddingRight: 10}}
-          />
-        );
-      },
+      headerTitle: 'Verify '+{number},
+      // headerRight: () => {
+      //   return (
+      //     <Entypo
+      //       onPress={() => alert('search')}
+      //       name="dots-three-vertical"
+      //       size={24}
+      //       color="#128c7e"
+      //       style={{paddingRight: 10}}
+      //     />
+      //   );
+      // },
       headerStyle: {
         backgroundColor: 'white',
         elevation: 0,
+      },
+      headerTitleStyle: {
+        fontWeight: 'bold',
+        fontSize: 18,
       },
       headerTintColor: '#128c7e',
     });
@@ -97,7 +101,7 @@ const OTPScreen = (props) => {
         
       <Text style={styles.plus}>Enter a 6-digit code</Text>
 
-<TouchableOpacity style={styles.itemContainer}>
+{/* <TouchableOpacity style={styles.itemContainer}>
   <View style={styles.iconContainer}>
     <Entypo name="message" color="grey" size={15} />
   </View>
@@ -119,7 +123,7 @@ const OTPScreen = (props) => {
   <View style={styles.timeContainer}>
     <Text style={styles.grey}>1:78</Text>
   </View>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
     </View>
         
     </View>

@@ -20,20 +20,21 @@ const ChooseCountry = (props) => {
   const [countryListArray, setCountryArrayList] = useState(null);
   const phone = useRef(null);
 
+  const countryListwithId = countryList.forEach((o, i) => o.id = i + 1);
  
   useLayoutEffect(() => {
     props.navigation.setOptions({
       headerTitle: 'Choose a country',
-      headerRight: () => {
-        return (
-          <Ionicons
-            name="search"
-            size={24}
-            color="#128c7e"
-            style={{paddingRight: 15}}
-          />
-        );
-      },
+      // headerRight: () => {
+      //   return (
+      //     <Ionicons
+      //       name="search"
+      //       size={24}
+      //       color="#128c7e"
+      //       style={{paddingRight: 15}}
+      //     />
+      //   );
+      // },
       headerStyle: {
         backgroundColor: 'white',
         elevation: 0,
@@ -45,7 +46,8 @@ const ChooseCountry = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   });
 
-  function onPressItem  (item)  {
+  function onPressItem(item) {
+    setSelectedId(item.code)
       name = {
             countryName: item.name
     };
@@ -54,7 +56,7 @@ const ChooseCountry = (props) => {
     };
         props.setCountryName(name);
     props.setCountryCode(code);
-    console.log("dispatchvariables",code,name)
+    // console.log("dispatchvariables",code,name)ss
     
     props.navigation.navigate('Login')
 
@@ -111,8 +113,9 @@ const ChooseCountry = (props) => {
       />
       <FlatList
         data={countryList}
+        // legacyImplementation={false}
         renderItem={renderItem}
-        // keyExtractor={(item) => item.code}
+        keyExtractor={(item) => item.id}
         extraData={selectedId}
       />
     </SafeAreaView>
