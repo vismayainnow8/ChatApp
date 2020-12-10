@@ -2,6 +2,9 @@ import {StyleSheet} from 'react-native';
 import {consts} from '../../Assets/Consts';
 // import { Appearance } from 'react-native'
 const styles = StyleSheet.create({
+  time: {
+    fontSize: 10,
+  },
   textinputContainer: {
     backgroundColor: 'white',
     height: 50,

@@ -77,8 +77,9 @@ const ChatScene = ({navigation, route}) => {
         const value = snapshot.val();
         let formatedValues = [];
         Object.keys(value ?? {}).forEach((item) => {
-          formatedValues.push(value[item]);
+          formatedValues.push({...value[item], id: item});
         });
+        formatedValues.sort((a, b) => a.time - b.time);
         setMessages(formatedValues);
       });
   }, []);
@@ -93,11 +94,16 @@ const ChatScene = ({navigation, route}) => {
       style={[
         styles.item,
         {
-          alignSelf: item.user == 'myself' ? 'flex-end' : 'flex-start',
+          alignSelf:
+            item.uid == auth().currentUser.uid ? 'flex-end' : 'flex-start',
         },
-        {backgroundColor: item.user == 'myself' ? '#dcf8c6' : 'white'},
+        {
+          backgroundColor:
+            item.uid == auth().currentUser.uid ? '#dcf8c6' : 'white',
+        },
       ]}>
       <Text style={styles.title}>{item.message}</Text>
+      <Text style={styles.time}>{item.time}</Text>
     </TouchableOpacity>
   );
 
@@ -164,7 +170,6 @@ const ChatScene = ({navigation, route}) => {
           data={messages}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
-          extraData={messages}
         />
         <View>
           {attachPressed ? (
