@@ -18,6 +18,7 @@ import {AttachModal} from '../../Components';
 import styles from '../ChatScene/style';
 import {consts} from '../../Assets/Consts';
 import database from '@react-native-firebase/database';
+import auth from '@react-native-firebase/auth';
 
 const ChatScene = ({navigation, route}) => {
   const {user, chatId} = route.params;
@@ -96,7 +97,7 @@ const ChatScene = ({navigation, route}) => {
         },
         {backgroundColor: item.user == 'myself' ? '#dcf8c6' : 'white'},
       ]}>
-      <Text style={styles.title}>{item.title}</Text>
+      <Text style={styles.title}>{item.message}</Text>
     </TouchableOpacity>
   );
 
@@ -106,12 +107,37 @@ const ChatScene = ({navigation, route}) => {
 
   const sendMessage = () => {
     Keyboard.dismiss();
-
     database().ref('messages').push({
+      message: writtenMessage,
+      time: database.ServerValue.TIMESTAMP,
+      status: 0,
+      uid: auth().currentUser.uid,
       chatId,
-      title: writtenMessage,
-      uid: user.uid,
     });
+    database()
+      .ref('userChat')
+      .child(user.uid)
+      .child(chatId)
+      .update({
+        lastMessage: {
+          message: writtenMessage,
+          time: database.ServerValue.TIMESTAMP,
+          status: 0,
+          uid: auth().currentUser.uid,
+        },
+      });
+    database()
+      .ref('userChat')
+      .child(auth().currentUser.uid)
+      .child(chatId)
+      .update({
+        lastMessage: {
+          message: writtenMessage,
+          time: database.ServerValue.TIMESTAMP,
+          status: 0,
+          uid: auth().currentUser.uid,
+        },
+      });
   };
 
   const onChangeText = (text) => {
