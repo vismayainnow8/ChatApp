@@ -39,28 +39,43 @@ const Contacts = ({navigation}) => {
   }, []);
 
   const onPressed = (item) => {
-    const data = database()
-      .ref('userChat')
-      .child(item.uid)
-      .push({
-        lastMessage: {},
-        user: {
-          displayName: auth().currentUser.displayName,
-          phoneNumber: auth().currentUser.phoneNumber,
-          uid: auth().currentUser.uid,
-        },
-      });
     database()
       .ref('userChat')
-      .child(auth().currentUser.uid)
-      .update({
-        [data.key]: {
-          lastMessage: {},
-          user: item,
-        },
+      .child(item.uid)
+      .orderByChild('user/uid')
+      .equalTo(auth().currentUser.uid)
+      .once('value', (snapshot) => {
+        const val = snapshot.val();
+        if (!val) {
+          console.log('no val');
+          const data = database()
+            .ref('userChat')
+            .child(item.uid)
+            .push({
+              lastMessage: {},
+              user: {
+                displayName: auth().currentUser.displayName,
+                phoneNumber: auth().currentUser.phoneNumber,
+                uid: auth().currentUser.uid,
+              },
+            });
+          database()
+            .ref('userChat')
+            .child(auth().currentUser.uid)
+            .update({
+              [data.key]: {
+                lastMessage: {},
+                user: item,
+              },
+            });
+          navigation.navigate('ChatScene', {user: item, chatId: data.key});
+        } else {
+          navigation.navigate('ChatScene', {
+            user: item,
+            chatId: Object.keys(val)[0],
+          });
+        }
       });
-    alert({user: item, chatId: data.key});
-    navigation.navigate('ChatScene', {user: item, chatId: data.key});
   };
 
   const Item = ({image, item}) => (
