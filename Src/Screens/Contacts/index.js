@@ -1,80 +1,71 @@
-import React, {useState, useEffect, useLayoutEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Text,
   ScrollView,
   FlatList,
-  Platform,
-  PermissionsAndroid,
   SafeAreaView,
   StatusBar,
   Image,
   View,
 } from 'react-native';
-import Contact from 'react-native-contacts';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import IconMaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/Entypo';
+import database from '@react-native-firebase/database';
+import auth from '@react-native-firebase/auth';
 import styles from './styles';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const Contacts = ({navigation}) => {
   const [] = useState(false);
   let [contacts, setContacts] = useState([]);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItem] = useState(null);
 
   useEffect(() => {
-    if (Platform.OS === 'android') {
-      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
-        title: 'Contacts',
-        message: 'This app would like to view your contacts.',
-      }).then(() => {
-        loadContacts();
-        console.log('useffected worked');
+    database()
+      .ref('contacts')
+      .once('value', (snapshot) => {
+        const value = snapshot.val();
+        let formatedValues = [];
+        Object.keys(value ?? {}).forEach((item) => {
+          formatedValues.push({
+            displayName: value[item].displayName,
+            phoneNumber: value[item].phoneNumber,
+            uid: value[item].uid,
+          });
+        });
+        setContacts(formatedValues);
       });
-    } else {
-      loadContacts();
-      console.log('useffected failed');
-    }
   }, []);
 
-  const loadContacts = () => {
-    Contact.getAll().then((contacts) => {
-      contacts.sort(function (a, b) {
-        if (a.displayName < b.displayName) {
-          return -1;
-        }
-        if (a.displayName > b.displayName) {
-          return 1;
-        }
-        return 0;
+  const onPressed = (item) => {
+    const data = database()
+      .ref('userChat')
+      .child(item.uid)
+      .push({
+        lastMessage: {},
+        user: {
+          displayName: auth().currentUser.displayName,
+          phoneNumber: auth().currentUser.phoneNumber,
+          uid: auth().currentUser.uid,
+        },
       });
-      setContacts(contacts);
-      console.log('contacts', contacts);
-    });
-  };
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerTitle: ' Select Contact',
-
-      headerStyle: {
-        backgroundColor: '#075e54',
-        // backgroundColor: contactSearchpress ? 'white' : '#075e54',
-        elevation: 0,
-      },
-      headerTintColor: 'white',
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  });
-
-  const onPressed = (selectedItem) => {
-    setSelectedItem(selectedItem);
-    console.log('selectedItem', selectedItem);
-    navigation.navigate('ChatScene', {title: selectedItem});
+    database()
+      .ref('userChat')
+      .child(auth().currentUser.uid)
+      .update({
+        [data.key]: {
+          lastMessage: {},
+          user: item,
+        },
+      });
+    alert({user: item, chatId: data.key});
+    navigation.navigate('ChatScene', {user: item, chatId: data.key});
   };
 
-  const Item = ({image, displayName, item, message}) => (
+  const Item = ({image, item}) => (
     <TouchableOpacity
-      onPress={() => onPressed(item.displayName)}
+      onPress={() => onPressed(item)}
       style={styles.listItemContainer}>
       <View style={styles.iconContainerperson}>
         {image ? (
@@ -88,20 +79,18 @@ const Contacts = ({navigation}) => {
         )}
       </View>
       <View style={styles.nameContainer}>
-        <Text>{displayName}</Text>
+        <Text>{item.displayName ?? item.phoneNumber}</Text>
         <View style={styles.dateContainer}>
           <Text
             numberOfLines={1}
             style={{fontWeight: '400', color: '#666', fontSize: 12}}>
-            my status..
+            {item.uid}
           </Text>
         </View>
       </View>
     </TouchableOpacity>
   );
-  function renderItem({item, index}) {
-    const isSelected = selectedItem === item.id;
-
+  function renderItem({item}) {
     return (
       <Item
         item={item}
@@ -110,7 +99,7 @@ const Contacts = ({navigation}) => {
         missed={item.missed}
         time={item.time}
         date={item.date}
-        message={item.message}
+        message={item.id}
         number={item.number}
       />
     );

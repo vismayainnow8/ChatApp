@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useRef,
-  useCallback,
-  useLayoutEffect,
-  useEffect,
-} from 'react';
+import React, {useState, useRef, useLayoutEffect, useEffect} from 'react';
 import {
   View,
   Text,
@@ -15,37 +9,21 @@ import {
   ScrollView,
   StatusBar,
   TouchableOpacity,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {useNavigation} from '@react-navigation/native';
 
 import {AttachModal} from '../../Components';
 import styles from '../ChatScene/style';
 import {consts} from '../../Assets/Consts';
 import database from '@react-native-firebase/database';
 
-const ChatScene = (props) => {
-  const navigation = useNavigation();
-  var initialMessages = [
-    {id: '0', title: 'hello ...', user: 'neha'},
-    {id: '1', title: 'Good morning..how are you?', user: 'myself'},
-  ];
-  const [messages, setMessages] = useState(initialMessages);
-  const [text, setText] = useState('');
-  const [selectedId, setSelectedId] = useState(null);
-  const [typingState, setTypingState] = useState('online');
-  const [textinputValue, setTextinputValue] = useState('online');
-  const [writtenMessage, setWrittenMessage] = useState(null);
-  const [attachPressed, setAttachPressed] = useState(false);
-  const [onChangingText, setonChangingText] = useState(false);
-  const textRef = useRef(null);
-  const scrollViewRef = useRef(null);
-const userRef = database().ref('/users/vis');
-  
-  function HeaderIcons(props) {
+const ChatScene = ({navigation, route}) => {
+  const {user, chatId} = route.params;
+  const [messages, setMessages] = useState([]);
+
+  function HeaderIcons() {
     return (
       <View style={{flexDirection: 'row'}}>
         <Ionicons
@@ -63,7 +41,6 @@ const userRef = database().ref('/users/vis');
           style={{paddingRight: 10}}
         />
         <Entypo
-          // onPress={() => props.navigation.navigate('')}
           name="dots-three-vertical"
           size={24}
           color="white"
@@ -73,11 +50,8 @@ const userRef = database().ref('/users/vis');
     );
   }
   useLayoutEffect(() => {
-    const name = props.route.params.title
-      ? props.route.params.title
-      : 'not saved';
-    props.navigation.setOptions({
-      headerTitle: name,
+    navigation.setOptions({
+      headerTitle: user.displayName ?? user.phoneNumber,
       headerRight: () => {
         return <HeaderIcons />;
       },
@@ -88,7 +62,31 @@ const userRef = database().ref('/users/vis');
       headerTintColor: 'white',
     });
   });
-  const Item = ({item, onPress, style}) => (
+
+  useEffect(() => {
+    return database()
+      .ref()
+      .child('messages')
+      .orderByChild('chatId')
+      .equalTo(chatId)
+      .on('value', (snapshot) => {
+        if (!snapshot) {
+          return;
+        }
+        const value = snapshot.val();
+        let formatedValues = [];
+        Object.keys(value ?? {}).forEach((item) => {
+          formatedValues.push(value[item]);
+        });
+        setMessages(formatedValues);
+      });
+  }, []);
+  const [writtenMessage, setWrittenMessage] = useState(null);
+  const [attachPressed, setAttachPressed] = useState(false);
+  const textRef = useRef(null);
+  const scrollViewRef = useRef(null);
+
+  const Item = ({item, onPress}) => (
     <TouchableOpacity
       onPress={onPress}
       style={[
@@ -108,22 +106,18 @@ const userRef = database().ref('/users/vis');
 
   const sendMessage = () => {
     Keyboard.dismiss();
-    const textstate = writtenMessage;
-    const id = Array.isArray(messages)
-      ? `msgUNIQITEM${messages.length}`
-      : 'msgUNIQITEM0';
-    setMessages([...messages, {id, title: textstate.trim(), user: 'myself'}]);
-    setWrittenMessage('');
-    userRef.push({
-            "message": writtenMessage
-    })
+
+    database().ref('messages').push({
+      chatId,
+      title: writtenMessage,
+      uid: user.uid,
+    });
   };
 
   const onChangeText = (text) => {
     setWrittenMessage(text);
-    setonChangingText(true);
   };
-  const attachOnPress = (text) => {
+  const attachOnPress = () => {
     if (attachPressed == true) {
       setAttachPressed(false);
     } else {
