@@ -23,7 +23,9 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     flexDirection: 'row',
   },
-  contentContainer: {},
+  contentContainer: {
+    minHeight: 300,
+  },
   logoText: {
     color: 'white',
     fontWeight: 'bold',
