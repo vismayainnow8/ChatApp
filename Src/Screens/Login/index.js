@@ -1,66 +1,67 @@
-import {connect} from 'react-redux';
-import React, {useLayoutEffect, useEffect,useState} from 'react';
-import {View, Text, Alert, TouchableOpacity,ActivityIndicator, TextInput} from 'react-native';
+import React, {useLayoutEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  Alert,
+  TouchableOpacity,
+  ActivityIndicator,
+  TextInput,
+} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import Entypo from 'react-native-vector-icons/Entypo';
 import {SmallButton} from '../../Components';
-import {setConfirmation} from '../../StateManagement/Actions';
 import styles from './styles';
-import {back} from 'react-native/Libraries/Animated/src/Easing';
-import Menu, {MenuItem, MenuDivider} from 'react-native-material-menu';
-// import { useEffect } from 'react/cjs/react.production.min';
-import {consts} from '../../Assets/Consts';
+import {consts, countryList} from '../../Assets/Consts';
 
-const Login = (props) => {
+const Login = ({navigation, route}) => {
   const [number, setNumber] = useState(null);
-  const [confirm, setConfirm] = useState(null);
+  const [country, setCountry] = useState(countryList[0]);
+
   const [borderBottomWidthCountry, setBorderBottomWidthCountry] = useState(1);
-  const [borderBottomWidthCode, setBorderBottomWidthCode] = useState(1);
+  const [borderBottomWidthCode] = useState(1);
   const [borderBottomWidthPhone, setBorderBottomWidthPhone] = useState(1);
-  const [textinputColor, setTextinputColor] = useState('grey');
-  const [value, setValue] = useState('phone number');
-  // const [countryCodeShown, setCountryCodeShown] = useState('+91');
-  // const [countryNameShown, setCountryNameShown] = useState('India');
   const [loading, setLoading] = useState(false);
-  const [menuState, setMenuState] = useState(ChatMenu);
-  var _menu = null;
 
-  const setMenuRef = (ref) => {
-    _menu = ref;
+  React.useEffect(() => {
+    if (route.params?.country) {
+      setCountry(route.params.country);
+    }
+  }, [route.params?.country]);
+  const onPressCountry = () => {
+    setBorderBottomWidthCountry(2);
+    navigation.navigate('ChooseCountry');
   };
 
-  const showMenu = () => {
-    _menu.show();
+  const onFocus = () => {
+    setBorderBottomWidthPhone(2);
   };
+  const signInWithPhoneNumber = async () => {
+    if (!number)
+      return Alert.alert('', 'Please enter your phone number', [
+        {text: 'OK', onPress: () => console.log('Cancel Pressed')},
+      ]);
 
-
-  useEffect(() => {
-    setLoading(false)
-  }, );
-
+    setLoading(true);
+    try {
+      const phoneNumber = country.code + number;
+      const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
+      if (confirmation) {
+        navigation.navigate('OTPScreen', {
+          confirmation: confirmation,
+          number: phoneNumber,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useLayoutEffect(() => {
-    props.navigation.setOptions({
+    navigation.setOptions({
       headerTitle: 'Enter your phone number',
       headerTitleAlign: 'center',
-      // headerRight: () => {
-      //   return (
-      //     // <Menu
-      //     //   ref={(ref) => setMenuRef(ref)}
-      //     //   button={
-      //     //     <Entypo
-      //     //       onPress={() => showMenu()}
-      //     //       name="dots-three-vertical"
-      //     //       size={24}
-      //     //       color="#128c7e"
-      //     //       style={{paddingRight: 10}}
-      //     //     />
-      //     //   }>
-      //     //   {menuState}
-      //     // </Menu>
-      //   );
-      // },
       headerTitleStyle: {
         fontWeight: 'bold',
         fontSize: 18,
@@ -71,76 +72,29 @@ const Login = (props) => {
       },
       headerTintColor: '#128c7e',
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  });
-  const signInWithPhoneNumber = async () => {
-    setLoading(true)
-    if (number) {
-      const phoneNumber = props.countryCode+number;
+  }, []);
 
-      const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
-      console.log('confirmation',confirmation)
-      if (confirmation) {
-        setConfirm(confirmation);
-        // actionData = {
-        //     confirmation: 'confirmation'
-        // };
-        // setConfirmation(actionData);
-        props.navigation.navigate('OTPScreen', {
-          confirmation: confirmation,
-          number:phoneNumber
-        });
-      }
-    }
-    else {
-     
-      Alert.alert(
-        '',
-        'Please enter your phone number',
-        [
-          { text: "OK", onPress: () => console.log('Cancel Pressed'), }
-        ]
-      )
-    }
-  };
-  const submitPhoneNumber = () => {
-    signInWithPhoneNumber();
-  };
-
-  const onPressCountry = () => {
-    setBorderBottomWidthCountry(2);
-    props.navigation.navigate('ChooseCountry');
-  };
- 
-  const onFocus = () => {
-    setBorderBottomWidthPhone(2)
-    // setValue
-  }
-  const ChatMenu = (
-    <View style={{backgroundColor: 'white'}}>
-      <MenuItem onPress={() => navigation.navigate('NewGroup')}>Help</MenuItem>
-    </View>
-  );
-//   useEffect(() => {
-//   console.log('number',number)
-// },[number])
   return (
-<View style={{flex:1}}>
-      {loading ?
-        <ActivityIndicator color='#128c7e' size={consts.textSizes(20)} style={{ flex: 1, paddingVertical: 30 }} /> :
+    <View style={{flex: 1}}>
+      {loading ? (
+        <ActivityIndicator
+          color="#128c7e"
+          size={consts.textSizes(20)}
+          style={{flex: 1, paddingVertical: 30}}
+        />
+      ) : (
         <View style={styles.mainContainer}>
           <Text style={styles.firstLine}>
             Whatsapp will send an SMS message to verify your phone number.{' '}
-            {/* <Text style={styles.firstBlueLine}>What's my number ?</Text> */}
           </Text>
 
           <TouchableOpacity
             style={[
               styles.countryContainer,
-              { borderBottomWidth: borderBottomWidthCountry },
+              {borderBottomWidth: borderBottomWidthCountry},
             ]}
             onPress={() => onPressCountry()}>
-            <Text>{props.countryName}</Text>
+            <Text>{country.name}</Text>
 
             <AntDesign
               name="caretdown"
@@ -156,32 +110,22 @@ const Login = (props) => {
             <View
               style={[
                 styles.countryCodeContainer,
-                { borderBottomWidth: borderBottomWidthCode },
+                {borderBottomWidth: borderBottomWidthCode},
               ]}>
-              
-              <Text >{ props.countryCode}</Text>
-              {/* <TextInput
-                placeholder={props.countryCode}
-                placeholderStyle={{color:"black"}}
-                style={{ padding: 0,color:"black" }}
-                onFocus={() => setBorderBottomWidthCode(2)}
-              /> */}
+              <Text>{country.code}</Text>
             </View>
             <TextInput
               style={[
                 styles.phoneNumberContainer,
                 {
                   borderBottomWidth: borderBottomWidthPhone,
-                  color:'black'
+                  color: 'black',
                 },
               ]}
-              // placeholder="phone number"
               placeholder="phone number"
-              // value={value}
-              onChangeText={(text)=>setNumber(text)}
+              onChangeText={(text) => setNumber(text)}
               onFocus={() => onFocus()}
-              onFocus={() => setBorderBottomWidthPhone(2)}
-              onSubmitEditing={() => submitPhoneNumber()}
+              onSubmitEditing={() => signInWithPhoneNumber()}
             />
           </View>
           <Text style={styles.plus}>Carrier SMS charges may apply</Text>
@@ -191,27 +135,10 @@ const Login = (props) => {
             style={styles.style}
             onPress={() => signInWithPhoneNumber()}
           />
-      
         </View>
-      }
+      )}
     </View>
   );
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setConfirmation: (data) => dispatch(setConfirmation(data)),
-  };
-};
-
-const mapStateToProps = (state, props) => {
-  console.log('loginstate',state)
-  console.log('countryCode',state.country.countryCode)
-  console.log('countryName',state.country.countryName)
-  return {
-    countryCode: state.country.countryCode,
-    countryName: state.country.countryName,
-    ...props
-  };
-};
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default Login;
