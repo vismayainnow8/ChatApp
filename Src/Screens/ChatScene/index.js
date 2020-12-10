@@ -25,10 +25,7 @@ import {useNavigation} from '@react-navigation/native';
 import {AttachModal} from '../../Components';
 import styles from '../ChatScene/style';
 import {consts} from '../../Assets/Consts';
-// import database from '@react-native-firebase/database';
-// import { View } from 'native-base';
-// const userRef = database().ref('/users/vis');
-// let userRef = this.database.ref('users/' + userId);
+import database from '@react-native-firebase/database';
 
 const ChatScene = (props) => {
   const navigation = useNavigation();
@@ -46,11 +43,8 @@ const ChatScene = (props) => {
   const [onChangingText, setonChangingText] = useState(false);
   const textRef = useRef(null);
   const scrollViewRef = useRef(null);
-
-  // const HeaderIcons = (<View style={{ flexDirection: "row" }}>
-  //         <Ionicons onPress={() => alert('search')} name="search" size={24} color="white" style={{ paddingRight: 10 }} />
-  // </View>)
-
+const userRef = database().ref('/users/vis');
+  
   function HeaderIcons(props) {
     return (
       <View style={{flexDirection: 'row'}}>
@@ -62,7 +56,6 @@ const ChatScene = (props) => {
           style={{paddingRight: 10}}
         />
         <FontAwesome
-          // onPress={() => alert('search')}
           onPress={() => navigation.navigate('CallingScreen')}
           name="phone"
           size={24}
@@ -70,7 +63,6 @@ const ChatScene = (props) => {
           style={{paddingRight: 10}}
         />
         <Entypo
-          // onPress={() => alert('search')}
           // onPress={() => props.navigation.navigate('')}
           name="dots-three-vertical"
           size={24}
@@ -91,12 +83,10 @@ const ChatScene = (props) => {
       },
       headerStyle: {
         backgroundColor: '#075e54',
-        // backgroundColor: contactSearchpress ? 'white' : '#075e54',
         elevation: 0,
       },
       headerTintColor: 'white',
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   });
   const Item = ({item, onPress, style}) => (
     <TouchableOpacity
@@ -124,9 +114,9 @@ const ChatScene = (props) => {
       : 'msgUNIQITEM0';
     setMessages([...messages, {id, title: textstate.trim(), user: 'myself'}]);
     setWrittenMessage('');
-    // userRef.push({
-    //         "message": writtenMessage
-    // })
+    userRef.push({
+            "message": writtenMessage
+    })
   };
 
   const onChangeText = (text) => {
@@ -145,14 +135,12 @@ const ChatScene = (props) => {
     <ScrollView
       keyboardShouldPersistTaps="always"
       contentContainerStyle={styles.scrollViewContainer}
-      // style={styles.container}
       ref={scrollViewRef}>
       <StatusBar backgroundColor="#075e54" barStyle="light-content" />
       <ImageBackground
         source={require('../../Assets/chatBackground.png')}
         style={styles.image}>
         <FlatList
-          // inverted={true}
           data={messages}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
@@ -182,7 +170,6 @@ const ChatScene = (props) => {
                 ref={textRef}
                 value={writtenMessage}
                 returnKeyType="none"
-                // onSubmit={() => Keyboard.dismiss()}
               />
 
               <TouchableOpacity
@@ -192,7 +179,6 @@ const ChatScene = (props) => {
                   name="paperclip"
                   size={consts.textSizes(23)}
                   color="grey"
-                  // style={{ paddingRIght: 15 }}
                 />
               </TouchableOpacity>
               <View style={styles.camera}>
@@ -200,7 +186,6 @@ const ChatScene = (props) => {
                   name="camera"
                   size={consts.textSizes(20)}
                   color="grey"
-                  // style={{ paddingRIght: 15 }}
                 />
               </View>
             </View>
