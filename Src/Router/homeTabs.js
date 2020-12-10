@@ -9,7 +9,22 @@ const Tab = createMaterialTopTabNavigator();
 
 export const TabView = () => {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+    // tabBarOptions={
+    //   {
+    //           activeTintColor: 'white',
+    //           inactiveTintColor: 'grey',
+    //           labelStyle: { fontSize: 12 },
+    //           style: { backgroundColor: '#075e54', height: consts.ScreenWidth * 0.16 },
+    //           tabBarPosition: 'top',
+    //           swipeEnabled: true,
+    //           animationEnabled: true,
+    //           indicatorStyle: {
+    //                   backgroundColor: "white",
+    //           },
+    //   }
+// }
+ >
       <Tab.Screen name="CAMERA" component={Status} />
       <Tab.Screen name="CHATS" component={Chats} />
       <Tab.Screen name="STATUS" component={Status} />

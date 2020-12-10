@@ -1,11 +1,29 @@
+import React, {useLayoutEffect,useEffect, useState} from 'react';
 import 'react-native-gesture-handler';
-import React from 'react';
+import auth from '@react-native-firebase/auth';
 import {SignInStack} from './signinStack';
 import {AppStack} from './appStack';
 
-export default function AppNavigation() {
-  const loggedIn = false;
-  if (!loggedIn) {
+export const AppNavigation = () => {
+
+   const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState();
+
+
+  // Handle user state changes
+  function onAuthStateChanged(user) {
+    setUser(user);
+    if (initializing) setInitializing(false);
+  }
+
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber; // unsubscribe on unmount
+  }, []);
+
+
+  // const user = false;
+  if (!user) {
     return <SignInStack />;
   }
   return <AppStack />;

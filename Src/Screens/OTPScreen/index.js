@@ -21,23 +21,18 @@ const OTPScreen = (props) => {
   const [confirm, setConfirm] = useState(props.route.params.confirmation);
   const [number, setNumber] = useState(props.route.params.number);
   
-  // const [propsValue, getCellOnLayoutHandler] = useClearByFocusCell({
-  //   value,
-  //   setValue,
-  // });
-  // useEffect(() => {
-    console.log('propsssssssssssssss', props);
-    // alert('propsssssssssssssss', props);
-  // }, []);
-  // async function confirmCode() {
+  
   const confirmCode = async (code) => {
-    // return <AppStack />;
-props.navigation.navigate('AppStack')
     try {
       await confirm.confirm(code);
     } catch (error) {
-      console.log('Invalid code.', error);
-props.navigation.replace('AppStack')
+      Alert.alert(
+        '',
+        'Invalid OTP .Please try again',
+        [
+          { text: "OK", onPress: () => console.log('Cancel Pressed'), }
+        ]
+      )
     }
   }
   

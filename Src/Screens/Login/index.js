@@ -18,9 +18,10 @@ const Login = (props) => {
   const [borderBottomWidthCountry, setBorderBottomWidthCountry] = useState(1);
   const [borderBottomWidthCode, setBorderBottomWidthCode] = useState(1);
   const [borderBottomWidthPhone, setBorderBottomWidthPhone] = useState(1);
-  const [settingsPressed, setSettingsPressed] = useState(false);
-  // const [countryName, setCountryName] = useState('props.route.params.name');
-  // const [countryCode, setCountryCode] = useState('props.route.params.code');
+  const [textinputColor, setTextinputColor] = useState('grey');
+  const [value, setValue] = useState('phone number');
+  // const [countryCodeShown, setCountryCodeShown] = useState('+91');
+  // const [countryNameShown, setCountryNameShown] = useState('India');
   const [loading, setLoading] = useState(false);
   const [menuState, setMenuState] = useState(ChatMenu);
   var _menu = null;
@@ -110,7 +111,11 @@ const Login = (props) => {
     setBorderBottomWidthCountry(2);
     props.navigation.navigate('ChooseCountry');
   };
-
+ 
+  const onFocus = () => {
+    setBorderBottomWidthPhone(2)
+    // setValue
+  }
   const ChatMenu = (
     <View style={{backgroundColor: 'white'}}>
       <MenuItem onPress={() => navigation.navigate('NewGroup')}>Help</MenuItem>
@@ -167,10 +172,14 @@ const Login = (props) => {
                 styles.phoneNumberContainer,
                 {
                   borderBottomWidth: borderBottomWidthPhone,
+                  color:'black'
                 },
               ]}
+              // placeholder="phone number"
               placeholder="phone number"
+              // value={value}
               onChangeText={(text)=>setNumber(text)}
+              onFocus={() => onFocus()}
               onFocus={() => setBorderBottomWidthPhone(2)}
               onSubmitEditing={() => submitPhoneNumber()}
             />
@@ -196,9 +205,12 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const mapStateToProps = (state, props) => {
+  console.log('loginstate',state)
+  console.log('countryCode',state.country.countryCode)
+  console.log('countryName',state.country.countryName)
   return {
-    countryCode: state.country.countryName.countryCode,
-    countryName: state.country.countryCode.countryName,
+    countryCode: state.country.countryCode,
+    countryName: state.country.countryName,
     ...props
   };
 };

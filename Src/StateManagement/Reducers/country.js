@@ -9,9 +9,9 @@ const initialState = {
 const countryReducer = (state = initialState, action) => {
   switch (action.type) {
     case COUNTRYCODE:
-      return {...state, countryName: action.data};
-    case COUNTRYNAME:
       return {...state, countryCode: action.data};
+    case COUNTRYNAME:
+      return {...state, countryName: action.data};
     default:
       return state;
   }
