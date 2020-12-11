@@ -16,6 +16,7 @@ import IconFontAwesome5 from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useNavigation} from '@react-navigation/native';
 import {consts} from '../../Assets/Consts';
 import {useSelector} from 'react-redux';
+import moment from 'moment';
 import styles from './styles';
 
 const Chats = (props) => {
@@ -53,96 +54,41 @@ const Chats = (props) => {
 
   useEffect(() => {
     console.log('gotreduxonaschatstate', props.textInput);
-    // alert(props.textInput);
   }, [props.textInput]);
 
   const onPressed = (item) => {
     navigation.navigate('ChatScene', item);
   };
 
-  const Item = ({image, item, number}) => {
-    const {user, lastMessage} = item;
-    return (
-      <TouchableOpacity
-        style={styles.listItemContainer}
-        onPress={() => onPressed(item)}>
-        <View style={styles.iconContainer}>
-          <Image
-            source={{uri: image}}
-            style={styles.initStyle}
-            resizeMode="contain"
-          />
-        </View>
-
-        <View style={styles.messageContainer}>
-          <View style={styles.firstContainer}>
-            <Text>{user?.displayName ?? user?.phoneNumber}</Text>
-            <Text style={styles.newtime}>{lastMessage?.time}</Text>
-          </View>
-          <View style={styles.secondContainer}>
-            <View style={styles.dateContainer}>
-              <IconFontAwesome5
-                name={lastMessage?.status ? 'check-double' : 'check'}
-                size={10}
-                color={lastMessage?.status ? '#ed788b' : '#666'}
-              />
-              <Text
-                numberOfLines={1}
-                style={{
-                  paddingLeft: 10,
-                  fontWeight: '400',
-                  color: '#666',
-                  fontSize: 12,
-                  // flexWrap: 'wrap',
-                }}>
-                {lastMessage?.message}
-              </Text>
-            </View>
-            <View style={styles.numbercountContainer}>
-              <Text style={styles.numberCount}>{number}</Text>
-            </View>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
-  function renderItem({item}) {
-    return (
-      <Item
-        item={item}
-        image={item.image}
-        first_name={item.first_name}
-        missed={item.missed}
-        time={item.time}
-        date={item.date}
-        message={item.message}
-        number={item.number}
-      />
-    );
-  }
-
   return (
-    <SafeAreaView style={{width: consts.ScreenWidth, flex: 1}}>
+    <SafeAreaView style={styles.screen}>
       <StatusBar backgroundColor="#075e54" />
       <View style={styles.mainContainer}>
-        <View style={styles.contentContainer}>
-          <FlatList
-            data={chats}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.chatId}
-          />
-          <TouchableOpacity
-            style={styles.contactsbuttonContainer}
-            onPress={() => navigation.navigate('Select contact')}>
-            <IconMaterialCommunityIcons
-              name="android-messages"
-              color="white"
-              size={23}
-              style={{padding: 5}}
+        <FlatList
+          data={chats}
+          renderItem={({item}) => (
+            <ChatsListItem
+              item={item}
+              image={item.image}
+              first_name={item.first_name}
+              missed={item.missed}
+              time={item.time}
+              date={item.date}
+              message={item.message}
+              number={item.number}
+              onPressed={onPressed}
             />
-          </TouchableOpacity>
-        </View>
+          )}
+          keyExtractor={(item) => item.chatId}
+        />
+        <TouchableOpacity style={styles.contactsFab}>
+          <IconMaterialCommunityIcons
+            onPress={() => navigation.navigate('Select contact')}
+            name="android-messages"
+            color="white"
+            size={28}
+          />
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -155,3 +101,45 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, null)(Chats);
+
+const ChatsListItem = ({image, item, number, onPressed}) => {
+  const {user, lastMessage} = item;
+  return (
+    <TouchableOpacity
+      style={styles.listItemContainer}
+      onPress={() => onPressed(item)}>
+      {/* <View style={styles.iconContainer}>
+        <Image
+          source={{uri: image}}
+          style={styles.initStyle}
+          resizeMode="contain"
+        />
+      </View> */}
+
+      <View style={styles.messageContainer}>
+        <View style={styles.firstContainer}>
+          <Text>{user?.displayName ?? user?.phoneNumber}</Text>
+
+          <View style={styles.dateContainer}>
+            <IconFontAwesome5
+              name={lastMessage?.status ? 'check-double' : 'check'}
+              size={10}
+              color={lastMessage?.status ? '#ed788b' : '#666'}
+            />
+            <Text numberOfLines={1} style={styles.lastMessage}>
+              {lastMessage?.message}
+            </Text>
+          </View>
+        </View>
+        <View style={styles.secondContainer}>
+          <Text style={styles.newtime}>
+            {lastMessage?.time && moment(lastMessage.time).format('h:mm a')}
+          </Text>
+          <View style={styles.numbercountContainer}>
+            <Text style={styles.numberCount}>{number}</Text>
+          </View>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+};

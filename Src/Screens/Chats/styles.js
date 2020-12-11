@@ -2,11 +2,83 @@ import {StyleSheet} from 'react-native';
 import {consts} from '../../Assets/Consts';
 // import { Appearance } from 'react-native'
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+  },
   mainContainer: {
     flex: 1,
     backgroundColor: 'white',
-    height: consts.ScreenWidth * 0.024,
   },
+  contactsFab: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    padding: 15,
+    borderRadius: 50,
+    backgroundColor: '#25d366',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
+  },
+  listItemContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconContainer: {
+    padding: 12,
+  },
+  initStyle: {
+    borderRadius: 55,
+    width: 55,
+    height: 55,
+  },
+  messageContainer: {
+    flex: 1,
+    padding: 12,
+    flexDirection: 'row',
+    borderBottomColor: 'lightgray',
+    borderBottomWidth: 0.25,
+  },
+  firstContainer: {
+    flex: 1,
+    marginRight: 25,
+  },
+  lastMessage: {
+    paddingLeft: 10,
+    color: '#666',
+    fontSize: 12,
+  },
+  dateContainer: {
+    flexDirection: 'row',
+    marginTop: 5,
+  },
+  secondContainer: {
+    paddingHorizontal: 5,
+    alignItems: 'flex-end',
+  },
+  newtime: {
+    color: '#25d366',
+    fontSize: 10,
+  },
+  numbercountContainer: {
+    backgroundColor: '#25d366',
+    height: 18,
+    width: 18,
+    borderRadius: 10,
+    marginTop: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  numberCount: {
+    color: 'white',
+    fontSize: 10,
+  },
+
   headerContainer: {
     flex: 1,
     flexDirection: 'row',
@@ -33,96 +105,13 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginLeft: 10,
   },
-  listItemContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    // paddingVertical: 10,
-    // borderWidth: 1,
-
-    marginTop: 5,
-    // paddingVertic
-  },
-  iconContainer: {
-    flex: 1,
-    alignItems: 'flex-start',
-    paddingRight: 5,
-  },
-  messageContainer: {
-    flex: 4,
-    justifyContent: 'center',
-    // backgroundColor: 'yellow',
-    height: '100%',
-    // borderBottomColor: 'rgba(92,94,94,0.5)',
-    borderBottomColor: 'lightgray',
-    borderBottomWidth: 0.25,
-  },
-  firstContainer: {
-    flexDirection: 'row',
-    paddingHorizontal: 5,
-    justifyContent: 'space-between',
-    paddingTop: 5,
-  },
-  secondContainer: {
-    flexDirection: 'row',
-    paddingHorizontal: 5,
-    justifyContent: 'space-between',
-    paddingBottom: 5,
-    // paddingTop: 5
-  },
   nameContainer: {
     alignItems: 'flex-start',
     flex: 1,
   },
-  dateContainer: {
-    flexDirection: 'row',
-    // justifyContent: 'space-between',
-    flexShrink: 1,
-    alignItems: 'center',
-    paddingRight: 20,
-  },
   callIconContainer: {
     flex: 1,
     alignItems: 'flex-end',
-  },
-  initStyle: {
-    borderRadius: 55,
-    width: 55,
-    height: 55,
-    marginVertical: 10,
-  },
-  newtime: {
-    color: '#25d366',
-    fontSize: consts.textSizes(10),
-
-    // color: 'red',
-    // '#ed788b' : '#075e54'
-  },
-  numberCount: {
-    color: 'white',
-    fontSize: consts.textSizes(10),
-
-    // '#ed788b' : '#075e54'
-  },
-  numbercountContainer: {
-    backgroundColor: '#25d366',
-    height: 18,
-    width: 18,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  contactsbuttonContainer: {
-    bottom: 20,
-    right: 10,
-    position: 'absolute',
-    width: 50,
-    height: 50,
-    borderRadius: 50 / 2,
-    backgroundColor: '#25d366',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   detailedlistItemContainer: {
     flex: 1,

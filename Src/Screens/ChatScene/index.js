@@ -15,7 +15,7 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import EmojiBoard from 'react-native-emoji-board'
+import EmojiBoard from 'react-native-emoji-board';
 import {AttachModal} from '../../Components';
 import styles from '../ChatScene/style';
 import database from '@react-native-firebase/database';
@@ -27,48 +27,13 @@ const ChatScene = ({navigation, route}) => {
   const headerHeight = useHeaderHeight();
   const {user, chatId} = route.params;
   const [messages, setMessages] = useState([]);
-<<<<<<< HEAD
-<<<<<<< HEAD
-  const [keyboardIcon, setKeyboardIcon] = useState(false);
+  const [keyboardIcon, setKeyboardIcon] = useState('emoji-happy');
   const [textInputFocus, setTextInputFocus] = useState(false);
   const [showEmoji, setShowEmoji] = useState(false);
-  const onClick = emoji => {
-      console.log(emoji);
+  const onClick = (emoji) => {
+    console.log(emoji);
     // writtenMessage.piu
-    
   };
-  function HeaderIcons() {
-    return (
-      <View style={{flexDirection: 'row'}}>
-        <Ionicons
-          onPress={() => navigation.navigate('VideoCalling')}
-          name="videocam"
-          size={24}
-          color="white"
-          style={{paddingRight: 10}}
-        />
-        <FontAwesome
-          onPress={() => navigation.navigate('CallingScreen')}
-          name="phone"
-          size={24}
-          color="white"
-          style={{paddingRight: 10}}
-        />
-        <Entypo
-          name="dots-three-vertical"
-          size={24}
-          color="white"
-          style={{paddingRight: 10}}
-        />
-      </View>
-    );
-  }
-=======
-
->>>>>>> 5a5501271424eb8e1a6f9a7a46fb1fb11eabd447
-=======
-
->>>>>>> 5a5501271424eb8e1a6f9a7a46fb1fb11eabd447
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: user.displayName ?? user.phoneNumber,
@@ -84,7 +49,6 @@ const ChatScene = ({navigation, route}) => {
   }, []);
 
   useEffect(() => {
-    
     return database()
       .ref()
       .child('messages')
@@ -112,16 +76,7 @@ const ChatScene = ({navigation, route}) => {
   };
 
   const sendMessage = () => {
-<<<<<<< HEAD
-<<<<<<< HEAD
-    Keyboard.dismiss();
-    setTextInputFocus(false)
-=======
     if (!writtenMessage) return;
->>>>>>> 5a5501271424eb8e1a6f9a7a46fb1fb11eabd447
-=======
-    if (!writtenMessage) return;
->>>>>>> 5a5501271424eb8e1a6f9a7a46fb1fb11eabd447
     database().ref('messages').push({
       message: writtenMessage,
       time: database.ServerValue.TIMESTAMP,
@@ -156,69 +111,22 @@ const ChatScene = ({navigation, route}) => {
     setWrittenMessage('');
   };
 
+  const keyboardIconPress = () => {
+    if (keyboardIcon == 'emoji-happy') {
+      Keyboard.dismiss();
+      setKeyboardIcon('keyboard');
+      setShowEmoji(true);
+    } else {
+      setKeyboardIcon('emoji-happy');
+      textRef.current.focus();
+      setShowEmoji(false);
+    }
+  };
   const onChangeText = (text) => {
     setWrittenMessage(text);
   };
-<<<<<<< HEAD
 
-  const keyboardIconPress = () => {
-
-    if (keyboardIcon == "emoji-happy") {
-      setKeyboardIcon('keyboard')
-      textRef.current.focus()
-      setShowEmoji(false)
-    }
-    else {
-      Keyboard.dismiss()
-      setKeyboardIcon("emoji-happy")
-      setShowEmoji(true)
-=======
->>>>>>> 5a5501271424eb8e1a6f9a7a46fb1fb11eabd447
-
-    }
- }
   return (
-<<<<<<< HEAD
-<<<<<<< HEAD
-    <View style={styles.scrollViewContainer}>
-      <StatusBar backgroundColor="#075e54" barStyle="light-content" />
-      <ImageBackground
-        source={require('../../Assets/chatBackground.png')}
-        style={styles.image}>
-        <View style={{flex: 1}}>
-          <FlatList
-            style={{flexGrow: 0}}
-            keyboardShouldPersistTaps="always"
-            inverted={true}
-            data={messages}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-          />
-        </View>
-        {attachPressed ? <AttachModal setModalVisible={attachPressed} /> : null}
-        <View style={styles.bottomContainer}>
-          <View style={styles.textinputContainer}>
-          <TouchableOpacity style={styles.emoji} onPress={()=>keyboardIconPress()}>
-                <Entypo
-                  name={keyboardIcon}
-                  size={consts.textSizes(25)}
-                  color="grey"
-                />
-              </TouchableOpacity>
-            <TextInput
-              placeholder="Type a message ...."
-              multiline={true}
-              onFocus={()=>setTextInputFocus(true)}
-              style={styles.textinput}
-              onChangeText={(text) => onChangeText(text)}
-              placeholderStyle={{fontSize: 20}}
-              ref={textRef}
-              value={writtenMessage}
-              returnKeyType="none"
-            />
-=======
-=======
->>>>>>> 5a5501271424eb8e1a6f9a7a46fb1fb11eabd447
     <SafeAreaView style={styles.scrollViewContainer}>
       <KeyboardAvoidingView
         style={styles.scrollViewContainer}
@@ -244,9 +152,9 @@ const ChatScene = ({navigation, route}) => {
           <View style={styles.bottomContainer}>
             <View style={styles.textinputContainer}>
               <Entypo
-                onPress={() => alert('test')}
+                onPress={() => keyboardIconPress()}
                 style={styles.emoji}
-                name="emoji-happy"
+                name={keyboardIcon}
                 size={28}
                 color="grey"
               />
@@ -259,10 +167,6 @@ const ChatScene = ({navigation, route}) => {
                 value={writtenMessage}
                 multiline
               />
-<<<<<<< HEAD
->>>>>>> 5a5501271424eb8e1a6f9a7a46fb1fb11eabd447
-=======
->>>>>>> 5a5501271424eb8e1a6f9a7a46fb1fb11eabd447
 
               {/* <TouchableOpacity
               style={styles.attach}
@@ -295,42 +199,22 @@ const ChatScene = ({navigation, route}) => {
               />
             </TouchableOpacity>
           </View>
-<<<<<<< HEAD
-<<<<<<< HEAD
-          <TouchableOpacity
-            style={styles.sendContainer}
-            onPress={() => sendMessage()}>
-            <Ionicons
-              name="send"
-              size={consts.textSizes(20)}
-              color="white"
-              style={{
-                alignSelf: 'flex-start',
-                paddingLeft: 5,
+          {showEmoji == true ? (
+            <EmojiBoard
+              showBoard={showEmoji}
+              tabBarPosition="top"
+              onClick={onClick}
+              categoryIconSize={22}
+              containerStyle={{
+                height: 300,
+                backgroundColor: 'white',
+                position: 'relative',
               }}
             />
-          </TouchableOpacity>
-          {showEmoji == true ?
-          <EmojiBoard showBoard={showEmoji}
-          tabBarPosition='top'
-          onClick={onClick}
-            categoryIconSize={22}
-            containerStyle={{backgroundColor:"white",position:"relative"}}
-          />:null}
-        </View>
-        
-      </ImageBackground>
-    </View>
-=======
+          ) : null}
         </ImageBackground>
       </KeyboardAvoidingView>
     </SafeAreaView>
->>>>>>> 5a5501271424eb8e1a6f9a7a46fb1fb11eabd447
-=======
-        </ImageBackground>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
->>>>>>> 5a5501271424eb8e1a6f9a7a46fb1fb11eabd447
   );
 };
 
