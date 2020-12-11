@@ -31,26 +31,14 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     flexDirection: 'row',
-    // justifyContent: "space-evenly",
-    paddingTop: 5,
-    paddingBottom: 8,
-    paddingHorizontal: 5,
-    // backgroundColor: "pink"
-  },
-  contentContainerStyle: {
-    flexDirection: 'row',
     justifyContent: 'space-evenly',
-    paddingTop: 5,
-    paddingBottom: 8,
-    paddingHorizontal: 5,
-    // backgroundColor: "pink",
-    flex: 1,
+    paddingVertical: 5,
+    width: '100%',
   },
 
   image: {
     flex: 1,
     resizeMode: 'cover',
-    justifyContent: 'center',
   },
   container: {
     flex: 1,

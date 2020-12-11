@@ -6,7 +6,6 @@ import {
   Keyboard,
   FlatList,
   ImageBackground,
-  ScrollView,
   StatusBar,
   TouchableOpacity,
 } from 'react-native';
@@ -19,6 +18,7 @@ import styles from '../ChatScene/style';
 import {consts} from '../../Assets/Consts';
 import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
+import moment from 'moment';
 
 const ChatScene = ({navigation, route}) => {
   const {user, chatId} = route.params;
@@ -62,7 +62,7 @@ const ChatScene = ({navigation, route}) => {
       },
       headerTintColor: 'white',
     });
-  });
+  }, []);
 
   useEffect(() => {
     return database()
@@ -79,14 +79,13 @@ const ChatScene = ({navigation, route}) => {
         Object.keys(value ?? {}).forEach((item) => {
           formatedValues.push({...value[item], id: item});
         });
-        formatedValues.sort((a, b) => a.time - b.time);
+        formatedValues.sort((a, b) => b.time - a.time);
         setMessages(formatedValues);
       });
   }, []);
   const [writtenMessage, setWrittenMessage] = useState(null);
   const [attachPressed, setAttachPressed] = useState(false);
   const textRef = useRef(null);
-  const scrollViewRef = useRef(null);
 
   const Item = ({item, onPress}) => (
     <TouchableOpacity
@@ -103,7 +102,7 @@ const ChatScene = ({navigation, route}) => {
         },
       ]}>
       <Text style={styles.title}>{item.message}</Text>
-      <Text style={styles.time}>{item.time}</Text>
+      <Text style={styles.time}>{moment(item.time).format('h:mm a')}</Text>
     </TouchableOpacity>
   );
 
@@ -112,7 +111,6 @@ const ChatScene = ({navigation, route}) => {
   };
 
   const sendMessage = () => {
-    Keyboard.dismiss();
     database().ref('messages').push({
       message: writtenMessage,
       time: database.ServerValue.TIMESTAMP,
@@ -144,12 +142,14 @@ const ChatScene = ({navigation, route}) => {
           uid: auth().currentUser.uid,
         },
       });
+    setWrittenMessage('');
   };
 
   const onChangeText = (text) => {
     setWrittenMessage(text);
   };
   const attachOnPress = () => {
+    Keyboard.dismiss();
     if (attachPressed == true) {
       setAttachPressed(false);
     } else {
@@ -158,79 +158,74 @@ const ChatScene = ({navigation, route}) => {
   };
 
   return (
-    <ScrollView
-      keyboardShouldPersistTaps="always"
-      contentContainerStyle={styles.scrollViewContainer}
-      ref={scrollViewRef}>
+    <View style={styles.scrollViewContainer}>
       <StatusBar backgroundColor="#075e54" barStyle="light-content" />
       <ImageBackground
         source={require('../../Assets/chatBackground.png')}
         style={styles.image}>
-        <FlatList
-          data={messages}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-        />
-        <View>
-          {attachPressed ? (
-            <AttachModal setModalVisible={attachPressed} />
-          ) : null}
-          <ScrollView
+        <View style={{flex: 1}}>
+          <FlatList
+            style={{flexGrow: 0}}
             keyboardShouldPersistTaps="always"
-            style={styles.bottomContainer}
-            contentContainerStyle={styles.contentContainerStyle}>
-            <View style={styles.textinputContainer}>
-              <View style={styles.emoji}>
-                <Entypo
-                  name="emoji-happy"
-                  size={consts.textSizes(25)}
-                  color="grey"
-                />
-              </View>
-              <TextInput
-                placeholder="Type a message ...."
-                style={styles.textinput}
-                onChangeText={(text) => onChangeText(text)}
-                placeholderStyle={{fontSize: 20}}
-                ref={textRef}
-                value={writtenMessage}
-                returnKeyType="none"
+            inverted={true}
+            data={messages}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+          />
+        </View>
+        {attachPressed ? <AttachModal setModalVisible={attachPressed} /> : null}
+        <View style={styles.bottomContainer}>
+          <View style={styles.textinputContainer}>
+            <View style={styles.emoji}>
+              <Entypo
+                name="emoji-happy"
+                size={consts.textSizes(25)}
+                color="grey"
               />
-
-              <TouchableOpacity
-                style={styles.attach}
-                onPress={() => attachOnPress()}>
-                <FontAwesome
-                  name="paperclip"
-                  size={consts.textSizes(23)}
-                  color="grey"
-                />
-              </TouchableOpacity>
-              <View style={styles.camera}>
-                <FontAwesome
-                  name="camera"
-                  size={consts.textSizes(20)}
-                  color="grey"
-                />
-              </View>
             </View>
+            <TextInput
+              placeholder="Type a message ...."
+              style={styles.textinput}
+              onChangeText={(text) => onChangeText(text)}
+              placeholderStyle={{fontSize: 20}}
+              ref={textRef}
+              value={writtenMessage}
+              returnKeyType="none"
+            />
+
             <TouchableOpacity
-              style={styles.sendContainer}
-              onPress={() => sendMessage()}>
-              <Ionicons
-                name="send"
-                size={consts.textSizes(20)}
-                color="white"
-                style={{
-                  alignSelf: 'flex-start',
-                  paddingLeft: 5,
-                }}
+              style={styles.attach}
+              onPress={() => attachOnPress()}>
+              <FontAwesome
+                name="paperclip"
+                size={consts.textSizes(23)}
+                color="grey"
               />
             </TouchableOpacity>
-          </ScrollView>
+            <View style={styles.camera}>
+              <FontAwesome
+                name="camera"
+                size={consts.textSizes(20)}
+                color="grey"
+              />
+            </View>
+          </View>
+          <TouchableOpacity
+            style={styles.sendContainer}
+            onPress={() => sendMessage()}>
+            <Ionicons
+              name="send"
+              size={consts.textSizes(20)}
+              color="white"
+              style={{
+                alignSelf: 'flex-start',
+                paddingLeft: 5,
+              }}
+            />
+          </TouchableOpacity>
         </View>
       </ImageBackground>
-    </ScrollView>
+    </View>
   );
 };
 
