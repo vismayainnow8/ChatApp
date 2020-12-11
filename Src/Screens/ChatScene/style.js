@@ -1,39 +1,53 @@
 import {StyleSheet} from 'react-native';
 import {consts} from '../../Assets/Consts';
-// import { Appearance } from 'react-native'
+
 const styles = StyleSheet.create({
-  time: {
-    fontSize: 10,
+  bottomContainer: {
+    flexDirection: 'row',
+    padding: 5,
+    width: '100%',
   },
   textinputContainer: {
     backgroundColor: 'white',
-    height: 50,
-    width: '80%',
+    maxHeight: 150,
+    flex: 1,
     borderRadius: 25,
     flexDirection: 'row',
-    paddingHorizontal: 10,
-    alignItems: 'center',
-    borderWidth: 0.2,
-    borderColor: 'grey',
-    fontSize: 25,
-    // justifyContent: "center",
-    // alignSelf: "flex-start"
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.18,
+    shadowRadius: 1.0,
+    elevation: 1,
+  },
+  emoji: {
+    alignSelf: 'flex-end',
+    padding: 10,
+  },
+  textinput: {
+    minHeight: 28,
+    marginVertical: 10,
+    paddingVertical: 0,
   },
   sendContainer: {
+    alignSelf: 'flex-end',
     backgroundColor: '#128c7e',
-    height: 50,
-    width: 50,
-    borderRadius: consts.ScreenHeight * 0.08,
-    paddingLeft: 10,
-    // alignItems: "center",
-
-    justifyContent: 'center',
-  },
-  bottomContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    paddingVertical: 5,
-    width: '100%',
+    paddingVertical: 12,
+    borderRadius: 25,
+    paddingLeft: 15,
+    paddingRight: 9,
+    marginLeft: 5,
+    height: 48,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
   },
 
   image: {
@@ -42,45 +56,39 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    // backgroundColor: "orange",
-    // backgroundColor: '#F9F7C5',
     padding: consts.ScreenWidth * 0.02,
   },
   scrollViewContainer: {
-    // justifyContent: "flex-end",
-    // backgroundColor: "pink",
     flex: 1,
   },
 
-  item: {
-    margin: 5,
-    // backgroundColor: "#dcf8c6",
-    // width:""
-    padding: 5,
-    // alignSelf: "flex-end",
+  chatNode: {
+    maxWidth: '80%',
+    marginVertical: 5,
+    marginHorizontal: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     borderRadius: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.18,
+    shadowRadius: 1.0,
+    elevation: 1,
   },
-  emoji: {
-    flex: 1.4,
-    // alignSelf: "flex-start",
-    // backgroundColor: "pink",
-    justifyContent: 'center',
+  chatNodeTime: {
+    alignSelf: 'flex-end',
+    color: '#777',
+    fontSize: 10,
   },
   attach: {
     flex: 1,
-    // alignSelf: "flex-start",
-    // backgroundColor: "orange",
     justifyContent: 'center',
-  },
-  textinput: {
-    flex: 6,
-    // alignSelf: "flex-start",
-    // backgroundColor: "blue"
   },
   camera: {
     flex: 1,
-    // alignSelf: "flex-start",
-    // backgroundColor: "green"
   },
 });
 
