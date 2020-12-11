@@ -11,6 +11,7 @@ export const AppNavigation = () => {
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged((user) => {
+      if (!user) return;
       database()
         .ref()
         .child('contacts')

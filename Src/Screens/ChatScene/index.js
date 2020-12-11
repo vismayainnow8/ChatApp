@@ -1,5 +1,6 @@
 import React, {useState, useRef, useLayoutEffect, useEffect} from 'react';
 import {
+  SafeAreaView,
   View,
   Text,
   TextInput,
@@ -15,7 +16,6 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 import {AttachModal} from '../../Components';
 import styles from '../ChatScene/style';
-import {consts} from '../../Assets/Consts';
 import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 import moment from 'moment';
@@ -24,38 +24,12 @@ const ChatScene = ({navigation, route}) => {
   const {user, chatId} = route.params;
   const [messages, setMessages] = useState([]);
 
-  function HeaderIcons() {
-    return (
-      <View style={{flexDirection: 'row'}}>
-        <Ionicons
-          onPress={() => navigation.navigate('VideoCalling')}
-          name="videocam"
-          size={24}
-          color="white"
-          style={{paddingRight: 10}}
-        />
-        <FontAwesome
-          onPress={() => navigation.navigate('CallingScreen')}
-          name="phone"
-          size={24}
-          color="white"
-          style={{paddingRight: 10}}
-        />
-        <Entypo
-          name="dots-three-vertical"
-          size={24}
-          color="white"
-          style={{paddingRight: 10}}
-        />
-      </View>
-    );
-  }
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: user.displayName ?? user.phoneNumber,
-      headerRight: () => {
-        return <HeaderIcons />;
-      },
+      // headerRight: () => {
+      //   return <HeaderIcons />;
+      // },
       headerStyle: {
         backgroundColor: '#075e54',
         elevation: 0,
@@ -111,6 +85,7 @@ const ChatScene = ({navigation, route}) => {
   };
 
   const sendMessage = () => {
+    if (!writtenMessage) return;
     database().ref('messages').push({
       message: writtenMessage,
       time: database.ServerValue.TIMESTAMP,
@@ -148,17 +123,9 @@ const ChatScene = ({navigation, route}) => {
   const onChangeText = (text) => {
     setWrittenMessage(text);
   };
-  const attachOnPress = () => {
-    Keyboard.dismiss();
-    if (attachPressed == true) {
-      setAttachPressed(false);
-    } else {
-      setAttachPressed(true);
-    }
-  };
 
   return (
-    <View style={styles.scrollViewContainer}>
+    <SafeAreaView style={styles.scrollViewContainer}>
       <StatusBar backgroundColor="#075e54" barStyle="light-content" />
       <ImageBackground
         source={require('../../Assets/chatBackground.png')}
@@ -176,13 +143,13 @@ const ChatScene = ({navigation, route}) => {
         {attachPressed ? <AttachModal setModalVisible={attachPressed} /> : null}
         <View style={styles.bottomContainer}>
           <View style={styles.textinputContainer}>
-            <View style={styles.emoji}>
-              <Entypo
-                name="emoji-happy"
-                size={consts.textSizes(25)}
-                color="grey"
-              />
-            </View>
+            <Entypo
+              onPress={() => alert('test')}
+              style={styles.emoji}
+              name="emoji-happy"
+              size={28}
+              color="grey"
+            />
             <TextInput
               placeholder="Type a message ...."
               style={styles.textinput}
@@ -190,10 +157,11 @@ const ChatScene = ({navigation, route}) => {
               placeholderStyle={{fontSize: 20}}
               ref={textRef}
               value={writtenMessage}
+              multiline
               returnKeyType="none"
             />
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={styles.attach}
               onPress={() => attachOnPress()}>
               <FontAwesome
@@ -208,24 +176,24 @@ const ChatScene = ({navigation, route}) => {
                 size={consts.textSizes(20)}
                 color="grey"
               />
-            </View>
+            </View> */}
           </View>
           <TouchableOpacity
             style={styles.sendContainer}
             onPress={() => sendMessage()}>
             <Ionicons
               name="send"
-              size={consts.textSizes(20)}
+              size={24}
               color="white"
               style={{
-                alignSelf: 'flex-start',
-                paddingLeft: 5,
+                height: 24,
+                width: 24,
               }}
             />
           </TouchableOpacity>
         </View>
       </ImageBackground>
-    </View>
+    </SafeAreaView>
   );
 };
 
