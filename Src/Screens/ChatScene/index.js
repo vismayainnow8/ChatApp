@@ -28,6 +28,7 @@ const ChatScene = ({navigation, route}) => {
   const {user, chatId} = route.params;
   const [messages, setMessages] = useState([]);
 <<<<<<< HEAD
+<<<<<<< HEAD
   const [keyboardIcon, setKeyboardIcon] = useState(false);
   const [textInputFocus, setTextInputFocus] = useState(false);
   const [showEmoji, setShowEmoji] = useState(false);
@@ -62,6 +63,9 @@ const ChatScene = ({navigation, route}) => {
       </View>
     );
   }
+=======
+
+>>>>>>> 5a5501271424eb8e1a6f9a7a46fb1fb11eabd447
 =======
 
 >>>>>>> 5a5501271424eb8e1a6f9a7a46fb1fb11eabd447
@@ -109,8 +113,12 @@ const ChatScene = ({navigation, route}) => {
 
   const sendMessage = () => {
 <<<<<<< HEAD
+<<<<<<< HEAD
     Keyboard.dismiss();
     setTextInputFocus(false)
+=======
+    if (!writtenMessage) return;
+>>>>>>> 5a5501271424eb8e1a6f9a7a46fb1fb11eabd447
 =======
     if (!writtenMessage) return;
 >>>>>>> 5a5501271424eb8e1a6f9a7a46fb1fb11eabd447
@@ -151,6 +159,7 @@ const ChatScene = ({navigation, route}) => {
   const onChangeText = (text) => {
     setWrittenMessage(text);
   };
+<<<<<<< HEAD
 
   const keyboardIconPress = () => {
 
@@ -163,10 +172,13 @@ const ChatScene = ({navigation, route}) => {
       Keyboard.dismiss()
       setKeyboardIcon("emoji-happy")
       setShowEmoji(true)
+=======
+>>>>>>> 5a5501271424eb8e1a6f9a7a46fb1fb11eabd447
 
     }
  }
   return (
+<<<<<<< HEAD
 <<<<<<< HEAD
     <View style={styles.scrollViewContainer}>
       <StatusBar backgroundColor="#075e54" barStyle="light-content" />
@@ -205,6 +217,8 @@ const ChatScene = ({navigation, route}) => {
               returnKeyType="none"
             />
 =======
+=======
+>>>>>>> 5a5501271424eb8e1a6f9a7a46fb1fb11eabd447
     <SafeAreaView style={styles.scrollViewContainer}>
       <KeyboardAvoidingView
         style={styles.scrollViewContainer}
@@ -245,6 +259,9 @@ const ChatScene = ({navigation, route}) => {
                 value={writtenMessage}
                 multiline
               />
+<<<<<<< HEAD
+>>>>>>> 5a5501271424eb8e1a6f9a7a46fb1fb11eabd447
+=======
 >>>>>>> 5a5501271424eb8e1a6f9a7a46fb1fb11eabd447
 
               {/* <TouchableOpacity
@@ -279,6 +296,7 @@ const ChatScene = ({navigation, route}) => {
             </TouchableOpacity>
           </View>
 <<<<<<< HEAD
+<<<<<<< HEAD
           <TouchableOpacity
             style={styles.sendContainer}
             onPress={() => sendMessage()}>
@@ -303,6 +321,11 @@ const ChatScene = ({navigation, route}) => {
         
       </ImageBackground>
     </View>
+=======
+        </ImageBackground>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+>>>>>>> 5a5501271424eb8e1a6f9a7a46fb1fb11eabd447
 =======
         </ImageBackground>
       </KeyboardAvoidingView>
