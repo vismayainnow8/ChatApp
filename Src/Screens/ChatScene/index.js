@@ -12,7 +12,7 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-
+import EmojiBoard from 'react-native-emoji-board'
 import {AttachModal} from '../../Components';
 import styles from '../ChatScene/style';
 import {consts} from '../../Assets/Consts';
@@ -23,7 +23,14 @@ import moment from 'moment';
 const ChatScene = ({navigation, route}) => {
   const {user, chatId} = route.params;
   const [messages, setMessages] = useState([]);
-
+  const [keyboardIcon, setKeyboardIcon] = useState(false);
+  const [textInputFocus, setTextInputFocus] = useState(false);
+  const [showEmoji, setShowEmoji] = useState(false);
+  const onClick = emoji => {
+      console.log(emoji);
+    // writtenMessage.piu
+    
+  };
   function HeaderIcons() {
     return (
       <View style={{flexDirection: 'row'}}>
@@ -65,6 +72,7 @@ const ChatScene = ({navigation, route}) => {
   }, []);
 
   useEffect(() => {
+    
     return database()
       .ref()
       .child('messages')
@@ -111,6 +119,8 @@ const ChatScene = ({navigation, route}) => {
   };
 
   const sendMessage = () => {
+    Keyboard.dismiss();
+    setTextInputFocus(false)
     database().ref('messages').push({
       message: writtenMessage,
       time: database.ServerValue.TIMESTAMP,
@@ -157,6 +167,20 @@ const ChatScene = ({navigation, route}) => {
     }
   };
 
+  const keyboardIconPress = () => {
+
+    if (keyboardIcon == "emoji-happy") {
+      setKeyboardIcon('keyboard')
+      textRef.current.focus()
+      setShowEmoji(false)
+    }
+    else {
+      Keyboard.dismiss()
+      setKeyboardIcon("emoji-happy")
+      setShowEmoji(true)
+
+    }
+ }
   return (
     <View style={styles.scrollViewContainer}>
       <StatusBar backgroundColor="#075e54" barStyle="light-content" />
@@ -176,15 +200,17 @@ const ChatScene = ({navigation, route}) => {
         {attachPressed ? <AttachModal setModalVisible={attachPressed} /> : null}
         <View style={styles.bottomContainer}>
           <View style={styles.textinputContainer}>
-            <View style={styles.emoji}>
-              <Entypo
-                name="emoji-happy"
-                size={consts.textSizes(25)}
-                color="grey"
-              />
-            </View>
+          <TouchableOpacity style={styles.emoji} onPress={()=>keyboardIconPress()}>
+                <Entypo
+                  name={keyboardIcon}
+                  size={consts.textSizes(25)}
+                  color="grey"
+                />
+              </TouchableOpacity>
             <TextInput
               placeholder="Type a message ...."
+              multiline={true}
+              onFocus={()=>setTextInputFocus(true)}
               style={styles.textinput}
               onChangeText={(text) => onChangeText(text)}
               placeholderStyle={{fontSize: 20}}
@@ -223,7 +249,15 @@ const ChatScene = ({navigation, route}) => {
               }}
             />
           </TouchableOpacity>
+          {showEmoji == true ?
+          <EmojiBoard showBoard={showEmoji}
+          tabBarPosition='top'
+          onClick={onClick}
+            categoryIconSize={22}
+            containerStyle={{backgroundColor:"white",position:"relative"}}
+          />:null}
         </View>
+        
       </ImageBackground>
     </View>
   );
