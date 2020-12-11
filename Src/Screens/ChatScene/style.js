@@ -7,15 +7,14 @@ const styles = StyleSheet.create({
   },
   textinputContainer: {
     backgroundColor: 'white',
-    minHeight: 50,
-    maxHeight: 150,
+    height: 50,
     width: '80%',
     borderRadius: 25,
     flexDirection: 'row',
     paddingHorizontal: 10,
     alignItems: 'center',
-    // borderWidth: 0.2,
-    // borderColor: 'grey',
+    borderWidth: 0.2,
+    borderColor: 'grey',
     fontSize: 25,
     // justifyContent: "center",
     // alignSelf: "flex-start"

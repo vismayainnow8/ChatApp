@@ -13,18 +13,16 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+
 import {AttachModal} from '../../Components';
 import styles from '../ChatScene/style';
 import {consts} from '../../Assets/Consts';
 import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
+
 const ChatScene = ({navigation, route}) => {
   const {user, chatId} = route.params;
   const [messages, setMessages] = useState([]);
-  const [show, setShow] = useState(false);
-  const [textInputFocus, setTextInputFocus] = useState(false);
- 
-
 
   function HeaderIcons() {
     return (
@@ -115,7 +113,6 @@ const ChatScene = ({navigation, route}) => {
 
   const sendMessage = () => {
     Keyboard.dismiss();
-    setTextInputFocus(false)
     database().ref('messages').push({
       message: writtenMessage,
       time: database.ServerValue.TIMESTAMP,
@@ -147,7 +144,6 @@ const ChatScene = ({navigation, route}) => {
           uid: auth().currentUser.uid,
         },
       });
-      setWrittenMessage('');
   };
 
   const onChangeText = (text) => {
@@ -175,7 +171,6 @@ const ChatScene = ({navigation, route}) => {
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
         />
-          
         <View>
           {attachPressed ? (
             <AttachModal setModalVisible={attachPressed} />
@@ -183,20 +178,17 @@ const ChatScene = ({navigation, route}) => {
           <ScrollView
             keyboardShouldPersistTaps="always"
             style={styles.bottomContainer}
-            // contentContainerStyle={styles.contentContainerStyle}
-          >
+            contentContainerStyle={styles.contentContainerStyle}>
             <View style={styles.textinputContainer}>
-              <TouchableOpacity style={styles.emoji} onPress={()=>setShow(show==true?false:true)}>
+              <View style={styles.emoji}>
                 <Entypo
                   name="emoji-happy"
                   size={consts.textSizes(25)}
                   color="grey"
                 />
-              </TouchableOpacity>
+              </View>
               <TextInput
                 placeholder="Type a message ...."
-                multiline={true}
-                onFocus={()=>setTextInputFocus(true)}
                 style={styles.textinput}
                 onChangeText={(text) => onChangeText(text)}
                 placeholderStyle={{fontSize: 20}}
@@ -214,15 +206,14 @@ const ChatScene = ({navigation, route}) => {
                   color="grey"
                 />
               </TouchableOpacity>
-              {textInputFocus==false?<View style={styles.camera}>
+              <View style={styles.camera}>
                 <FontAwesome
                   name="camera"
                   size={consts.textSizes(20)}
                   color="grey"
                 />
-              </View>:null}
+              </View>
             </View>
-         
             <TouchableOpacity
               style={styles.sendContainer}
               onPress={() => sendMessage()}>
@@ -237,8 +228,6 @@ const ChatScene = ({navigation, route}) => {
               />
             </TouchableOpacity>
           </ScrollView>
-          
-        
         </View>
       </ImageBackground>
     </ScrollView>
