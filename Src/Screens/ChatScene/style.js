@@ -1,10 +1,7 @@
 import {StyleSheet} from 'react-native';
 import {consts} from '../../Assets/Consts';
-// import { Appearance } from 'react-native'
+
 const styles = StyleSheet.create({
-  time: {
-    fontSize: 10,
-  },
   bottomContainer: {
     flexDirection: 'row',
     padding: 5,
@@ -65,10 +62,26 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  item: {
-    margin: 5,
-    padding: 5,
+  chatNode: {
+    maxWidth: '80%',
+    marginVertical: 5,
+    marginHorizontal: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     borderRadius: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.18,
+    shadowRadius: 1.0,
+    elevation: 1,
+  },
+  chatNodeTime: {
+    alignSelf: 'flex-end',
+    color: '#777',
+    fontSize: 10,
   },
   attach: {
     flex: 1,
