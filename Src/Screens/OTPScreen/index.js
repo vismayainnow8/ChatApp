@@ -1,11 +1,13 @@
-import React, {useLayoutEffect} from 'react';
+import React, {useLayoutEffect,useEffect} from 'react';
 import {View, Text} from 'react-native';
 import CodeInput from 'react-native-confirmation-code-input';
 import styles from './styles';
 
 const OTPScreen = ({navigation, route}) => {
   const {number, confirmation} = route.params;
-
+  useEffect(() => {
+    console.log("jkjk",number)
+  })
   const confirmCode = async (code) => {
     try {
       await confirmation.confirm(code);

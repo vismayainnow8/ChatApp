@@ -4,6 +4,7 @@ import Login from '../Screens/Login';
 import ChooseCountry from '../Screens/ChooseCountry';
 import OTPScreen from '../Screens/OTPScreen';
 import WelcomeScreen from '../Screens/WelcomeScreen';
+import ProfileInfo from '../Screens/ProfileInfo';
 
 const Stack = createStackNavigator();
 
@@ -14,6 +15,7 @@ export const SignInStack = () => {
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="ChooseCountry" component={ChooseCountry} />
       <Stack.Screen name="OTPScreen" component={OTPScreen} />
+      <Stack.Screen name="ProfileInfo" component={ProfileInfo} />
     </Stack.Navigator>
   );
 };
