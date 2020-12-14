@@ -17,7 +17,9 @@ const ProfileInfo = ({ navigation, route }) => {
     setWrittenMessage(text);
     
   }
-  const backspace = () => {};
+  const backspace = () => {
+    setWrittenMessage( writtenMessage.slice(0, -1))
+  };
 
   const onClick = (emoji) => {
     setWrittenMessage(writtenMessage?writtenMessage + emoji.code:emoji.code);
