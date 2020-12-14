@@ -30,9 +30,12 @@ const ChatScene = ({navigation, route}) => {
   const [keyboardIcon, setKeyboardIcon] = useState('emoji-happy');
   const [textInputFocus, setTextInputFocus] = useState(false);
   const [showEmoji, setShowEmoji] = useState(false);
+  const [writtenMessage, setWrittenMessage] = useState(null);
+  const [attachPressed, setAttachPressed] = useState(false);
+  const textRef = useRef(null);
   const onClick = (emoji) => {
     console.log(emoji);
-    // writtenMessage.piu
+    setWrittenMessage(writtenMessage+emoji.code)
   };
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -67,9 +70,7 @@ const ChatScene = ({navigation, route}) => {
         setMessages(formatedValues);
       });
   }, []);
-  const [writtenMessage, setWrittenMessage] = useState(null);
-  const [attachPressed, setAttachPressed] = useState(false);
-  const textRef = useRef(null);
+  
 
   const renderItem = ({item}) => {
     return <ChatNode item={item} />;
