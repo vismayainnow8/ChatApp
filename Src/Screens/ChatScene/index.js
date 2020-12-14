@@ -43,7 +43,7 @@ const ChatScene = ({navigation, route}) => {
   const [showEmoji, setShowEmoji] = useState(false);
 
   const onClick = (emoji) => {
-    setWrittenMessage((message) => message + emoji.code);
+    setWrittenMessage(writtenMessage?writtenMessage + emoji.code:emoji.code);
   };
 
   const backspace = () => {};
