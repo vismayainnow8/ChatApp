@@ -46,7 +46,9 @@ const ChatScene = ({navigation, route}) => {
     setWrittenMessage(writtenMessage?writtenMessage + emoji.code:emoji.code);
   };
 
-  const backspace = () => {};
+  const backspace = () => {
+    setWrittenMessage( writtenMessage.slice(0, -1))
+  };
 
   const onInputFocus = () => {
     if (Platform.OS == 'android') {
