@@ -11,6 +11,8 @@ import {
   StatusBar,
   TouchableOpacity,
   KeyboardAvoidingView,
+  UIManager,
+  LayoutAnimation,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -23,17 +25,38 @@ import auth from '@react-native-firebase/auth';
 import moment from 'moment';
 import {useHeaderHeight} from '@react-navigation/stack';
 
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
 const ChatScene = ({navigation, route}) => {
   const headerHeight = useHeaderHeight();
   const {user, chatId} = route.params;
   const [messages, setMessages] = useState([]);
-  const [keyboardIcon, setKeyboardIcon] = useState('emoji-happy');
+  const [writtenMessage, setWrittenMessage] = useState(null);
+  const [attachPressed, setAttachPressed] = useState(false);
+  const textRef = useRef(null);
   const [textInputFocus, setTextInputFocus] = useState(false);
   const [showEmoji, setShowEmoji] = useState(false);
+
   const onClick = (emoji) => {
-    console.log(emoji);
-    // writtenMessage.piu
+    setWrittenMessage((message) => message + emoji.code);
   };
+
+  const backspace = () => {};
+
+  const onInputFocus = () => {
+    if (Platform.OS == 'android') {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    } else {
+      Keyboard.scheduleLayoutAnimation(LayoutAnimation.Presets.easeInEaseOut);
+    }
+    setShowEmoji(false);
+  };
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: user.displayName ?? user.phoneNumber,
@@ -67,9 +90,6 @@ const ChatScene = ({navigation, route}) => {
         setMessages(formatedValues);
       });
   }, []);
-  const [writtenMessage, setWrittenMessage] = useState(null);
-  const [attachPressed, setAttachPressed] = useState(false);
-  const textRef = useRef(null);
 
   const renderItem = ({item}) => {
     return <ChatNode item={item} />;
@@ -112,12 +132,15 @@ const ChatScene = ({navigation, route}) => {
   };
 
   const keyboardIconPress = () => {
-    if (keyboardIcon == 'emoji-happy') {
+    if (Platform.OS == 'android') {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    } else {
+      Keyboard.scheduleLayoutAnimation(LayoutAnimation.Presets.easeInEaseOut);
+    }
+    if (!showEmoji) {
       Keyboard.dismiss();
-      setKeyboardIcon('keyboard');
       setShowEmoji(true);
     } else {
-      setKeyboardIcon('emoji-happy');
       textRef.current.focus();
       setShowEmoji(false);
     }
@@ -154,7 +177,7 @@ const ChatScene = ({navigation, route}) => {
               <Entypo
                 onPress={() => keyboardIconPress()}
                 style={styles.emoji}
-                name={keyboardIcon}
+                name={showEmoji ? 'keyboard' : 'emoji-happy'}
                 size={28}
                 color="grey"
               />
@@ -165,6 +188,7 @@ const ChatScene = ({navigation, route}) => {
                 placeholderStyle={{fontSize: 20}}
                 ref={textRef}
                 value={writtenMessage}
+                onFocus={onInputFocus}
                 multiline
               />
 
@@ -199,20 +223,19 @@ const ChatScene = ({navigation, route}) => {
               />
             </TouchableOpacity>
           </View>
-          {showEmoji == true ? (
-            <EmojiBoard
-              showBoard={showEmoji}
-              tabBarPosition="top"
-              onClick={onClick}
-              categoryIconSize={22}
-              containerStyle={{
-                height: 300,
-                backgroundColor: 'white',
-                position: 'relative',
-              }}
-            />
-          ) : null}
         </ImageBackground>
+        <EmojiBoard
+          showBoard={showEmoji}
+          tabBarPosition="top"
+          onClick={onClick}
+          categoryIconSize={22}
+          containerStyle={{
+            height: showEmoji ? 300 : 0,
+            backgroundColor: 'white',
+            position: 'relative',
+          }}
+          onRemove={backspace}
+        />
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
