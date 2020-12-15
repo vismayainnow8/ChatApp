@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import 'react-native-gesture-handler';
 import auth from '@react-native-firebase/auth';
-import database from '@react-native-firebase/database';
 import {SignInStack} from './signinStack';
 import {AppStack} from './appStack';
 
@@ -11,13 +10,6 @@ export const AppNavigation = () => {
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged((user) => {
-      if (!user) return;
-      database()
-        .ref()
-        .child('contacts')
-        .update({
-          [user.phoneNumber]: {uid: user.uid, phoneNumber: user.phoneNumber},
-        });
       setUser(user);
       if (initializing) setInitializing(false);
     });
@@ -27,5 +19,5 @@ export const AppNavigation = () => {
   if (!user) {
     return <SignInStack />;
   }
-  return <AppStack />;
+  return <AppStack user={user} />;
 };

@@ -1,4 +1,4 @@
-import React, {useLayoutEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -57,22 +57,6 @@ const Login = ({navigation, route}) => {
       setLoading(false);
     }
   };
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerTitle: 'Enter your phone number',
-      headerTitleAlign: 'center',
-      headerTitleStyle: {
-        fontWeight: 'bold',
-        fontSize: 18,
-      },
-      headerStyle: {
-        backgroundColor: 'white',
-        elevation: 0,
-      },
-      headerTintColor: '#128c7e',
-    });
-  }, []);
 
   return (
     <View style={{flex: 1}}>

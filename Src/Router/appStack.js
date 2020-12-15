@@ -2,6 +2,7 @@ import 'react-native-gesture-handler';
 import {consts} from '../Assets/Consts';
 import React, {useState} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
+import auth from '@react-native-firebase/auth';
 import {
   View,
   TextInput,
@@ -32,9 +33,11 @@ import ChatScene from '../Screens/ChatScene';
 import Camera from '../Screens/Camera';
 import CallingScreen from '../Screens/CallingScreen';
 import VideoCalling from '../Screens/VideoCalling';
+import ProfileInfo from '../Screens/ProfileInfo';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 import {TabView} from './homeTabs';
+import {signInStackTopbar} from './options';
 
 const Stack = createStackNavigator();
 
@@ -67,11 +70,18 @@ const HomeRightButtons = ({openSearch}) => {
   );
 };
 
-export const AppStack = () => {
+export const AppStack = ({user}) => {
   const [searchbarVisible, setSearchbarVisible] = useState(false);
   return (
     <>
-      <Stack.Navigator initialRouteName="WhatsApp">
+      <Stack.Navigator>
+        {!user.displayName && (
+          <Stack.Screen
+            name="ProfileInfo"
+            component={ProfileInfo}
+            options={signInStackTopbar('Profile Info')}
+          />
+        )}
         <Stack.Screen
           name="WhatsApp"
           component={TabView}
