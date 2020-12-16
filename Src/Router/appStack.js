@@ -29,11 +29,13 @@ import TwoStepVerification from '../Screens/TwoStepVerification';
 import RequestAccountInfo from '../Screens/RequestAccountInfo';
 import DeleteAccount from '../Screens/DeleteAccount';
 import ChatScene from '../Screens/ChatScene';
-import Camera from '../Screens/Camera';
 import CallingScreen from '../Screens/CallingScreen';
 import VideoCalling from '../Screens/VideoCalling';
+import Camera from '../Screens/Camera';
+import {ImagePreview} from '../Screens/Camera/Components';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
+
 import {TabView} from './homeTabs';
 
 const Stack = createStackNavigator();
@@ -103,6 +105,8 @@ export const AppStack = () => {
         <Stack.Screen name="ChangeNumber" component={ChangeNumber} />
         <Stack.Screen name="StarredMessages" component={StarredMessages} />
         <Stack.Screen name="Privacy" component={Privacy} />
+        <Stack.Screen name="Camera" component={Camera} />
+      <Stack.Screen name="ImagePreview" component={ImagePreview} />
         <Stack.Screen
           name="TwoStepVerification"
           component={TwoStepVerification}
@@ -114,11 +118,7 @@ export const AppStack = () => {
         <Stack.Screen name="DeleteAccount" component={DeleteAccount} />
         <Stack.Screen name="ChatScene" component={ChatScene} />
         <Stack.Screen name="Contacts" component={Contacts} />
-        <Stack.Screen
-          name="Camera"
-          component={Camera}
-          options={{headerShown: false}}
-        />
+       
         <Stack.Screen name="CallingScreen" component={CallingScreen} />
         <Stack.Screen name="VideoCalling" component={VideoCalling} />
       </Stack.Navigator>

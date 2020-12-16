@@ -13,7 +13,8 @@ import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconFontAwesome5 from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import { setUser,setChatId  } from '../../StateManagement/Actions';
 import {consts} from '../../Assets/Consts';
 import {useSelector} from 'react-redux';
 import moment from 'moment';
@@ -47,7 +48,6 @@ const Chats = (props) => {
   }, []);
 
   useEffect(() => {
-    console.log('props', props);
     setSearchPressedState(searchPressed);
     setTabState(tab);
   }, [searchPressed, searchPressedState, tab, tabState]);
@@ -58,6 +58,8 @@ const Chats = (props) => {
 
   const onPressed = (item) => {
     navigation.navigate('ChatScene', item);
+    setUser(item.user)
+    setChatId(item.chatId)
   };
 
   return (
@@ -94,13 +96,6 @@ const Chats = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    textInput: state.textInput.textInput,
-  };
-};
-
-export default connect(mapStateToProps, null)(Chats);
 
 const ChatsListItem = ({image, item, number, onPressed}) => {
   const {user, lastMessage} = item;
@@ -143,3 +138,19 @@ const ChatsListItem = ({image, item, number, onPressed}) => {
     </TouchableOpacity>
   );
 };
+
+
+const mapStateToProps = (state) => {
+  return {
+    textInput: state.textInput.textInput,
+  };
+};
+const mapDispatchToProps = dispatch => {
+  return {
+    setUser: (item) => dispatch(setUser(item)),
+    setChatId: (item) => dispatch(setChatId(item)),
+
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Chats);

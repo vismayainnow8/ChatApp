@@ -119,7 +119,7 @@ const Status = (props) => {
     <ScrollView style={styles.mainContainer}>
       <StatusBar backgroundColor="#075e54" barStyle="light-content" />
       <View style={styles.listItemContainer}>
-        <View style={styles.iconContainer}>
+        <TouchableOpacity style={styles.iconContainer} onPress={()=>navigation.navigate('Camera')}>
           <Image
             source={{
               uri: 'https://randomuser.me/api/portraits/men/1.jpg',
@@ -130,7 +130,7 @@ const Status = (props) => {
           <View style={styles.numbercountContainer}>
             <Text style={styles.numberCount}>+</Text>
           </View>
-        </View>
+        </TouchableOpacity>
 
         <View style={styles.messageContainer}>
           <View style={styles.firstContainer}>
