@@ -1,15 +1,9 @@
-import React, {useLayoutEffect} from 'react';
+import React from 'react';
 import {View, Text, Image} from 'react-native';
 import {SmallButton} from '../../Components';
 import styles from './styles';
 
 const WelcomeScreen = ({navigation}) => {
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerShown: false,
-    });
-  }, []);
-
   return (
     <View style={styles.mainContainer}>
       <Text style={styles.header}>Welcome to WhatsApp</Text>

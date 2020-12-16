@@ -1,108 +1,142 @@
-import React, {useLayoutEffect,useEffect,useState,useRef} from 'react';
-import {View, Text,Image,TextInput,Platform, UIManager,Keyboard,
-  LayoutAnimation,} from 'react-native';
-import CodeInput from 'react-native-confirmation-code-input';
-import Entypo from 'react-native-vector-icons/Entypo';
+import React, {useState, useRef} from 'react';
+import {
+  View,
+  Text,
+  ImageBackground,
+  TextInput,
+  Image,
+  Pressable,
+} from 'react-native';
+import ImageCropPicker from 'react-native-image-crop-picker';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
+import MDIcon from 'react-native-vector-icons/MaterialIcons';
+import RBSheet from 'react-native-raw-bottom-sheet';
 import {SmallButton} from '../../Components';
-import EmojiBoard from 'react-native-emoji-board';
-
 import styles from './styles';
+import {StackActions} from '@react-navigation/native';
 
-const ProfileInfo = ({ navigation, route }) => {
-  const [showEmoji, setShowEmoji] = useState(false);
-  const [writtenMessage, setWrittenMessage] = useState(null);
-  const textRef = useRef(null);
-  
-  const onChangeText = (text) => {
-    setWrittenMessage(text);
-    
-  }
-  const backspace = () => {
-    setWrittenMessage( writtenMessage.slice(0, -1))
-  };
+const ProfileInfo = ({navigation}) => {
+  const [name, setName] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [image, setImage] = useState({});
+  const pickerLstRef = useRef(null);
+  const {phoneNumber, uid} = auth().currentUser;
 
-  const onClick = (emoji) => {
-    setWrittenMessage(writtenMessage?writtenMessage + emoji.code:emoji.code);
-  };
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerTitle: 'Profile Info',
-      headerTitleAlign: 'center',
-      headerStyle: {
-        backgroundColor: 'white',
-        elevation: 0,
-      },
-      headerTitleStyle: {
-        fontWeight: 'bold',
-        fontSize: 18,
-      },
-      headerTintColor: '#128c7e',
-    });
-  });
-const keyboardIconPress = () => {
-    if (Platform.OS == 'android') {
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    } else {
-      Keyboard.scheduleLayoutAnimation(LayoutAnimation.Presets.easeInEaseOut);
-    }
-    if (!showEmoji) {
-      Keyboard.dismiss();
-      setShowEmoji(true);
-    } else {
-      textRef.current.focus();
-      setShowEmoji(false);
+  const next = async () => {
+    if (!name) return;
+    setLoading(true);
+    try {
+      const imageStorageRef = storage().ref('images/dp/' + uid + '.jpeg');
+      await imageStorageRef.putFile(image.path);
+      const url = await storage()
+        .ref('images/dp/' + uid + '.jpeg')
+        .getDownloadURL();
+      await firestore()
+        .collection('Users')
+        .doc(uid)
+        .set({phoneNumber, photoURL: url, displayName: name});
+      await auth().currentUser.updateProfile({
+        displayName: name,
+        photoURL: url,
+      });
+      navigation.dispatch(StackActions.replace('WhatsApp'));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
+
+  const changeProfilePic = () => {
+    pickerLstRef.current.open();
+  };
+
+  const openPicker = () => {
+    pickerLstRef.current.close();
+    ImageCropPicker.openPicker({
+      width: 300,
+      height: 300,
+      cropping: true,
+    })
+      .then((image) => setImage(image))
+      .catch((error) => console.log(error));
+  };
+
+  const openCamera = () => {
+    pickerLstRef.current.close();
+    ImageCropPicker.openCamera({
+      width: 300,
+      height: 300,
+      cropping: true,
+    })
+      .then((image) => setImage(image))
+      .catch((error) => console.log(error));
+  };
+
   return (
     <View style={styles.mainContainer}>
-       <Text style={styles.line}>
-       Please provide your name and an optional profile photo
+      <Text style={styles.line}>
+        Please provide your name and an optional profile photo
       </Text>
-      <View style={styles.imageContainer}>
-        <Image
-          style={styles.image}
+      <Pressable onPress={changeProfilePic}>
+        <ImageBackground
+          style={styles.imageBackgroundContainer}
+          imageStyle={styles.imageBackground}
           source={{
             uri: 'https://reactnative.dev/img/tiny_logo.png',
-          }}
-        />
-        <View  style={styles.textinputContainer}>
-          <TextInput
-            ref={textRef}
-            value={writtenMessage}
-                placeholder="Type your name here ...."
-                style={styles.phoneNumberContainer}
-                onChangeText={(text) => onChangeText(text)}
-                placeholderStyle={{fontSize: 20}}
-        />
-        <Entypo
-                onPress={() => keyboardIconPress()}
-                style={styles.emoji}
-                name={showEmoji ? 'keyboard' : 'emoji-happy'}
-                size={28}
-                color="grey"
-              />
-        </View>
-        
-        <SmallButton
-            title="NEXT"
-            labelStyle={styles.labelStyle}
-            style={styles.style}
-            onPress={() => signInWithPhoneNumber()}
-        />
-        <EmojiBoard
-          showBoard={showEmoji}
-          tabBarPosition="top"
-          onClick={onClick}
-          categoryIconSize={22}
-          containerStyle={{
-            height: showEmoji ? 300 : 0,
-            backgroundColor: 'white',
-            position: 'relative',
-          }}
-          onRemove={backspace}
+          }}>
+          {image?.path && (
+            <Image source={{uri: image.path}} style={styles.image} />
+          )}
+        </ImageBackground>
+      </Pressable>
+      <View style={styles.textinputContainer}>
+        <TextInput
+          value={name}
+          placeholder="Type your name here ...."
+          style={styles.phoneNumberContainer}
+          onChangeText={setName}
+          placeholderStyle={{fontSize: 20}}
         />
       </View>
+
+      <SmallButton
+        title="NEXT"
+        labelStyle={styles.labelStyle}
+        style={styles.style}
+        onPress={next}
+        loading={loading}
+      />
+      <RBSheet
+        ref={pickerLstRef}
+        height={160}
+        customStyles={{
+          container: styles.rbSheet,
+        }}>
+        <Text style={styles.gridHeader}>Profile Photo</Text>
+        <View style={styles.gridContainer}>
+          <Pressable
+            key="photo-camera"
+            onPress={openCamera}
+            style={styles.gridButtonContainer}>
+            <View style={[styles.gridButton]}>
+              <MDIcon name="photo-camera" style={styles.gridIcon} />
+            </View>
+            <Text style={styles.gridLabel}>Take photo</Text>
+          </Pressable>
+          <Pressable
+            key="photo"
+            onPress={openPicker}
+            style={styles.gridButtonContainer}>
+            <View style={[styles.gridButton]}>
+              <MDIcon name="photo" style={styles.gridIcon} />
+            </View>
+            <Text style={styles.gridLabel}>Choose Image</Text>
+          </Pressable>
+        </View>
+      </RBSheet>
     </View>
   );
 };
