@@ -20,7 +20,7 @@ const OTPScreen = ({navigation, route}) => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: 'Verify ' + {number},
+      headerTitle: 'Verify ' + number,
       headerStyle: {
         backgroundColor: 'white',
         elevation: 0,
