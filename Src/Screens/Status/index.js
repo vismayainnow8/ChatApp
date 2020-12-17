@@ -118,8 +118,8 @@ const Status = (props) => {
   return (
     <View style={styles.mainContainer}>
       <StatusBar backgroundColor="#075e54" barStyle="light-content" />
-      <View style={styles.listItemContainer}>
-        <TouchableOpacity style={styles.iconContainer} onPress={()=>navigation.navigate('Camera')}>
+      <TouchableOpacity style={styles.listItemContainer} onPress={()=>navigation.navigate('Camera')}>
+        <View style={styles.iconContainer} >
           <Image
             source={{
               uri: 'https://randomuser.me/api/portraits/men/1.jpg',
@@ -130,7 +130,7 @@ const Status = (props) => {
           <View style={styles.numbercountContainer}>
             <Text style={styles.numberCount}>+</Text>
           </View>
-        </TouchableOpacity>
+        </View>
 
         <View style={styles.messageContainer}>
           <View style={styles.firstContainer}>
@@ -150,7 +150,7 @@ const Status = (props) => {
             </View>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
 
       <View style={styles.updateContainer}>
         <Text style={styles.grey}>Recent Updates</Text>
