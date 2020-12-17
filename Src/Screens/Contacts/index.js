@@ -1,124 +1,149 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   Text,
   ScrollView,
   FlatList,
+  Platform,
+  PermissionsAndroid,
   SafeAreaView,
   StatusBar,
   Image,
   View,
+  ActivityIndicator,
 } from 'react-native';
+import Contact from 'react-native-contacts';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import IconMaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/Entypo';
-import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import styles from './styles';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {useCallback} from 'react';
 
+let start;
 const Contacts = ({navigation}) => {
-  const [] = useState(false);
-  let [contacts, setContacts] = useState([]);
-  const [selectedItem] = useState(null);
+  const [contacts, setContacts] = useState([]);
+  const contactsMap = useRef();
+  const contactsArray = useRef();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    database()
-      .ref('contacts')
-      .once('value', (snapshot) => {
-        const value = snapshot.val();
-        let formatedValues = [];
-        Object.keys(value ?? {}).forEach((item) => {
-          formatedValues.push({
-            displayName: value[item].displayName,
-            phoneNumber: value[item].phoneNumber,
-            uid: value[item].uid,
-          });
-        });
-        setContacts(formatedValues);
+    start = new Date().getTime();
+    if (Platform.OS === 'android') {
+      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
+        title: 'Contacts',
+        message: 'This app would like to view your contacts.',
+      }).then(() => {
+        loadContacts();
+        console.log('useffected worked');
       });
+    } else {
+      loadContacts();
+      console.log('useffected failed');
+    }
   }, []);
 
-  const onPressed = (item) => {
-    database()
-      .ref('userChat')
-      .child(item.uid)
-      .orderByChild('user/uid')
-      .equalTo(auth().currentUser.uid)
-      .once('value', (snapshot) => {
-        const val = snapshot.val();
-        if (!val) {
-          console.log('no val');
-          const data = database()
-            .ref('userChat')
-            .child(item.uid)
-            .push({
-              lastMessage: {},
-              user: {
-                displayName: auth().currentUser.displayName,
-                phoneNumber: auth().currentUser.phoneNumber,
-                uid: auth().currentUser.uid,
-              },
-            });
-          database()
-            .ref('userChat')
-            .child(auth().currentUser.uid)
-            .update({
-              [data.key]: {
-                lastMessage: {},
-                user: item,
-              },
-            });
-          navigation.navigate('ChatScene', {user: item, chatId: data.key});
-        } else {
-          navigation.navigate('ChatScene', {
-            user: item,
-            chatId: Object.keys(val)[0],
-          });
-        }
-      });
+  const loadContacts = () => {
+    console.log('A', new Date().getTime() - start);
+    Contact.getAll().then((contacts) => {
+      setLoading(true);
+      setContacts([]);
+      let filteredContacts = contacts.filter((item) =>
+        Boolean(item.phoneNumbers.length),
+      );
+      contactsMap.current = filteredContacts.reduce((prev, current) => {
+        let newMap = current.phoneNumbers.reduce((newPrev, newCurrent) => {
+          if (newCurrent.number.replace(/[^0-9+]/g, '').length < 7)
+            return newPrev;
+          return {
+            ...newPrev,
+            [newCurrent.number.replace(/[^0-9+]/g, '')]: current.displayName,
+          };
+        }, {});
+        return {...prev, ...newMap};
+      }, {});
+      contactsArray.current = Object.keys(contactsMap.current);
+      checkContactsInServer(contactsArray.current);
+    });
   };
 
-  const Item = ({image, item}) => (
-    <TouchableOpacity
-      onPress={() => onPressed(item)}
-      style={styles.listItemContainer}>
-      <View style={styles.iconContainerperson}>
-        {image ? (
-          <Image
-            source={{uri: image}}
-            style={styles.initStyle}
-            resizeMode="contain"
-          />
-        ) : (
-          <IconMaterialIcons name="person" color="white" size={23} />
-        )}
-      </View>
-      <View style={styles.nameContainer}>
-        <Text>{item.displayName ?? item.phoneNumber}</Text>
-        <View style={styles.dateContainer}>
-          <Text
-            numberOfLines={1}
-            style={{fontWeight: '400', color: '#666', fontSize: 12}}>
-            {item.uid}
-          </Text>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
-  function renderItem({item}) {
-    return (
-      <Item
-        item={item}
-        image={item.image}
-        displayName={item.displayName}
-        missed={item.missed}
-        time={item.time}
-        date={item.date}
-        message={item.id}
-        number={item.number}
-      />
-    );
-  }
+  const checkContactsInServer = (phoneContacts) => {
+    let contactsChunks = [];
+    for (let i = 0; i < Math.ceil(phoneContacts.length / 10); i++) {
+      contactsChunks.push(phoneContacts.slice(i * 10, (i + 1) * 10));
+    }
+    console.log('B', new Date().getTime() - start);
+    Promise.all(
+      contactsChunks.map((chunk) =>
+        firestore()
+          .collection('Users')
+          .where('phoneNumber', 'in', chunk)
+          .get()
+          .then((querySnapshot) => {
+            let data = [];
+            querySnapshot.forEach((documentSnapshot) => {
+              data.push({
+                uid: documentSnapshot.id,
+                ...documentSnapshot.data(),
+              });
+            });
+            setContacts((contacts) => [...contacts, ...data]);
+          }),
+      ),
+    ).finally(() => {
+      setLoading(false);
+    });
+  };
+
+  const openChat = useCallback((item) => {
+    const key =
+      item.uid > auth().currentUser.uid
+        ? item.uid + '|' + auth().currentUser.uid
+        : auth().currentUser.uid + '|' + item.uid;
+    firestore()
+      .collection('Chats')
+      .where('type', '==', 'direct')
+      .where('key', '==', key)
+      .get()
+      .then((querySnapshot) => {
+        if (querySnapshot.empty) {
+          console.log('no val');
+          firestore()
+            .collection('Chats')
+            .add({
+              key,
+              members: [item.uid, auth().currentUser.uid],
+              type: 'direct',
+              details: {
+                [item.uid]: item,
+                [auth().currentUser.uid]: {
+                  displayName: auth().currentUser.displayName,
+                  phoneNumber: auth().currentUser.phoneNumber,
+                  photoURL: auth().currentUser.photoURL,
+                },
+              },
+              lastMessage: {},
+            })
+            .then((data) => {
+              let chat = {
+                chatId: data.id,
+                user: item,
+              };
+              navigation.navigate('ChatScene', chat);
+            });
+        } else {
+          let chat = {};
+          querySnapshot.forEach((data) => {
+            chat = {
+              chatId: data.id,
+              user: item,
+            };
+          });
+          navigation.navigate('ChatScene', chat);
+        }
+      });
+  }, []);
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -172,7 +197,19 @@ const Contacts = ({navigation}) => {
             </View>
           </View>
 
-          <FlatList data={contacts} renderItem={renderItem} />
+          <FlatList
+            data={contacts}
+            renderItem={({item}) => (
+              <Item
+                displayName={item.displayName}
+                photoURL={item.photoURL}
+                phoneNumber={item.phoneNumber}
+                onPress={() => openChat(item)}
+              />
+            )}
+            keyExtractor={(item) => item.uid}
+            ListFooterComponent={<ListFooterLoader loading={loading} />}
+          />
           <View style={styles.listItemContainer}>
             <View style={styles.iconContainerWoColor}>
               <Icon name="share" color="grey" size={23} style={{padding: 5}} />
@@ -209,3 +246,33 @@ const Contacts = ({navigation}) => {
 };
 
 export default Contacts;
+
+const ListFooterLoader = ({loading = false}) => (
+  <ActivityIndicator
+    color="red"
+    animating={loading}
+    style={{height: 50, alignSelf: 'center'}}
+  />
+);
+
+const Item = ({photoURL, displayName, phoneNumber, onPress}) => (
+  <TouchableOpacity onPress={onPress} style={styles.listItemContainer}>
+    <View style={styles.iconContainerperson}>
+      {photoURL ? (
+        <Image source={{uri: photoURL}} style={styles.initStyle} />
+      ) : (
+        <IconMaterialIcons name="person" color="white" size={23} />
+      )}
+    </View>
+    <View style={styles.nameContainer}>
+      <Text>{displayName}</Text>
+      <View style={styles.dateContainer}>
+        <Text
+          numberOfLines={1}
+          style={{fontWeight: '400', color: '#666', fontSize: 12}}>
+          {phoneNumber}
+        </Text>
+      </View>
+    </View>
+  </TouchableOpacity>
+);

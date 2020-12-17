@@ -116,7 +116,7 @@ const Status = (props) => {
   }
 
   return (
-    <ScrollView style={styles.mainContainer}>
+    <View style={styles.mainContainer}>
       <StatusBar backgroundColor="#075e54" barStyle="light-content" />
       <View style={styles.listItemContainer}>
         <TouchableOpacity style={styles.iconContainer} onPress={()=>navigation.navigate('Camera')}>
@@ -179,7 +179,7 @@ const Status = (props) => {
           style={{padding: 5}}
         />
       </TouchableOpacity>
-    </ScrollView>
+    </View>
   );
 };
 

@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react';
-import {connect} from 'react-redux';
 import {
   Text,
   TouchableOpacity,
@@ -10,12 +9,11 @@ import {
   View,
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
-import database from '@react-native-firebase/database';
+import firestore from '@react-native-firebase/firestore';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconFontAwesome5 from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useNavigation } from '@react-navigation/native';
-import { setUser,setChatId  } from '../../StateManagement/Actions';
-import {consts} from '../../Assets/Consts';
+import {useNavigation} from '@react-navigation/native';
+import {setUser, setChatId} from '../../StateManagement/Actions';
 import {useSelector} from 'react-redux';
 import moment from 'moment';
 import styles from './styles';
@@ -30,21 +28,30 @@ const Chats = (props) => {
   var tab = useSelector((state) => state.searchPressed.tabState);
 
   useEffect(() => {
-    return database()
-      .ref()
-      .child('userChat')
-      .child(auth().currentUser.uid)
-      .on('value', (snapshot) => {
-        if (!snapshot) {
-          return;
-        }
-        const value = snapshot.val();
-        let formatedValues = [];
-        Object.keys(value ?? {}).forEach((item) => {
-          formatedValues.push({...value[item], chatId: item});
-        });
-        setChats(formatedValues);
-      });
+    return firestore()
+      .collection('Chats')
+      .where('members', 'array-contains', auth().currentUser.uid)
+      .onSnapshot(
+        (res) => {
+          let data = [];
+          res.forEach((item) => {
+            const formatedItem = {
+              chatId: item.id,
+              ...item.data(),
+            };
+            const userId =
+              formatedItem.members[
+                formatedItem.members[1] == auth().currentUser.uid ? 0 : 1
+              ];
+            formatedItem.user = formatedItem.details[userId];
+            delete formatedItem.details;
+            data.push(formatedItem);
+          });
+          console.log(data);
+          setChats(data);
+        },
+        (error) => {},
+      );
   }, []);
 
   useEffect(() => {
@@ -58,8 +65,8 @@ const Chats = (props) => {
 
   const onPressed = (item) => {
     navigation.navigate('ChatScene', item);
-    setUser(item.user)
-    setChatId(item.chatId)
+    setUser(item.user);
+    setChatId(item.chatId);
   };
 
   return (
@@ -96,20 +103,19 @@ const Chats = (props) => {
   );
 };
 
-
-const ChatsListItem = ({image, item, number, onPressed}) => {
+const ChatsListItem = ({item, number, onPressed}) => {
   const {user, lastMessage} = item;
   return (
     <TouchableOpacity
       style={styles.listItemContainer}
       onPress={() => onPressed(item)}>
-      {/* <View style={styles.iconContainer}>
-        <Image
-          source={{uri: image}}
-          style={styles.initStyle}
-          resizeMode="contain"
-        />
-      </View> */}
+      <View style={styles.iconContainerperson}>
+        {user.photoURL ? (
+          <Image source={{uri: user.photoURL}} style={styles.initStyle} />
+        ) : (
+          <IconMaterialIcons name="person" color="white" size={23} />
+        )}
+      </View>
 
       <View style={styles.messageContainer}>
         <View style={styles.firstContainer}>
@@ -139,18 +145,4 @@ const ChatsListItem = ({image, item, number, onPressed}) => {
   );
 };
 
-
-const mapStateToProps = (state) => {
-  return {
-    textInput: state.textInput.textInput,
-  };
-};
-const mapDispatchToProps = dispatch => {
-  return {
-    setUser: (item) => dispatch(setUser(item)),
-    setChatId: (item) => dispatch(setChatId(item)),
-
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Chats);
+export default Chats;

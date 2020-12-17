@@ -116,7 +116,7 @@ export const AppStack = ({user}) => {
         <Stack.Screen name="StarredMessages" component={StarredMessages} />
         <Stack.Screen name="Privacy" component={Privacy} />
         <Stack.Screen name="Camera" component={Camera} />
-      <Stack.Screen name="ImagePreview" component={ImagePreview} />
+        <Stack.Screen name="ImagePreview" component={ImagePreview} />
         <Stack.Screen
           name="TwoStepVerification"
           component={TwoStepVerification}
@@ -128,7 +128,6 @@ export const AppStack = ({user}) => {
         <Stack.Screen name="DeleteAccount" component={DeleteAccount} />
         <Stack.Screen name="ChatScene" component={ChatScene} />
         <Stack.Screen name="Contacts" component={Contacts} />
-       
         <Stack.Screen name="CallingScreen" component={CallingScreen} />
         <Stack.Screen name="VideoCalling" component={VideoCalling} />
       </Stack.Navigator>

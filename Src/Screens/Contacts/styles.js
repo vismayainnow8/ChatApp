@@ -50,13 +50,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginLeft: 10,
   },
-  listItemContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    // justifyContent: "center",
-    padding: 10,
-  },
   statuslistItemContainer: {
     flex: 2,
     flexDirection: 'row',
@@ -93,21 +86,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 20,
   },
-  iconContainerperson: {
-    // flex: 1,
-    // alignItems: 'flex-start',
-    // alignItems: "center",
-    justifyContent: 'center',
-    // // paddingRight: 20,
-    // backgroundColor: 'pink',
-
-    borderRadius: 40,
-    width: 40,
-    height: 40,
-    backgroundColor: '#D9E3E2',
-    alignItems: 'center',
-    marginRight: 20,
-  },
 
   iconContainerTop: {
     flex: 1,
@@ -125,11 +103,6 @@ const styles = StyleSheet.create({
   callIconContainer: {
     flex: 1,
     alignItems: 'flex-end',
-  },
-  initStyle: {
-    borderRadius: 30,
-    width: 60,
-    height: 60,
   },
   newtime: {
     color: '#25d366',
@@ -164,6 +137,26 @@ const styles = StyleSheet.create({
     backgroundColor: '#25d366',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  listItemContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+  },
+  iconContainerperson: {
+    justifyContent: 'center',
+    borderRadius: 20,
+    width: 40,
+    height: 40,
+    backgroundColor: '#D9E3E2',
+    alignItems: 'center',
+    marginRight: 20,
+  },
+  initStyle: {
+    borderRadius: 20,
+    width: 40,
+    height: 40,
   },
 });
 

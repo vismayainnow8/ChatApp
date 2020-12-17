@@ -21,6 +21,7 @@ import EmojiBoard from 'react-native-emoji-board';
 import {AttachModal} from '../../Components';
 import styles from '../ChatScene/style';
 import database from '@react-native-firebase/database';
+import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import moment from 'moment';
 import {useHeaderHeight} from '@react-navigation/stack';
@@ -43,11 +44,11 @@ const ChatScene = ({navigation, route}) => {
   const [showEmoji, setShowEmoji] = useState(false);
 
   const onClick = (emoji) => {
-    setWrittenMessage(writtenMessage?writtenMessage + emoji.code:emoji.code);
+    setWrittenMessage((writtenMessage ?? '') + emoji.code);
   };
 
   const backspace = () => {
-    setWrittenMessage( writtenMessage.slice(0, -1))
+    setWrittenMessage(writtenMessage.slice(0, -1));
   };
 
   const onInputFocus = () => {
@@ -106,22 +107,9 @@ const ChatScene = ({navigation, route}) => {
       uid: auth().currentUser.uid,
       chatId,
     });
-    database()
-      .ref('userChat')
-      .child(user.uid)
-      .child(chatId)
-      .update({
-        lastMessage: {
-          message: writtenMessage,
-          time: database.ServerValue.TIMESTAMP,
-          status: 0,
-          uid: auth().currentUser.uid,
-        },
-      });
-    database()
-      .ref('userChat')
-      .child(auth().currentUser.uid)
-      .child(chatId)
+    firestore()
+      .collection('Chats')
+      .doc(chatId)
       .update({
         lastMessage: {
           message: writtenMessage,
