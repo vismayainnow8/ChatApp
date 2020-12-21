@@ -56,8 +56,9 @@ export const ChatNode = ({
           {replyMessage && <ReplyMessage replyMessage={replyMessage} />}
           <View style={styles.messageContainer}>
             <Text style={styles.message}>{item.message}</Text>
+            <View style={styles.timePadder} />
             <Text style={styles.chatNodeTime}>
-              {moment(item.time).format('h:mm a')}
+              {moment(item.time).format('D MMM h:mm a')}
             </Text>
           </View>
         </View>
@@ -101,11 +102,20 @@ const styles = StyleSheet.create({
   },
   messageContainer: {
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingVertical: 7,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
   message: {},
+  timePadder: {
+    height: 14,
+    width: 100,
+  },
   chatNodeTime: {
-    alignSelf: 'flex-end',
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    padding: 9,
     color: '#777',
     fontSize: 10,
   },

@@ -72,7 +72,14 @@ const ChatScene = ({route}) => {
         const value = snapshot.val();
         let formatedValues = [];
         Object.keys(value ?? {}).forEach((item) => {
-          formatedValues.push({...value[item], id: item});
+          formatedValues.push({
+            ...value[item],
+            id: item,
+            displayName:
+              value[item].uid == auth().currentUser.uid
+                ? 'You'
+                : user.displayName ?? user.phoneNumber,
+          });
         });
         formatedValues.sort((a, b) => b.time - a.time);
         setMessages(formatedValues);

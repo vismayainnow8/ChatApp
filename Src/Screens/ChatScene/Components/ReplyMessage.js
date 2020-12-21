@@ -7,7 +7,7 @@ export const ReplyMessage = ({replyMessage, closeReply}) => {
     <View style={styles.replyContainer}>
       <View style={styles.replyHeader}>
         <Text style={styles.replyHeaderText} numberOfLines={1}>
-          {replyMessage.uid}
+          {replyMessage.displayName}
         </Text>
         {closeReply && (
           <Entypo
