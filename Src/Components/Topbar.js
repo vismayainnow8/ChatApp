@@ -1,125 +1,140 @@
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-// import { connect, useDispatch } from 'react-redux';
-import {
-  View,
-  StyleSheet,
-  Keyboard,
-  Text,
-  AsyncStorage,
-  Platform,
-} from 'react-native';
+import {View, StyleSheet, Image, Text} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Menu, {MenuItem} from 'react-native-material-menu';
+import {useRef} from 'react/cjs/react.development';
 import {colors} from '../Assets';
-// import { Navigation } from 'react-native-navigation';
-// import { LOGOUT } from '../StateManagement/Actions/types';
-// import { goToAuth } from '../Navigation';
-// import { Store } from '../StateManagement';
-import {Search} from './Search';
-// import { logoutApi } from '../Services/entry'
 
 export const Topbar = ({
   title,
   subtitle,
   noBack,
-  children,
-  componentId,
-  onSearch,
-  closingSearch,
-  ...props
+  moreMenus = [],
+  menus = [],
+  avatar = null,
+  showOverlayComponent,
+  OverlayComponent,
 }) => {
-  const onBack = () => {
-    Keyboard.dismiss();
-    // if (Platform.OS == 'ios') {
-    //         Navigation.popToRoot(componentId);
+  const {goBack} = useNavigation();
+  const menuRef = useRef();
 
-    // }
-    // else {
-    //         Navigation.pop(componentId)
-    // }
+  const onPressMoreMenuItem = (onPress) => {
+    onPress();
+    menuRef.current.hide();
   };
-  const logout = async () => {
-    Keyboard.dismiss();
-    // logoutApi().then(() => {
-    //         Store.dispatch({ type: LOGOUT })
-    //         goToAuth()
-    // })
-    await AsyncStorage.clear();
-  };
-  const search = onSearch ? (
-    <Search
-      onSearch={onSearch}
-      closingSearch={closingSearch}
-      initialSearchValue={props.initialSearchValue}
-    />
-  ) : null;
-  const padder = !onSearch && !title ? <View style={styles.padder} /> : null;
 
+  const showMenu = () => {
+    menuRef.current.show();
+  };
   return (
     <View style={styles.container}>
-      {/* <View style={{ justifyContent: "center" }}> */}
-      <Text style={styles.title}>{title}</Text>
-      {/* </View> */}
-      {search}
-      {padder}
-      {!!subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
-
       {!noBack && (
         <Feather
           name="arrow-left"
           color="white"
-          size={20}
-          onPress={onBack}
-          style={styles.backIcon}
+          size={25}
+          onPress={goBack}
+          style={styles.icons}
         />
       )}
-      <View style={styles.rightBtnContainer}>
-        <Feather
-          name="power"
-          color="white"
-          size={20}
-          onPress={logout}
-          style={styles.rightBtn}
-        />
+      {avatar !== null && <Avatar avatar={avatar} />}
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>{title}</Text>
+        {!!subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
       </View>
-      {children}
+      {menus.map((menu) => (
+        <menu.component
+          name={menu.icon}
+          color="white"
+          size={25}
+          onPress={menu.onPress}
+          style={styles.icons}
+        />
+      ))}
+      {Boolean(moreMenus.length) && (
+        <Menu
+          ref={menuRef}
+          button={
+            <Feather
+              name="more-vertical"
+              color="white"
+              size={25}
+              onPress={showMenu}
+              style={styles.icons}
+            />
+          }>
+          {moreMenus.map((menu) => (
+            <MenuItem onPress={() => onPressMoreMenuItem(menu.onPress)}>
+              {menu.title}
+            </MenuItem>
+          ))}
+        </Menu>
+      )}
+      {showOverlayComponent && (
+        <View style={styles.overlayComponent}>{OverlayComponent}</View>
+      )}
+    </View>
+  );
+};
+
+const Avatar = ({avatar}) => {
+  return (
+    <View style={styles.avatarContainer}>
+      {avatar == '' ? (
+        <MaterialIcons name="person" color="white" size={23} />
+      ) : (
+        <Image source={{uri: avatar}} style={styles.avatar} />
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#1ab394',
-    // backgroundColor: 'pink',
-    paddingVertical: 10,
-    paddingBottom: 15,
-    zIndex: 20,
+    height: 55,
+    backgroundColor: colors.themePrimary.dark,
+    flexDirection: 'row',
+  },
+  overlayComponent: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  icons: {
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+  },
+  titleContainer: {
+    flex: 1,
+    paddingHorizontal: 10,
+    justifyContent: 'center',
   },
   title: {
-    lineHeight: 20,
-    fontSize: 16,
-    fontWeight: 'bold',
-    alignSelf: 'center',
-    // paddingVertical: 10,
+    fontSize: 20,
+    padding: 0,
     color: 'white',
   },
   subtitle: {
     color: 'white',
-    lineHeight: 17,
+    padding: 0,
     fontSize: 11,
-    alignSelf: 'center',
-    marginTop: -10,
   },
-  backIcon: {
-    position: 'absolute',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+  avatarContainer: {
+    justifyContent: 'center',
+    borderRadius: 30,
+    width: 39,
+    height: 39,
+    marginVertical: 8,
+    backgroundColor: '#D9E3E2',
+    alignItems: 'center',
   },
-  rightBtnContainer: {
-    position: 'absolute',
-    right: 0,
-  },
-  rightBtn: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+  avatar: {
+    borderRadius: 30,
+    width: 39,
+    height: 39,
   },
 });

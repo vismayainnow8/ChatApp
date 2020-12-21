@@ -1,4 +1,5 @@
 import {StyleSheet} from 'react-native';
+import {colors} from '../../Assets';
 import {consts} from '../../Assets/Consts';
 
 const styles = StyleSheet.create({
@@ -8,6 +9,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    backgroundColor: colors.themePrimary.dark,
   },
   bottomContainer: {
     flexDirection: 'row',
@@ -101,6 +103,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
     elevation: 2,
+  },
+
+  icons: {
+    paddingVertical: 15,
+    paddingHorizontal: 10,
   },
 });
 

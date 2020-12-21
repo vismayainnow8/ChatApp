@@ -38,7 +38,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 
 import {TabView} from './homeTabs';
-import {appStackTopbar, signInStackTopbar} from './options';
+import {appStackTopbar, noTopBar, signInStackTopbar} from './options';
 
 const Stack = createStackNavigator();
 
@@ -124,7 +124,7 @@ export const AppStack = ({user}) => {
         <Stack.Screen
           name="ChatScene"
           component={ChatScene}
-          options={appStackTopbar('ChatScene')}
+          options={noTopBar}
         />
         <Stack.Screen name="Contacts" component={Contacts} />
         <Stack.Screen name="CallingScreen" component={CallingScreen} />

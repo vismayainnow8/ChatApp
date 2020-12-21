@@ -1,4 +1,4 @@
-import React, {useState, useRef, useLayoutEffect, useEffect} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   SafeAreaView,
   View,
@@ -12,13 +12,17 @@ import {
   LayoutAnimation,
 } from 'react-native';
 import EmojiBoard from 'react-native-emoji-board';
-import {AttachModal} from '../../Components';
+import {AttachModal, Topbar} from '../../Components';
 import styles from '../ChatScene/style';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Feather from 'react-native-vector-icons/Feather';
 import database from '@react-native-firebase/database';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {useHeaderHeight} from '@react-navigation/stack';
 import {ChatInput, ChatNode} from './Components';
+import {colors} from '../../Assets';
 
 if (
   Platform.OS === 'android' &&
@@ -27,14 +31,14 @@ if (
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-const ChatScene = ({navigation, route}) => {
+const ChatScene = ({route}) => {
   const headerHeight = useHeaderHeight();
   const {user, chatId} = route.params;
   const [messages, setMessages] = useState([]);
   const [selectedMessages, setSelectedMessages] = useState([]);
   const [replyMessage, setReplyMessage] = useState(null);
   const [writtenMessage, setWrittenMessage] = useState(null);
-  const [attachPressed, setAttachPressed] = useState(false);
+  const [attachPressed] = useState(false);
   const textRef = useRef(null);
   const [showEmoji, setShowEmoji] = useState(false);
 
@@ -54,15 +58,6 @@ const ChatScene = ({navigation, route}) => {
     }
     setShowEmoji(false);
   };
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerTitle: user.displayName ?? user.phoneNumber,
-      // headerRight: () => {
-      //   return <HeaderIcons />;
-      // },
-    });
-  }, []);
 
   useEffect(() => {
     return database()
@@ -158,8 +153,16 @@ const ChatScene = ({navigation, route}) => {
       setShowEmoji(false);
     }
   };
+
   const onChangeText = (text) => {
     setWrittenMessage(text);
+  };
+
+  const deleteSelected = () => {
+    selectedMessages.forEach((message) => {
+      database().ref('messages').child(message).remove();
+    });
+    setSelectedMessages([]);
   };
 
   return (
@@ -169,6 +172,31 @@ const ChatScene = ({navigation, route}) => {
         keyboardVerticalOffset={headerHeight}
         behavior={Platform.OS === 'ios' ? 'padding' : 'null'}>
         <StatusBar backgroundColor="#075e54" barStyle="light-content" />
+        <Topbar
+          title={user.displayName ?? user.phoneNumber}
+          avatar={user.photoURL}
+          moreMenus={[
+            {title: 'test', onPress: () => alert('test')},
+            {title: 'test2', onPress: () => alert('test2')},
+          ]}
+          showOverlayComponent={Boolean(selectedMessages.length)}
+          OverlayComponent={
+            <SelectedMessagesActions
+              closeActions={() => setSelectedMessages([])}
+              data={[
+                {
+                  icon: 'delete',
+                  onPress: deleteSelected,
+                  component: MaterialIcons,
+                },
+              ]}
+            />
+          }
+          menus={[
+            {icon: 'videocam', onPress: () => {}, component: Ionicons},
+            {icon: 'phone', onPress: () => {}, component: MaterialIcons},
+          ]}
+        />
         <ImageBackground
           source={require('../../Assets/chatBackground.png')}
           style={styles.image}>
@@ -215,3 +243,32 @@ const ChatScene = ({navigation, route}) => {
 };
 
 export default ChatScene;
+
+const SelectedMessagesActions = ({data, closeActions}) => {
+  return (
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: colors.themePrimary.light,
+        flexDirection: 'row',
+      }}>
+      <Feather
+        name="arrow-left"
+        color="white"
+        size={25}
+        onPress={closeActions}
+        style={styles.icons}
+      />
+      <View style={{flex: 1}} />
+      {data.map((item) => (
+        <item.component
+          name={item.icon}
+          color="white"
+          size={25}
+          onPress={item.onPress}
+          style={styles.icons}
+        />
+      ))}
+    </View>
+  );
+};
