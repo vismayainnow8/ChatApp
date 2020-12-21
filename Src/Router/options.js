@@ -15,3 +15,13 @@ export const signInStackTopbar = (headerTitle) => ({
   },
   headerTintColor: '#128c7e',
 });
+
+export const appStackTopbar = (headerTitle) => ({
+  headerTitle,
+  headerStyle: {
+    backgroundColor: '#075e54',
+    elevation: 0,
+  },
+  headerTitleAlign: 'left',
+  headerTintColor: 'white',
+});

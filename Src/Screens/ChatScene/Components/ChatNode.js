@@ -27,7 +27,9 @@ export const ChatNode = ({
     return (
       <Animated.View
         style={[styles.actionView, {transform: [{translateX: trans}]}]}>
-        <Entypo style={styles.reply} name={'reply'} size={22} color="white" />
+        <View style={styles.reply}>
+          <Entypo name={'reply'} size={22} color="white" />
+        </View>
       </Animated.View>
     );
   };

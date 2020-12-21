@@ -38,7 +38,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 
 import {TabView} from './homeTabs';
-import {signInStackTopbar} from './options';
+import {appStackTopbar, signInStackTopbar} from './options';
 
 const Stack = createStackNavigator();
 
@@ -87,12 +87,8 @@ export const AppStack = ({user}) => {
           name="WhatsApp"
           component={TabView}
           options={{
+            ...appStackTopbar('WhatsApp'),
             headerShown: !searchbarVisible,
-            headerStyle: {
-              backgroundColor: '#075e54',
-              elevation: 0,
-            },
-            headerTitleAlign: 'left',
             headerRight: () => (
               <HomeRightButtons openSearch={() => setSearchbarVisible(true)} />
             ),
@@ -125,7 +121,11 @@ export const AppStack = ({user}) => {
           component={RequestAccountInfo}
         />
         <Stack.Screen name="DeleteAccount" component={DeleteAccount} />
-        <Stack.Screen name="ChatScene" component={ChatScene} />
+        <Stack.Screen
+          name="ChatScene"
+          component={ChatScene}
+          options={appStackTopbar('ChatScene')}
+        />
         <Stack.Screen name="Contacts" component={Contacts} />
         <Stack.Screen name="CallingScreen" component={CallingScreen} />
         <Stack.Screen name="VideoCalling" component={VideoCalling} />

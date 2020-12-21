@@ -13,7 +13,7 @@ export const AppNavigation = () => {
       setUser(user);
       if (initializing) setInitializing(false);
     });
-    return subscriber; // unsubscribe on unmount
+    return subscriber;
   }, []);
 
   if (!user) {

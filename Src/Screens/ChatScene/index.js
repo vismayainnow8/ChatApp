@@ -36,7 +36,6 @@ const ChatScene = ({navigation, route}) => {
   const [writtenMessage, setWrittenMessage] = useState(null);
   const [attachPressed, setAttachPressed] = useState(false);
   const textRef = useRef(null);
-  const [textInputFocus, setTextInputFocus] = useState(false);
   const [showEmoji, setShowEmoji] = useState(false);
 
   const onClick = (emoji) => {
@@ -62,11 +61,6 @@ const ChatScene = ({navigation, route}) => {
       // headerRight: () => {
       //   return <HeaderIcons />;
       // },
-      headerStyle: {
-        backgroundColor: '#075e54',
-        elevation: 0,
-      },
-      headerTintColor: 'white',
     });
   }, []);
 
