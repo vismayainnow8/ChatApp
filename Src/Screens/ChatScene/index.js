@@ -106,9 +106,11 @@ const ChatScene = ({navigation, route}) => {
   };
 
   const renderItem = ({item}) => {
+    const replyMessage = messages.find((message) => message.id == item.replyTo);
     return (
       <ChatNode
         item={item}
+        replyMessage={replyMessage}
         onPress={() => onPressChatNode(item.id)}
         onLongPress={() => toggleSelect(item.id)}
         selected={selectedMessages.includes(item.id)}
@@ -122,13 +124,17 @@ const ChatScene = ({navigation, route}) => {
     if (!writtenMessage) {
       return;
     }
-    database().ref('messages').push({
+    let message = {
       message: writtenMessage,
       time: database.ServerValue.TIMESTAMP,
       status: 0,
       uid: auth().currentUser.uid,
       chatId,
-    });
+    };
+    if (replyMessage) {
+      message.replyTo = replyMessage.id;
+    }
+    database().ref('messages').push(message);
     firestore()
       .collection('Chats')
       .doc(chatId)
@@ -141,6 +147,7 @@ const ChatScene = ({navigation, route}) => {
         },
       });
     setWrittenMessage('');
+    setReplyMessage(null);
   };
 
   const keyboardIconPress = () => {

@@ -4,6 +4,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Swipable from 'react-native-gesture-handler/Swipeable';
 import auth from '@react-native-firebase/auth';
 import moment from 'moment';
+import {ReplyMessage} from './ReplyMessage';
 
 export const ChatNode = ({
   item,
@@ -12,6 +13,7 @@ export const ChatNode = ({
   selected,
   onReply,
   textRef,
+  replyMessage,
 }) => {
   const swipableRef = useRef();
   const isMine = item.uid == auth().currentUser.uid;
@@ -48,10 +50,14 @@ export const ChatNode = ({
         onLongPress={onLongPress}
         style={{backgroundColor: selected ? '#00BBFF30' : 'transparent'}}>
         <View style={[styles.chatNode, derivedContainerStyle]}>
-          <Text style={styles.title}>{item.message}</Text>
-          <Text style={styles.chatNodeTime}>
-            {moment(item.time).format('h:mm a')}
-          </Text>
+          {/* <Text style={styles.title}>{item.uid}</Text> */}
+          {replyMessage && <ReplyMessage replyMessage={replyMessage} />}
+          <View style={styles.messageContainer}>
+            <Text style={styles.message}>{item.message}</Text>
+            <Text style={styles.chatNodeTime}>
+              {moment(item.time).format('h:mm a')}
+            </Text>
+          </View>
         </View>
       </Pressable>
     </Swipable>
@@ -67,8 +73,6 @@ const styles = StyleSheet.create({
     maxWidth: '80%',
     marginVertical: 5,
     marginHorizontal: 15,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
     borderRadius: 5,
     shadowColor: '#000',
     shadowOffset: {
@@ -87,6 +91,17 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     backgroundColor: 'white',
   },
+  title: {
+    margin: 7,
+    marginBottom: 0,
+    fontWeight: 'bold',
+    color: 'red',
+  },
+  messageContainer: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  message: {},
   chatNodeTime: {
     alignSelf: 'flex-end',
     color: '#777',

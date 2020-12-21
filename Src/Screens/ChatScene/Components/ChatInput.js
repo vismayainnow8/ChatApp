@@ -1,14 +1,9 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+import {View, TextInput, TouchableOpacity, StyleSheet} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {ReplyMessage} from './ReplyMessage';
 
 export const ChatInput = ({
   keyboardIconPress,
@@ -26,23 +21,7 @@ export const ChatInput = ({
       <View
         style={[styles.inputContainer, replyMessage && styles.hasReplyMessage]}>
         {replyMessage && (
-          <View style={styles.replyContainer}>
-            <View style={styles.replyHeader}>
-              <Text style={styles.replyHeaderText} numberOfLines={1}>
-                {replyMessage.uid}
-              </Text>
-              <Entypo
-                onPress={closeReply}
-                style={styles.closeReply}
-                name={'cross'}
-                size={18}
-                color="grey"
-              />
-            </View>
-            <Text style={styles.replyMessage} numberOfLines={3}>
-              {replyMessage.message}
-            </Text>
-          </View>
+          <ReplyMessage replyMessage={replyMessage} closeReply={closeReply} />
         )}
         <View style={styles.textInputContainer}>
           <Entypo
@@ -87,7 +66,7 @@ export const ChatInput = ({
   );
 };
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   bottomContainer: {
     flexDirection: 'row',
     padding: 5,
@@ -109,33 +88,6 @@ const styles = StyleSheet.create({
   hasReplyMessage: {
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
-  },
-  replyContainer: {
-    borderLeftWidth: 3,
-    borderColor: 'red',
-    borderRadius: 3,
-    backgroundColor: '#f7f7f7',
-    margin: 7,
-    padding: 7,
-  },
-  replyHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  replyHeaderText: {
-    marginRight: 30,
-    fontWeight: 'bold',
-    color: 'red',
-  },
-  closeReply: {
-    position: 'absolute',
-    top: -15,
-    right: -15,
-    padding: 12,
-  },
-  replyMessage: {
-    fontSize: 12,
-    color: 'grey',
   },
   textInputContainer: {
     maxHeight: 150,
