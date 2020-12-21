@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {
   Text,
-  ScrollView,
   FlatList,
   Platform,
   PermissionsAndroid,
@@ -54,8 +53,9 @@ const Contacts = ({navigation}) => {
       );
       contactsMap.current = filteredContacts.reduce((prev, current) => {
         let newMap = current.phoneNumbers.reduce((newPrev, newCurrent) => {
-          if (newCurrent.number.replace(/[^0-9+]/g, '').length < 7)
+          if (newCurrent.number.replace(/[^0-9+]/g, '').length < 7) {
             return newPrev;
+          }
           return {
             ...newPrev,
             [newCurrent.number.replace(/[^0-9+]/g, '')]: current.displayName,
@@ -101,6 +101,7 @@ const Contacts = ({navigation}) => {
       item.uid > auth().currentUser.uid
         ? item.uid + '|' + auth().currentUser.uid
         : auth().currentUser.uid + '|' + item.uid;
+
     firestore()
       .collection('Chats')
       .where('type', '==', 'direct')
@@ -148,99 +149,108 @@ const Contacts = ({navigation}) => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <StatusBar backgroundColor="#075e54" barStyle="light-content" />
-      <ScrollView style={styles.mainContainer}>
-        <View style={styles.contentContainer}>
-          <View style={styles.listItemContainer}>
-            <View style={styles.iconContainer}>
-              <IconMaterialIcons
-                name="group"
-                color="white"
-                size={23}
-                style={styles.specialIcon}
-              />
-            </View>
-            <View style={styles.nameContainer}>
-              <Text>New Group</Text>
-              <View style={styles.dateContainer}>
-                <Text
-                  numberOfLines={1}
-                  style={{
-                    fontWeight: '400',
-                    color: '#666',
-                    fontSize: 12,
-                  }}
+      <FlatList
+        style={styles.mainContainer}
+        ListHeaderComponent={
+          <>
+            <View style={styles.listItemContainer}>
+              <View style={styles.iconContainer}>
+                <IconMaterialIcons
+                  name="group"
+                  color="white"
+                  size={23}
+                  style={styles.specialIcon}
                 />
               </View>
-            </View>
-          </View>
-          <View style={styles.listItemContainer}>
-            <View style={styles.iconContainer}>
-              <IconMaterialIcons
-                name="group"
-                color="white"
-                size={23}
-                style={styles.specialIcon}
-              />
-            </View>
-            <View style={styles.nameContainer}>
-              <Text>New Contact</Text>
-              <View style={styles.dateContainer}>
-                <Text
-                  numberOfLines={1}
-                  style={{
-                    fontWeight: '400',
-                    color: '#666',
-                    fontSize: 12,
-                  }}
-                />
+              <View style={styles.nameContainer}>
+                <Text>New Group</Text>
+                <View style={styles.dateContainer}>
+                  <Text
+                    numberOfLines={1}
+                    style={{
+                      fontWeight: '400',
+                      color: '#666',
+                      fontSize: 12,
+                    }}
+                  />
+                </View>
               </View>
             </View>
-          </View>
-
-          <FlatList
-            data={contacts}
-            renderItem={({item}) => (
-              <Item
-                displayName={item.displayName}
-                photoURL={item.photoURL}
-                phoneNumber={item.phoneNumber}
-                onPress={() => openChat(item)}
-              />
-            )}
-            keyExtractor={(item) => item.uid}
-            ListFooterComponent={<ListFooterLoader loading={loading} />}
+            <View style={styles.listItemContainer}>
+              <View style={styles.iconContainer}>
+                <IconMaterialIcons
+                  name="group"
+                  color="white"
+                  size={23}
+                  style={styles.specialIcon}
+                />
+              </View>
+              <View style={styles.nameContainer}>
+                <Text>New Contact</Text>
+                <View style={styles.dateContainer}>
+                  <Text
+                    numberOfLines={1}
+                    style={{
+                      fontWeight: '400',
+                      color: '#666',
+                      fontSize: 12,
+                    }}
+                  />
+                </View>
+              </View>
+            </View>
+          </>
+        }
+        data={contacts}
+        renderItem={({item}) => (
+          <Item
+            displayName={item.displayName}
+            photoURL={item.photoURL}
+            phoneNumber={item.phoneNumber}
+            onPress={() => openChat(item)}
           />
-          <View style={styles.listItemContainer}>
-            <View style={styles.iconContainerWoColor}>
-              <Icon name="share" color="grey" size={23} style={{padding: 5}} />
-            </View>
-            <View style={styles.callerDetailsContainer}>
-              <View style={styles.callerDetailsContainerWrap}>
-                <View style={styles.nameContainer}>
-                  <Text>Invite friends</Text>
+        )}
+        keyExtractor={(item) => item.uid}
+        ListFooterComponent={
+          <>
+            <ListFooterLoader loading={loading} />
+            <View style={styles.listItemContainer}>
+              <View style={styles.iconContainerWoColor}>
+                <Icon
+                  name="share"
+                  color="grey"
+                  size={23}
+                  style={{padding: 5}}
+                />
+              </View>
+              <View style={styles.callerDetailsContainer}>
+                <View style={styles.callerDetailsContainerWrap}>
+                  <View style={styles.nameContainer}>
+                    <Text>Invite friends</Text>
+                  </View>
                 </View>
               </View>
             </View>
-          </View>
-          <View style={styles.listItemContainer}>
-            <View style={styles.iconContainerWoColor}>
-              <IconAntDesign
-                name="questioncircle"
-                color="grey"
-                size={23}
-                style={{padding: 5}}
-              />
-            </View>
-            <View style={styles.callerDetailsContainer}>
-              <View style={styles.callerDetailsContainerWrap}>
-                <View style={styles.nameContainer}>
-                  <Text>Contacts help</Text>
+            <View style={styles.listItemContainer}>
+              <View style={styles.iconContainerWoColor}>
+                <IconAntDesign
+                  name="questioncircle"
+                  color="grey"
+                  size={23}
+                  style={{padding: 5}}
+                />
+              </View>
+              <View style={styles.callerDetailsContainer}>
+                <View style={styles.callerDetailsContainerWrap}>
+                  <View style={styles.nameContainer}>
+                    <Text>Contacts help</Text>
+                  </View>
                 </View>
               </View>
             </View>
-          </View>
-        </View>
-      </ScrollView>
+          </>
+        }
+      />
     </SafeAreaView>
   );
 };

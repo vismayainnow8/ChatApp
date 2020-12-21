@@ -2,7 +2,6 @@ import 'react-native-gesture-handler';
 import {consts} from '../Assets/Consts';
 import React, {useState} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import auth from '@react-native-firebase/auth';
 import {
   View,
   TextInput,
@@ -174,7 +173,6 @@ const SearchBar = ({visible, closeSearch}) => {
           <TextInput
             placeholder="Search..."
             style={{
-              //   backgroundColor: 'yellow',
               width: consts.ScreenWidth / 1.35,
             }}
           />

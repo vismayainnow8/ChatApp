@@ -2,29 +2,23 @@ import React, {useState, useRef, useLayoutEffect, useEffect} from 'react';
 import {
   SafeAreaView,
   View,
-  Text,
-  TextInput,
   Keyboard,
   Platform,
   FlatList,
   ImageBackground,
   StatusBar,
-  TouchableOpacity,
   KeyboardAvoidingView,
   UIManager,
   LayoutAnimation,
 } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import Entypo from 'react-native-vector-icons/Entypo';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import EmojiBoard from 'react-native-emoji-board';
 import {AttachModal} from '../../Components';
 import styles from '../ChatScene/style';
 import database from '@react-native-firebase/database';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import moment from 'moment';
 import {useHeaderHeight} from '@react-navigation/stack';
+import {ChatInput, ChatNode} from './Components';
 
 if (
   Platform.OS === 'android' &&
@@ -37,6 +31,8 @@ const ChatScene = ({navigation, route}) => {
   const headerHeight = useHeaderHeight();
   const {user, chatId} = route.params;
   const [messages, setMessages] = useState([]);
+  const [selectedMessages, setSelectedMessages] = useState([]);
+  const [replyMessage, setReplyMessage] = useState(null);
   const [writtenMessage, setWrittenMessage] = useState(null);
   const [attachPressed, setAttachPressed] = useState(false);
   const textRef = useRef(null);
@@ -94,12 +90,38 @@ const ChatScene = ({navigation, route}) => {
       });
   }, []);
 
+  const toggleSelect = (id) => {
+    const index = selectedMessages.indexOf(id);
+    if (index > -1) {
+      setSelectedMessages(selectedMessages.filter((item) => item !== id));
+    } else {
+      setSelectedMessages([...selectedMessages, id]);
+    }
+  };
+
+  const onPressChatNode = (id) => {
+    if (selectedMessages.length) {
+      return toggleSelect(id);
+    }
+  };
+
   const renderItem = ({item}) => {
-    return <ChatNode item={item} />;
+    return (
+      <ChatNode
+        item={item}
+        onPress={() => onPressChatNode(item.id)}
+        onLongPress={() => toggleSelect(item.id)}
+        selected={selectedMessages.includes(item.id)}
+        onReply={() => setReplyMessage(item)}
+        textRef={textRef}
+      />
+    );
   };
 
   const sendMessage = () => {
-    if (!writtenMessage) return;
+    if (!writtenMessage) {
+      return;
+    }
     database().ref('messages').push({
       message: writtenMessage,
       time: database.ServerValue.TIMESTAMP,
@@ -140,9 +162,9 @@ const ChatScene = ({navigation, route}) => {
   };
 
   return (
-    <SafeAreaView style={styles.scrollViewContainer}>
+    <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
-        style={styles.scrollViewContainer}
+        style={styles.container}
         keyboardVerticalOffset={headerHeight}
         behavior={Platform.OS === 'ios' ? 'padding' : 'null'}>
         <StatusBar backgroundColor="#075e54" barStyle="light-content" />
@@ -162,57 +184,17 @@ const ChatScene = ({navigation, route}) => {
           {attachPressed ? (
             <AttachModal setModalVisible={attachPressed} />
           ) : null}
-          <View style={styles.bottomContainer}>
-            <View style={styles.textinputContainer}>
-              <Entypo
-                onPress={() => keyboardIconPress()}
-                style={styles.emoji}
-                name={showEmoji ? 'keyboard' : 'emoji-happy'}
-                size={28}
-                color="grey"
-              />
-              <TextInput
-                placeholder="Type a message ...."
-                style={styles.textinput}
-                onChangeText={(text) => onChangeText(text)}
-                placeholderStyle={{fontSize: 20}}
-                ref={textRef}
-                value={writtenMessage}
-                onFocus={onInputFocus}
-                multiline
-              />
-
-              {/* <TouchableOpacity
-              style={styles.attach}
-              onPress={() => attachOnPress()}>
-              <FontAwesome
-              name="paperclip"
-              size={consts.textSizes(23)}
-              color="grey"
-              />
-              </TouchableOpacity>
-              <View style={styles.camera}>
-              <FontAwesome
-              name="camera"
-              size={consts.textSizes(20)}
-              color="grey"
-              />
-            </View> */}
-            </View>
-            <TouchableOpacity
-              style={styles.sendContainer}
-              onPress={() => sendMessage()}>
-              <Ionicons
-                name="send"
-                size={24}
-                color="white"
-                style={{
-                  height: 24,
-                  width: 24,
-                }}
-              />
-            </TouchableOpacity>
-          </View>
+          <ChatInput
+            keyboardIconPress={keyboardIconPress}
+            showEmoji={showEmoji}
+            onChangeText={onChangeText}
+            textRef={textRef}
+            writtenMessage={writtenMessage}
+            onInputFocus={onInputFocus}
+            sendMessage={sendMessage}
+            replyMessage={replyMessage}
+            closeReply={() => setReplyMessage(null)}
+          />
         </ImageBackground>
         <EmojiBoard
           showBoard={showEmoji}
@@ -232,26 +214,3 @@ const ChatScene = ({navigation, route}) => {
 };
 
 export default ChatScene;
-
-const ChatNode = ({item, onPress}) => {
-  const isMine = item.uid == auth().currentUser.uid;
-  const derivedContainerStyle = isMine
-    ? {
-        alignSelf: 'flex-end',
-        backgroundColor: '#dcf8c6',
-      }
-    : {
-        alignSelf: 'flex-start',
-        backgroundColor: 'white',
-      };
-  return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={[styles.chatNode, derivedContainerStyle]}>
-      <Text style={styles.title}>{item.message}</Text>
-      <Text style={styles.chatNodeTime}>
-        {moment(item.time).format('h:mm a')}
-      </Text>
-    </TouchableOpacity>
-  );
-};

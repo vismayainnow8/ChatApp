@@ -5,7 +5,6 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     backgroundColor: '#F5FCFF',
-    height: consts.ScreenWidth * 0.024,
   },
   callerDetailsContainer: {
     flex: 4,
