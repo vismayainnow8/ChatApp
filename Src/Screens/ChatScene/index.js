@@ -172,6 +172,29 @@ const ChatScene = ({route}) => {
     setSelectedMessages([]);
   };
 
+  const replySelected = () => {
+    const [id] = selectedMessages;
+    const replyMessage = messages.find((message) => message.id == id);
+    setReplyMessage(replyMessage);
+  };
+
+  const selectedMessagesActionsData = () => {
+    let data = [];
+    if (selectedMessages.length == 1) {
+      data.push({
+        icon: 'reply',
+        onPress: replySelected,
+        component: MaterialIcons,
+      });
+    }
+    data.push({
+      icon: 'delete',
+      onPress: deleteSelected,
+      component: MaterialIcons,
+    });
+    return data;
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
@@ -190,13 +213,7 @@ const ChatScene = ({route}) => {
           OverlayComponent={
             <SelectedMessagesActions
               closeActions={() => setSelectedMessages([])}
-              data={[
-                {
-                  icon: 'delete',
-                  onPress: deleteSelected,
-                  component: MaterialIcons,
-                },
-              ]}
+              data={selectedMessagesActionsData()}
             />
           }
           menus={[
