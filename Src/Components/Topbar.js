@@ -46,6 +46,7 @@ export const Topbar = ({
       </View>
       {menus.map((menu) => (
         <menu.component
+          key={menu.icon}
           name={menu.icon}
           color="white"
           size={25}
@@ -66,7 +67,9 @@ export const Topbar = ({
             />
           }>
           {moreMenus.map((menu) => (
-            <MenuItem onPress={() => onPressMoreMenuItem(menu.onPress)}>
+            <MenuItem
+              key={menu.title}
+              onPress={() => onPressMoreMenuItem(menu.onPress)}>
               {menu.title}
             </MenuItem>
           ))}

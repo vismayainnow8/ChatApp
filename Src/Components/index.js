@@ -6,3 +6,4 @@ export {SmallButton} from './SmallButton';
 export {AttachModal} from './AttachModal';
 export {Search} from './Search';
 export {Topbar} from './Topbar';
+export {Screen} from './Screen';

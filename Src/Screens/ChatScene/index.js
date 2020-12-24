@@ -1,18 +1,6 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {
-  SafeAreaView,
-  View,
-  Keyboard,
-  Platform,
-  FlatList,
-  ImageBackground,
-  StatusBar,
-  KeyboardAvoidingView,
-  UIManager,
-  LayoutAnimation,
-} from 'react-native';
-import EmojiBoard from 'react-native-emoji-board';
-import {AttachModal, Topbar} from '../../Components';
+import {View, FlatList, ImageBackground} from 'react-native';
+import {Screen, Topbar} from '../../Components';
 import styles from '../ChatScene/style';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -20,44 +8,15 @@ import Feather from 'react-native-vector-icons/Feather';
 import database from '@react-native-firebase/database';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import {useHeaderHeight} from '@react-navigation/stack';
 import {ChatInput, ChatNode} from './Components';
 import {colors} from '../../Assets';
 
-if (
-  Platform.OS === 'android' &&
-  UIManager.setLayoutAnimationEnabledExperimental
-) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
-
 const ChatScene = ({route}) => {
-  const headerHeight = useHeaderHeight();
   const {user, chatId} = route.params;
   const [messages, setMessages] = useState([]);
   const [selectedMessages, setSelectedMessages] = useState([]);
   const [replyMessage, setReplyMessage] = useState(null);
-  const [writtenMessage, setWrittenMessage] = useState(null);
-  const [attachPressed] = useState(false);
   const textRef = useRef(null);
-  const [showEmoji, setShowEmoji] = useState(false);
-
-  const onClick = (emoji) => {
-    setWrittenMessage((writtenMessage ?? '') + emoji.code);
-  };
-
-  const backspace = () => {
-    setWrittenMessage(writtenMessage.slice(0, -1));
-  };
-
-  const onInputFocus = () => {
-    if (Platform.OS == 'android') {
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    } else {
-      Keyboard.scheduleLayoutAnimation(LayoutAnimation.Presets.easeInEaseOut);
-    }
-    setShowEmoji(false);
-  };
 
   useEffect(() => {
     return database()
@@ -101,68 +60,13 @@ const ChatScene = ({route}) => {
     }
   };
 
-  const renderItem = ({item}) => {
-    const replyMessage = messages.find((message) => message.id == item.replyTo);
-    return (
-      <ChatNode
-        item={item}
-        replyMessage={replyMessage}
-        onPress={() => onPressChatNode(item.id)}
-        onLongPress={() => toggleSelect(item.id)}
-        selected={selectedMessages.includes(item.id)}
-        onReply={() => setReplyMessage(item)}
-        textRef={textRef}
-      />
-    );
-  };
-
-  const sendMessage = () => {
-    if (!writtenMessage) {
-      return;
-    }
-    let message = {
-      message: writtenMessage,
-      time: database.ServerValue.TIMESTAMP,
-      status: 0,
-      uid: auth().currentUser.uid,
-      chatId,
-    };
-    if (replyMessage) {
-      message.replyTo = replyMessage.id;
-    }
+  const sendMessage = (message) => {
+    message.chatId = chatId;
     database().ref('messages').push(message);
-    firestore()
-      .collection('Chats')
-      .doc(chatId)
-      .update({
-        lastMessage: {
-          message: writtenMessage,
-          time: database.ServerValue.TIMESTAMP,
-          status: 0,
-          uid: auth().currentUser.uid,
-        },
-      });
-    setWrittenMessage('');
+    firestore().collection('Chats').doc(chatId).update({
+      lastMessage: message,
+    });
     setReplyMessage(null);
-  };
-
-  const keyboardIconPress = () => {
-    if (Platform.OS == 'android') {
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    } else {
-      Keyboard.scheduleLayoutAnimation(LayoutAnimation.Presets.easeInEaseOut);
-    }
-    if (!showEmoji) {
-      Keyboard.dismiss();
-      setShowEmoji(true);
-    } else {
-      textRef.current.focus();
-      setShowEmoji(false);
-    }
-  };
-
-  const onChangeText = (text) => {
-    setWrittenMessage(text);
   };
 
   const deleteSelected = () => {
@@ -195,74 +99,63 @@ const ChatScene = ({route}) => {
     return data;
   };
 
+  const topbarMoreMenus = [
+    {title: 'test', onPress: () => alert('test')},
+    {title: 'test2', onPress: () => alert('test2')},
+  ];
+  const topbarMenus = [
+    {icon: 'videocam', onPress: () => {}, component: Ionicons},
+    {icon: 'phone', onPress: () => {}, component: MaterialIcons},
+  ];
+
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        style={styles.container}
-        keyboardVerticalOffset={headerHeight}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'null'}>
-        <StatusBar backgroundColor="#075e54" barStyle="light-content" />
-        <Topbar
-          title={user.displayName ?? user.phoneNumber}
-          avatar={user.photoURL}
-          moreMenus={[
-            {title: 'test', onPress: () => alert('test')},
-            {title: 'test2', onPress: () => alert('test2')},
-          ]}
-          showOverlayComponent={Boolean(selectedMessages.length)}
-          OverlayComponent={
-            <SelectedMessagesActions
-              closeActions={() => setSelectedMessages([])}
-              data={selectedMessagesActionsData()}
-            />
-          }
-          menus={[
-            {icon: 'videocam', onPress: () => {}, component: Ionicons},
-            {icon: 'phone', onPress: () => {}, component: MaterialIcons},
-          ]}
-        />
-        <ImageBackground
-          source={require('../../Assets/chatBackground.png')}
-          style={styles.image}>
-          <View style={{flex: 1}}>
-            <FlatList
-              style={{flexGrow: 0}}
-              keyboardShouldPersistTaps="handled"
-              inverted={true}
-              data={messages}
-              renderItem={renderItem}
-              keyExtractor={(item) => item.id}
-            />
-          </View>
-          {attachPressed ? (
-            <AttachModal setModalVisible={attachPressed} />
-          ) : null}
-          <ChatInput
-            keyboardIconPress={keyboardIconPress}
-            showEmoji={showEmoji}
-            onChangeText={onChangeText}
-            textRef={textRef}
-            writtenMessage={writtenMessage}
-            onInputFocus={onInputFocus}
-            sendMessage={sendMessage}
-            replyMessage={replyMessage}
-            closeReply={() => setReplyMessage(null)}
+    <Screen>
+      <Topbar
+        title={user.displayName ?? user.phoneNumber}
+        avatar={user.photoURL}
+        moreMenus={topbarMoreMenus}
+        showOverlayComponent={Boolean(selectedMessages.length)}
+        OverlayComponent={
+          <SelectedMessagesActions
+            closeActions={() => setSelectedMessages([])}
+            data={selectedMessagesActionsData()}
           />
-        </ImageBackground>
-        <EmojiBoard
-          showBoard={showEmoji}
-          tabBarPosition="top"
-          onClick={onClick}
-          categoryIconSize={22}
-          containerStyle={{
-            height: showEmoji ? 300 : 0,
-            backgroundColor: 'white',
-            position: 'relative',
-          }}
-          onRemove={backspace}
+        }
+        menus={topbarMenus}
+      />
+      <ImageBackground
+        source={require('../../Assets/chatBackground.png')}
+        style={styles.image}>
+        <View style={{flex: 1}}>
+          <FlatList
+            style={{flexGrow: 0}}
+            keyboardShouldPersistTaps="handled"
+            inverted={true}
+            data={messages}
+            renderItem={({item}) => (
+              <ChatNode
+                item={item}
+                replyMessage={messages.find(
+                  (message) => message.id == item.replyTo,
+                )}
+                onPress={() => onPressChatNode(item.id)}
+                onLongPress={() => toggleSelect(item.id)}
+                selected={selectedMessages.includes(item.id)}
+                onReply={() => setReplyMessage(item)}
+                textRef={textRef}
+              />
+            )}
+            keyExtractor={(item) => item.id}
+          />
+        </View>
+        <ChatInput
+          textRef={textRef}
+          sendMessage={sendMessage}
+          replyMessage={replyMessage}
+          closeReply={() => setReplyMessage(null)}
         />
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      </ImageBackground>
+    </Screen>
   );
 };
 
