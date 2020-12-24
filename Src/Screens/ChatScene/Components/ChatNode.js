@@ -1,10 +1,11 @@
 import React, {useRef} from 'react';
-import {View, Text, Animated, Pressable, StyleSheet} from 'react-native';
+import {View, Text, Animated, Pressable, StyleSheet, Image} from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Swipable from 'react-native-gesture-handler/Swipeable';
 import auth from '@react-native-firebase/auth';
 import moment from 'moment';
 import {ReplyMessage} from './ReplyMessage';
+import {consts} from '../../../Assets';
 
 export const ChatNode = ({
   item,
@@ -54,6 +55,9 @@ export const ChatNode = ({
         <View style={[styles.chatNode, derivedContainerStyle]}>
           {/* <Text style={styles.title}>{item.uid}</Text> */}
           {replyMessage && <ReplyMessage replyMessage={replyMessage} />}
+          {item.media && (
+            <Image style={styles.image} source={{uri: item.media}} />
+          )}
           <View style={styles.messageContainer}>
             <Text style={styles.message}>{item.message}</Text>
             <View style={styles.timePadder} />
@@ -99,6 +103,12 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     fontWeight: 'bold',
     color: 'red',
+  },
+  image: {
+    width: consts.ScreenWidth * 0.8 - 14,
+    aspectRatio: 1,
+    margin: 7,
+    marginBottom: 0,
   },
   messageContainer: {
     paddingHorizontal: 10,

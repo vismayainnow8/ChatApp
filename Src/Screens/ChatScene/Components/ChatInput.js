@@ -18,8 +18,11 @@ import IconMaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import EmojiBoard from 'react-native-emoji-board';
 import {ReplyMessage} from './ReplyMessage';
 import database from '@react-native-firebase/database';
+import storage from '@react-native-firebase/storage';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import auth from '@react-native-firebase/auth';
+import {v4 as uuidv4} from 'uuid';
+import {Circle, Bar, CircleSnail} from 'react-native-progress';
 
 const inputTypes = {
   none: 'none',
@@ -64,7 +67,7 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
     ImageCropPicker.openPicker({
       compressImageMaxWidth: 500,
       compressImageMaxHeight: 500,
-      mediaType: 'video',
+      mediaType: 'image',
       cropping: true,
       multiple: true,
     })
@@ -77,7 +80,7 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
     ImageCropPicker.openCamera({
       compressImageMaxWidth: 500,
       compressImageMaxHeight: 500,
-      mediaType: 'video',
+      mediaType: 'image',
       cropping: true,
     })
       .then((image) => setMedias([{...image}]))
@@ -106,6 +109,7 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
         writtenMessage={writtenMessage}
         setWrittenMessage={setWrittenMessage}
         medias={medias}
+        setMedias={setMedias}
         showMenu={showMenu}
       />
       <EmojiBoard
@@ -153,7 +157,9 @@ export const Input = ({
   setWrittenMessage,
   showMenu,
   medias,
+  setMedias,
 }) => {
+  const [loading, setLoading] = useState(false);
   const keyboardIconPress = () => {
     if (Platform.OS == 'android') {
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -178,15 +184,36 @@ export const Input = ({
     }
   };
 
-  const onPressSend = () => {
-    if (!writtenMessage) {
+  const onPressSend = async () => {
+    if (!writtenMessage && !medias?.length) {
       return;
     }
     let message = {
-      message: writtenMessage,
+      message: writtenMessage ?? undefined,
     };
-    sendMessage(message);
-    setWrittenMessage('');
+    if (medias[0]?.path) {
+      const imageStorageRef = storage().ref(
+        'images/attachments/' + uuidv4() + '.jpeg',
+      );
+      const task = imageStorageRef.putFile(medias[0].path);
+      setLoading(0.01);
+      setWrittenMessage('');
+      setMedias([]);
+      task.on('state_changed', (taskSnapshot) => {
+        const fraction =
+          taskSnapshot.bytesTransferred / taskSnapshot.totalBytes;
+        setLoading(fraction > 0 ? fraction : 0.01);
+      });
+
+      task.then(async () => {
+        const url = await imageStorageRef.getDownloadURL();
+        message.media = url;
+        sendMessage(message);
+        setLoading(false);
+      });
+    } else {
+      sendMessage(message);
+    }
   };
 
   return (
@@ -235,16 +262,20 @@ export const Input = ({
           </View>
         </View>
       </View>
-      <TouchableOpacity style={styles.sendContainer} onPress={onPressSend}>
-        <Ionicons
-          name="send"
-          size={24}
-          color="white"
-          style={{
-            height: 24,
-            width: 24,
-          }}
-        />
+      <TouchableOpacity style={styles.sendContainer}>
+        {loading ? (
+          <Circle progress={loading} size={48} color="white">
+            <Text style={styles.percentage}>{Math.ceil(loading * 100)}%</Text>
+          </Circle>
+        ) : (
+          <Ionicons
+            name="send"
+            size={24}
+            color="white"
+            onPress={onPressSend}
+            style={styles.sendIcon}
+          />
+        )}
       </TouchableOpacity>
     </View>
   );
@@ -291,12 +322,10 @@ export const styles = StyleSheet.create({
   sendContainer: {
     alignSelf: 'flex-end',
     backgroundColor: '#128c7e',
-    paddingVertical: 12,
     borderRadius: 25,
-    paddingLeft: 15,
-    paddingRight: 9,
     marginLeft: 5,
     height: 48,
+    width: 48,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -305,6 +334,23 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
     elevation: 2,
+  },
+  sendIcon: {
+    marginVertical: 12,
+    marginLeft: 15,
+    marginRight: 9,
+    height: 24,
+    width: 24,
+  },
+  percentage: {
+    position: 'absolute',
+    fontSize: 14,
+    paddingVertical: 10,
+    marginVertical: 7,
+    textAlign: 'center',
+    width: 48,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
   },
 
   modalView: {
