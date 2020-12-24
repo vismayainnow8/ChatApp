@@ -15,47 +15,52 @@ import {connect} from 'react-redux';
 import IconFontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {consts} from '../../Assets/Consts';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
+// import StoryImages from "react-native-stories";
 import {useNavigation} from '@react-navigation/native';
 
 import styles from './styles';
-const DATA = [
-  {
-    id: 1,
-    first_name: 'Glenn',
-    mobile: true,
-    message: 'Hey there! I am using WhatsApp',
-    date: '22-Mar-2016',
-    time: '5:46 PM',
-    image: 'https://randomuser.me/api/portraits/men/1.jpg',
-    number: 1,
-  },
-  {
-    id: 2,
-    first_name: 'Carl',
-    mobile: false,
-    message: 'Do you smell what the rock is cooking?',
-    date: '22-Feb-2016',
-    time: '09:38 PM',
-    image: 'https://randomuser.me/api/portraits/women/37.jpg',
-    number: 2,
-  },
-  {
-    id: 3,
-    first_name: 'Rick',
-    mobile: true,
-    message: "Hello there it's been a while. Not much",
-    date: '01-Jul-2016',
-    time: '1:33 PM',
-    image: 'https://randomuser.me/api/portraits/women/13.jpg',
-    number: 3,
-  },
-];
+import PROFILE from '../../Assets/welcomeImage.jpg';
+import BACK from '../../Assets/chatBackground.png';
+// import BACK from './images/back.png';
+
+
+
 
 const Status = (props) => {
   const [loaded, setLoaded] = useState(false);
   const navigation = useNavigation();
-
+  const DATA = [
+    {
+      id: 1,
+      first_name: 'Glenn',
+      mobile: true,
+      message: 'Hey there! I am using WhatsApp',
+      date: '22-Mar-2016',
+      time: '5:46 PM',
+      image: 'https://randomuser.me/api/portraits/men/1.jpg',
+      number: 1,
+    },
+    {
+      id: 2,
+      first_name: 'Carl',
+      mobile: false,
+      message: 'Do you smell what the rock is cooking?',
+      date: '22-Feb-2016',
+      time: '09:38 PM',
+      image: 'https://randomuser.me/api/portraits/women/37.jpg',
+      number: 2,
+    },
+    {
+      id: 3,
+      first_name: 'Rick',
+      mobile: true,
+      message: "Hello there it's been a while. Not much",
+      date: '01-Jul-2016',
+      time: '1:33 PM',
+      image: 'https://randomuser.me/api/portraits/women/13.jpg',
+      number: 3,
+    },
+  ];
   useLayoutEffect(() => {
     navigation.setOptions({
       tabStyle: {width: 100},
@@ -71,6 +76,8 @@ const Status = (props) => {
     <TouchableOpacity
       style={styles.listItemContainer}
       // onPress={() => onPressed(item.first_name)}
+      onPress={() => navigation.navigate('ViewStatus')}
+
     >
       <View style={styles.iconContainer}>
         <Image
@@ -115,10 +122,18 @@ const Status = (props) => {
     );
   }
 
+  
   return (
-    <View style={styles.mainContainer}>
+    <ScrollView style={styles.mainContainer}>
       <StatusBar backgroundColor="#075e54" barStyle="light-content" />
-      <TouchableOpacity style={styles.listItemContainer} onPress={()=>navigation.navigate('Camera')}>
+     
+        {/* <StoryImages
+      images={images || []}
+      color='red'
+    /> */}
+      <TouchableOpacity style={styles.listItemContainer}
+     onPress={() => navigation.navigate('Camera')}
+     >
         <View style={styles.iconContainer} >
           <Image
             source={{
@@ -179,14 +194,14 @@ const Status = (props) => {
           style={{padding: 5}}
         />
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    textInput: state.textInput.textInput,
-  };
-};
+// const mapStateToProps = (state) => {
+//   return {
+//     textInput: state.textInput.textInput,
+//   };
+// };
 
-export default connect(mapStateToProps, null)(Status);
+export default Status;

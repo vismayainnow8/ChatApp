@@ -37,7 +37,7 @@ let cameraRef
       // cameraRef.pausePreview()
       const options = { quality: 0.5, base64: true };
       const data = await cameraRef.takePictureAsync(options);
-      console.log('data.uri',data.uri);
+      console.log('datasssssssss',data);
       setData(data.uri)
       navigation.navigate('ImagePreview', {cameraImageUri:data.uri})
       // return <ImagePreview />;
@@ -67,7 +67,7 @@ let cameraRef
         buttonNegative: 'Cancel',
       }}
       onGoogleVisionBarcodesDetected={({ barcodes }) => {
-        console.log('barcodes',barcodes);
+        // console.log('barcodes',barcodes);
       }}
     />
     <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
