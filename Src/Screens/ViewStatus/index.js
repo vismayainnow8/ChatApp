@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-// import React from "react";
+import {connect} from 'react-redux';
 import { View, Text,StatusBar } from "react-native";
 import {StoryContainer, ProgressBar} from '../../Components/Story';
 
@@ -7,8 +7,7 @@ const ViewStatus = (props) => {
   // const [images, setImages] = useState([]);
 
   useEffect(() => {
-    console.log('imagesviewstatus', props);
-    // alert(props.textInput);
+    console.log('imagesviewstatus', props.imageUriArray);
   });
         const images = [
                 'https://s3.ap-south-1.amazonaws.com/hsdreams1/pins/2019/01/big/7d1e5e0b31a650b9314023921b9e161b.jpeg',
@@ -34,4 +33,13 @@ const ViewStatus = (props) => {
   );
 };
 
-export default ViewStatus;
+const mapStateToProps = (state,props) => {
+
+  return {
+    imageUri: state.imageUri.imageUri,
+    imageUriArray: state.imageUri.imageUriArray,
+    ...props
+  };
+};
+
+export default connect(mapStateToProps, null)(ViewStatus);

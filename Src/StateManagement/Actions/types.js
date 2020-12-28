@@ -7,3 +7,4 @@ export const COUNTRYCODE = 'countryCode';
 export const USER = 'user';
 export const CHATID = 'chatId';
 export const IMAGEURI = 'imageUri';
+export const IMAGEURIARRAY = 'imageUriArray';

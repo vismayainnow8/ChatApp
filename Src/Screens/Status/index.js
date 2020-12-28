@@ -15,13 +15,11 @@ import {connect} from 'react-redux';
 import IconFontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {consts} from '../../Assets/Consts';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-// import StoryImages from "react-native-stories";
 import {useNavigation} from '@react-navigation/native';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import styles from './styles';
 import PROFILE from '../../Assets/welcomeImage.jpg';
 import BACK from '../../Assets/chatBackground.png';
-// import BACK from './images/back.png';
 
 
 
@@ -30,13 +28,9 @@ const Status = (props) => {
   const [loaded, setLoaded] = useState(false);
   const [imageCaptured, setImageCaptured] = useState(null);
   const [imageArray, setImageArray] = useState(null);
-  // const [cameraImageUri, setcameraImageUri] = useState(route.params.cameraImageUri);
   const navigation = useNavigation();
   
-  useEffect(() => {
-    console.log('hi',props.imageUri)
-  });
-
+  
   const DATA = [
     {
       id: 1,
@@ -76,12 +70,14 @@ const Status = (props) => {
   });
 
   const onPressStatus = () => {
-    // if (cameraImageUri) {
-    //   alert(cameraImageUri)
-    // }
-    // else {/
+    if (props.imageUri != null) {
+      navigation.navigate('ViewStatus')
+    }
+    else {
       openCamera()
-    // }
+    
+    }
+  
   }
 
 
@@ -89,7 +85,7 @@ const Status = (props) => {
     <TouchableOpacity
       style={styles.listItemContainer}
       // onPress={() => onPressed(item.first_name)}
-      onPress={() => navigation.navigate('Camera')}
+      onPress={() => navigation.navigate('ViewStatus')}
 
     >
       <View style={styles.iconContainer}>
@@ -143,21 +139,13 @@ const Status = (props) => {
       cropping: true,
     })
       .then((photo) =>
-        // console.log('photo', photo.path),
-        // setImageCaptured()
         navigation.navigate('ImagePreview',{cameraImageUri:photo.path}),
-// setImageArray(photo.path)
       )
       .catch((error) => console.log('error',error));
   };
   return (
     <ScrollView style={styles.mainContainer}>
       <StatusBar backgroundColor="#075e54" barStyle="light-content" />
-     
-        {/* <StoryImages
-      images={images || []}
-      color='red'
-    /> */}
       <TouchableOpacity style={styles.listItemContainer}
      onPress={ ()=>onPressStatus()}
      >
@@ -226,11 +214,11 @@ const Status = (props) => {
 };
 
 const mapStateToProps = (state,props) => {
-  console.log("states",state.imageUri)
-  // console.log("imagestates",state)
+  console.log("statesstatus",state.imageUri)
 
   return {
-    imageUri: state.imageUri,
+    imageUri: state.imageUri.imageUri,
+    imageUriArray: state.imageUriArray,
     ...props
   };
 };

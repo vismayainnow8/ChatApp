@@ -14,9 +14,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
-import { setImageUri } from "../../../StateManagement/Actions";
+import { setImageUri,setImageUriArray } from "../../../StateManagement/Actions";
 
-export const ImagePreview = ({ navigation, route ,setImageUri},) => {
+export const ImagePreview = ({ navigation, route ,setImageUri,setImageUriArray},) => {
   const [caption, setCaption] = useState(null);
   const [user, setUser] = useState(null);
   const [userId, setUserId] = useState(null);
@@ -55,7 +55,8 @@ export const ImagePreview = ({ navigation, route ,setImageUri},) => {
     const sendStatus = () => {
       if (!cameraImageUri) return;
 navigation.navigate('Status')
-setImageUri(cameraImageUri)
+      setImageUri(cameraImageUri)
+      setImageUriArray(cameraImageUri)
       // database().ref('status').push({
       //   status: cameraImageUri,
       //   time: database.ServerValue.TIMESTAMP,
@@ -83,8 +84,6 @@ setImageUri(cameraImageUri)
         <ImageBackground
             source={{uri: cameraImageUri}}
         style={{ height: '100%', width: '100%' }}
-        
-        
       />
        <View style={styles.topContainer}>
        <AntDesign
@@ -92,7 +91,6 @@ setImageUri(cameraImageUri)
             name="arrowleft"
             size={25}
             color="white"
-            // style={{paddingLeft: 10}}
           />
     </View>
       <View style={styles.bottomContainer}>
@@ -102,9 +100,6 @@ setImageUri(cameraImageUri)
           onChangeText={(text) => setCaption(text)}
           placeholderStyle={{fontSize: 20,color:"white"}}
           placeholderTextColor="white"
-          
-              // onFocus={() => onFocus()}
-              // onSubmitEditing={() => signInWithPhoneNumber()}
         />
          <TouchableOpacity
         style={styles.contactsbuttonContainer}
@@ -122,21 +117,17 @@ setImageUri(cameraImageUri)
 };
 
 
-const mapStateToProps = (state) => {
-  return {
-    user: state.user,
-  };
-};
 
 const mapDispatchToProps = (dispatch) => {
   return {
     setImageUri: (data) => dispatch(setImageUri(data)),
-
+    setImageUriArray: (data) => dispatch(setImageUriArray(data)),
+    
 
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ImagePreview);
+export default connect(null, mapDispatchToProps)(ImagePreview);
 
 
 
