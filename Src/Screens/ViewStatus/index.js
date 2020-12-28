@@ -2,10 +2,7 @@ import React, {useState, useRef, useEffect} from 'react';
 import {connect} from 'react-redux';
 import { View, Text,StatusBar } from "react-native";
 import {StoryContainer, ProgressBar} from '../../Components/Story';
-
 const ViewStatus = (props) => {
-  // const [images, setImages] = useState([]);
-
   useEffect(() => {
     console.log('imagesviewstatus', props.imageUriArray);
   });
@@ -22,19 +19,14 @@ const ViewStatus = (props) => {
     <StoryContainer
    visible={true}
    enableProgress={true}
-   images={images}
+   images={props.imageUriArray}
    duration={20}  
-   containerStyle={{
-       width: '100%',
-           height: '100%',
-   }}
-/>
+   containerStyle={{ width: '100%',  height: '100%', }}/>
     </View>
   );
 };
 
 const mapStateToProps = (state,props) => {
-
   return {
     imageUri: state.imageUri.imageUri,
     imageUriArray: state.imageUri.imageUriArray,

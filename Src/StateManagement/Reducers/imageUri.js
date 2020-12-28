@@ -13,7 +13,7 @@ const imageUriReducer = (state = initialState, action) => {
     case IMAGEURI:
       return {...state, imageUri: action.data};
       case IMAGEURIARRAY:
-        return {...state, imageUriArray:initialState.imageUriArray.push(action.data)};   
+        return {...state, imageUriArray:[...state.imageUriArray,action.data]};   
     default:
       return state;
   }
