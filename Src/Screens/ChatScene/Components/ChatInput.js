@@ -22,7 +22,7 @@ import storage from '@react-native-firebase/storage';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import auth from '@react-native-firebase/auth';
 import {v4 as uuidv4} from 'uuid';
-import {Circle, Bar, CircleSnail} from 'react-native-progress';
+import {Circle} from 'react-native-progress';
 
 const inputTypes = {
   none: 'none',
@@ -111,6 +111,7 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
         medias={medias}
         setMedias={setMedias}
         showMenu={showMenu}
+        openCamera={openCamera}
       />
       <EmojiBoard
         showBoard={inputType == inputTypes.emoji}
@@ -158,8 +159,9 @@ export const Input = ({
   showMenu,
   medias,
   setMedias,
+  openCamera,
 }) => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState({status: false, fileNumber: ''});
   const keyboardIconPress = () => {
     if (Platform.OS == 'android') {
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -184,36 +186,62 @@ export const Input = ({
     }
   };
 
-  const onPressSend = async () => {
+  const onPressSend = () => {
     if (!writtenMessage && !medias?.length) {
       return;
     }
     let message = {
       message: writtenMessage ?? undefined,
     };
-    if (medias[0]?.path) {
-      const imageStorageRef = storage().ref(
-        'images/attachments/' + uuidv4() + '.jpeg',
-      );
-      const task = imageStorageRef.putFile(medias[0].path);
-      setLoading(0.01);
-      setWrittenMessage('');
+    setWrittenMessage('');
+    if (medias.length) {
       setMedias([]);
-      task.on('state_changed', (taskSnapshot) => {
-        const fraction =
-          taskSnapshot.bytesTransferred / taskSnapshot.totalBytes;
-        setLoading(fraction > 0 ? fraction : 0.01);
-      });
-
-      task.then(async () => {
-        const url = await imageStorageRef.getDownloadURL();
-        message.media = url;
+      medias.forEach(async (media, index) => {
+        setLoading({status: 0.01, fileNumber: index + '/' + medias.length});
+        message.media = await uploadImageAsPromise(media);
+        console.log(message);
         sendMessage(message);
-        setLoading(false);
       });
     } else {
       sendMessage(message);
     }
+  };
+
+  const uploadImageAsPromise = async (image) => {
+    return new Promise((resolve, reject) => {
+      const imageStorageRef = storage().ref(
+        'images/attachments/' + uuidv4() + '.jpeg',
+      );
+      const task = imageStorageRef.putFile(image.path);
+
+      task.on(
+        'state_changed',
+        (taskSnapshot) => {
+          const fraction =
+            taskSnapshot.bytesTransferred / taskSnapshot.totalBytes;
+          setLoading((data) => ({
+            ...data,
+            status: fraction > 0 ? fraction : 0.01,
+          }));
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        },
+        async () => {
+          setLoading({status: false, fileNumber: ''});
+          const downloadURL = await imageStorageRef.getDownloadURL();
+          resolve(downloadURL);
+        },
+      );
+    });
+  };
+
+  const closeMedia = (index) => {
+    setMedias((medias) => [
+      ...medias.slice(0, index),
+      ...medias.slice(index + 1),
+    ]);
   };
 
   return (
@@ -227,12 +255,20 @@ export const Input = ({
           <ReplyMessage replyMessage={replyMessage} closeReply={closeReply} />
         )}
         {!!medias?.length && (
-          <View style={{flexDirection: 'row', margin: 7, marginBottom: 0}}>
-            {medias.map((media) => (
-              <Image
-                style={{height: 50, width: 50, marginRight: 5}}
-                source={{uri: media.path}}
-              />
+          <View style={styles.mediaContainer}>
+            {medias.map((media, index) => (
+              <View>
+                <Image
+                  style={styles.mediaThumbnail}
+                  source={{uri: media.path}}
+                />
+                <Pressable
+                  onPress={() => closeMedia(index)}
+                  style={styles.closeMedia}
+                  hitSlop={10}>
+                  <Entypo name={'cross'} size={15} color="grey" />
+                </Pressable>
+              </View>
             ))}
           </View>
         )}
@@ -254,18 +290,31 @@ export const Input = ({
             onFocus={onInputFocus}
             multiline
           />
-          <TouchableOpacity style={styles.emoji} onPress={showMenu}>
-            <FontAwesome name="paperclip" size={22} color="grey" />
-          </TouchableOpacity>
-          <View style={styles.emoji}>
-            <FontAwesome name="camera" size={22} color="grey" />
-          </View>
+          <FontAwesome
+            style={styles.emoji}
+            onPress={showMenu}
+            name="paperclip"
+            size={22}
+            color="grey"
+          />
+          <FontAwesome
+            style={styles.emoji}
+            onPress={openCamera}
+            name="camera"
+            size={22}
+            color="grey"
+          />
         </View>
       </View>
       <TouchableOpacity style={styles.sendContainer}>
-        {loading ? (
-          <Circle progress={loading} size={48} color="white">
-            <Text style={styles.percentage}>{Math.ceil(loading * 100)}%</Text>
+        {loading.status ? (
+          <Circle progress={loading.status} size={48} color="white">
+            <View style={styles.percentageContainer}>
+              <Text style={styles.percentage}>
+                {Math.ceil(loading.status * 100)}%
+              </Text>
+              <Text style={styles.percentage}>of {loading.fileNumber}</Text>
+            </View>
           </Circle>
         ) : (
           <Ionicons
@@ -342,13 +391,15 @@ export const styles = StyleSheet.create({
     height: 24,
     width: 24,
   },
-  percentage: {
+  percentageContainer: {
     position: 'absolute',
-    fontSize: 14,
-    paddingVertical: 10,
-    marginVertical: 7,
-    textAlign: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
     width: 48,
+    height: 48,
+  },
+  percentage: {
+    fontSize: 10,
     fontWeight: 'bold',
     color: '#FFFFFF',
   },
@@ -376,5 +427,23 @@ export const styles = StyleSheet.create({
     color: 'grey',
     fontSize: 14,
     marginTop: 6,
+  },
+  mediaContainer: {
+    flexDirection: 'row',
+    margin: 7,
+    marginBottom: 0,
+  },
+  mediaThumbnail: {
+    height: 50,
+    width: 50,
+    marginRight: 5,
+    borderRadius: 3,
+  },
+  closeMedia: {
+    backgroundColor: '#FFFFFFA0',
+    borderRadius: 20,
+    position: 'absolute',
+    top: 2,
+    right: 7,
   },
 });
