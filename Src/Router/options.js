@@ -1,3 +1,5 @@
+import {colors} from '../Assets';
+
 export const noTopBar = {
   headerShown: false,
 };
@@ -25,3 +27,9 @@ export const appStackTopbar = (headerTitle) => ({
   headerTitleAlign: 'left',
   headerTintColor: 'white',
 });
+
+export const homeTabOptions = {
+  indicatorStyle: {backgroundColor: '#FFF', height: 3},
+  labelStyle: {color: '#FFF'},
+  style: {backgroundColor: colors.themePrimary.dark},
+};
