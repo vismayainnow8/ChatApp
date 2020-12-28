@@ -16,7 +16,6 @@ export const AttachModal = (props) => {
 
   useEffect(() => {
     setModalVisible(props.setModalVisible);
-    console.log('props.setModalVisible', props.setModalVisible);
   }, [props.setModalVisible]);
 
   return (

@@ -9,7 +9,7 @@ function StoryView(props: StoryViewProps) {
   const [refresh, setRefresh] = useState(true);
 
   const image = props.images[props.progressIndex]
-  console.log('image',image);
+  // console.log('image',image);
 
   return (
     <SafeAreaView style={styles.divStory}>

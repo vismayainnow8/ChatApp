@@ -17,7 +17,7 @@ import {consts} from '../../Assets/Consts';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 // import StoryImages from "react-native-stories";
 import {useNavigation} from '@react-navigation/native';
-
+import ImageCropPicker from 'react-native-image-crop-picker';
 import styles from './styles';
 import PROFILE from '../../Assets/welcomeImage.jpg';
 import BACK from '../../Assets/chatBackground.png';
@@ -28,7 +28,15 @@ import BACK from '../../Assets/chatBackground.png';
 
 const Status = (props) => {
   const [loaded, setLoaded] = useState(false);
+  const [imageCaptured, setImageCaptured] = useState(null);
+  const [imageArray, setImageArray] = useState(null);
+  // const [cameraImageUri, setcameraImageUri] = useState(route.params.cameraImageUri);
   const navigation = useNavigation();
+  
+  useEffect(() => {
+    console.log('hi',props.imageUri)
+  });
+
   const DATA = [
     {
       id: 1,
@@ -67,16 +75,21 @@ const Status = (props) => {
     });
   });
 
-  useEffect(() => {
-    console.log('gotreduxonaschatstate', props.textInput);
-    // alert(props.textInput);
-  }, [props.textInput]);
+  const onPressStatus = () => {
+    // if (cameraImageUri) {
+    //   alert(cameraImageUri)
+    // }
+    // else {/
+      openCamera()
+    // }
+  }
+
 
   const Item = ({image, first_name, missed, time, date, message, number}) => (
     <TouchableOpacity
       style={styles.listItemContainer}
       // onPress={() => onPressed(item.first_name)}
-      onPress={() => navigation.navigate('ViewStatus')}
+      onPress={() => navigation.navigate('Camera')}
 
     >
       <View style={styles.iconContainer}>
@@ -122,7 +135,21 @@ const Status = (props) => {
     );
   }
 
-  
+  const openCamera = () => {
+    ImageCropPicker.openCamera({
+      compressImageMaxWidth: 500,
+      compressImageMaxHeight: 500,
+      mediaType: 'image',
+      cropping: true,
+    })
+      .then((photo) =>
+        // console.log('photo', photo.path),
+        // setImageCaptured()
+        navigation.navigate('ImagePreview',{cameraImageUri:photo.path}),
+// setImageArray(photo.path)
+      )
+      .catch((error) => console.log('error',error));
+  };
   return (
     <ScrollView style={styles.mainContainer}>
       <StatusBar backgroundColor="#075e54" barStyle="light-content" />
@@ -132,7 +159,7 @@ const Status = (props) => {
       color='red'
     /> */}
       <TouchableOpacity style={styles.listItemContainer}
-     onPress={() => navigation.navigate('Camera')}
+     onPress={ ()=>onPressStatus()}
      >
         <View style={styles.iconContainer} >
           <Image
@@ -198,10 +225,15 @@ const Status = (props) => {
   );
 };
 
-// const mapStateToProps = (state) => {
-//   return {
-//     textInput: state.textInput.textInput,
-//   };
-// };
+const mapStateToProps = (state,props) => {
+  console.log("states",state.imageUri)
+  // console.log("imagestates",state)
 
-export default Status;
+  return {
+    imageUri: state.imageUri,
+    ...props
+  };
+};
+
+export default connect(mapStateToProps, null)(Status);
+

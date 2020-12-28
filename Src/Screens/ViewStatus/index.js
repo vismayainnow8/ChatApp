@@ -1,8 +1,15 @@
-import React from "react";
+import React, {useState, useRef, useEffect} from 'react';
+// import React from "react";
 import { View, Text,StatusBar } from "react-native";
 import {StoryContainer, ProgressBar} from '../../Components/Story';
 
-const ViewStatus = () => {
+const ViewStatus = (props) => {
+  // const [images, setImages] = useState([]);
+
+  useEffect(() => {
+    console.log('imagesviewstatus', props);
+    // alert(props.textInput);
+  });
         const images = [
                 'https://s3.ap-south-1.amazonaws.com/hsdreams1/pins/2019/01/big/7d1e5e0b31a650b9314023921b9e161b.jpeg',
                 'https://boostupliving.com/wp-content/uploads/2019/06/best-motivational-quote-mobile-wallpapers-53.jpg',

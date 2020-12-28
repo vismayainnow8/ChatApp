@@ -29,12 +29,12 @@ const StoryContainer = (props: StoryContainerProps) => {
   }, [])
 
   function onShowKeyboard(e: any) {
-    console.log(stopProgress);
+    // console.log(stopProgress);
     setStopProgress(true);
   }
 
   function onHideKeyboard(e: any) {
-    console.log(stopProgress);
+    // console.log(stopProgress);
     setStopProgress(false);
   }
 

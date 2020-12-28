@@ -135,7 +135,7 @@ marginBottom:15,
   },
   nameText: {
     color: 'white',
-    fontSize: 25,
+    fontSize: 20,
     paddingBottom: 10,
     paddingLeft: 15
   }

@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {View, FlatList, ImageBackground} from 'react-native';
+import {View, FlatList, ImageBackground,TouchableOpacity} from 'react-native';
 import {Screen, Topbar} from '../../Components';
 import styles from '../ChatScene/style';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -11,7 +11,7 @@ import auth from '@react-native-firebase/auth';
 import {ChatInput, ChatNode} from './Components';
 import {colors} from '../../Assets';
 
-const ChatScene = ({route}) => {
+const ChatScene = ({route,navigation}) => {
   const {user, chatId} = route.params;
   const [messages, setMessages] = useState([]);
   const [selectedMessages, setSelectedMessages] = useState([]);
@@ -110,6 +110,7 @@ const ChatScene = ({route}) => {
 
   return (
     <Screen>
+      <TouchableOpacity onPress={() => navigation.navigate('ViewContact',{displayName:user.displayName,phoneNumber:user.phoneNumber})}>
       <Topbar
         title={user.displayName ?? user.phoneNumber}
         avatar={user.photoURL}
@@ -122,7 +123,8 @@ const ChatScene = ({route}) => {
           />
         }
         menus={topbarMenus}
-      />
+        />
+        </TouchableOpacity>
       <ImageBackground
         source={require('../../Assets/chatBackground.png')}
         style={styles.image}>

@@ -6,3 +6,4 @@ export const COUNTRYNAME = 'countryName';
 export const COUNTRYCODE = 'countryCode';
 export const USER = 'user';
 export const CHATID = 'chatId';
+export const IMAGEURI = 'imageUri';

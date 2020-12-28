@@ -30,13 +30,13 @@ const ProgressiveImageView = ({ thumbnailSource, imgSource, style, props }: Prog
     <View style={styles.container}>
       <Animated.Image
         source={{ uri: thumbnailSource }}
-        style={[style, { opacity: thumbnailAnimated }]}
+        style={[{ opacity: thumbnailAnimated }]}
         onLoad={() => handleThumbnailLoad()}
         // blurRadius={1}
       />
       <Animated.Image
         source={{ uri: imgSource }}
-        style={[styles.imageOverlay, { opacity: imageAnimated }, style]}
+        style={[styles.imageOverlay, { opacity: imageAnimated }, ]}
         onLoad={() => onImageLoad()}
       />
     </View>

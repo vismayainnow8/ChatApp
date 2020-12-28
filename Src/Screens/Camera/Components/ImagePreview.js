@@ -14,7 +14,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
-export const ImagePreview = ({ navigation, route }) => {
+import { setImageUri } from "../../../StateManagement/Actions";
+
+export const ImagePreview = ({ navigation, route ,setImageUri},) => {
   const [caption, setCaption] = useState(null);
   const [user, setUser] = useState(null);
   const [userId, setUserId] = useState(null);
@@ -29,49 +31,49 @@ export const ImagePreview = ({ navigation, route }) => {
     }, []);
 
     useEffect(() => {
-      return database()
-        .ref()
-        .child('status')
-        // .orderByChild('userId')
-        // .equalTo(user.uid)
-        .on('value', (snapshot) => {
-          if (!snapshot) {
-            return;
-          }
-          const value = snapshot.val();
-          let formatedValues = [];
-          Object.keys(value ?? {}).forEach((item) => {
-            formatedValues.push({...value[item], id: item});
-          });
-          formatedValues.sort((a, b) => b.time - a.time);
-          setStatus(formatedValues);
-        });
+      // return database()
+      //   .ref()
+      //   .child('status')
+      //   // .orderByChild('userId')
+      //   // .equalTo(user.uid)
+      //   .on('value', (snapshot) => {
+      //     if (!snapshot) {
+      //       return;
+      //     }
+      //     const value = snapshot.val();
+      //     let formatedValues = [];
+      //     Object.keys(value ?? {}).forEach((item) => {
+      //       formatedValues.push({...value[item], id: item});
+      //     });
+      //     formatedValues.sort((a, b) => b.time - a.time);
+      //     setStatus(formatedValues);
+      //   });
     }, []);
   
 
   
     const sendStatus = () => {
       if (!cameraImageUri) return;
-
-
-      database().ref('status').push({
-        status: cameraImageUri,
-        time: database.ServerValue.TIMESTAMP,
-        uid: auth().currentUser.uid,
-      });
-      database()
-        .ref('status')
-        .child( auth().currentUser.uid)
-        .update({
-          lastStatus: {
-            status: status,
-            time: database.ServerValue.TIMESTAMP,
-            status: 0,
-            uid: auth().currentUser.uid,
-            name:"nametobegiven",
-            profileImage:"profileImagetobegiven",
-          },
-        });
+navigation.navigate('Status')
+setImageUri(cameraImageUri)
+      // database().ref('status').push({
+      //   status: cameraImageUri,
+      //   time: database.ServerValue.TIMESTAMP,
+      //   uid: auth().currentUser.uid,
+      // });
+      // database()
+      //   .ref('status')
+      //   .child( auth().currentUser.uid)
+      //   .update({
+      //     lastStatus: {
+      //       status: status,
+      //       time: database.ServerValue.TIMESTAMP,
+      //       status: 0,
+      //       uid: auth().currentUser.uid,
+      //       name:"nametobegiven",
+      //       profileImage:"profileImagetobegiven",
+      //     },
+      //   });
      
     };
     
@@ -121,14 +123,20 @@ export const ImagePreview = ({ navigation, route }) => {
 
 
 const mapStateToProps = (state) => {
-  console.log("states",state)
   return {
     user: state.user,
   };
 };
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setImageUri: (data) => dispatch(setImageUri(data)),
 
-export default connect(mapStateToProps, null)(ImagePreview);
+
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ImagePreview);
 
 
 
