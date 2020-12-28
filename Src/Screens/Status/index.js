@@ -201,9 +201,9 @@ const Status = (props) => {
       />
       <TouchableOpacity
         style={styles.contactsbuttonContainer}
-        onPress={() => navigation.navigate('Select contact')}>
+        onPress={() =>openCamera( )}>
         <IconMaterialCommunityIcons
-          name="android-messages"
+          name="camera"
           color="white"
           size={23}
           style={{padding: 5}}
@@ -214,8 +214,6 @@ const Status = (props) => {
 };
 
 const mapStateToProps = (state,props) => {
-  console.log("statesstatus",state.imageUri)
-
   return {
     imageUri: state.imageUri.imageUri,
     imageUriArray: state.imageUriArray,
