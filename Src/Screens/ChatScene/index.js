@@ -1,5 +1,5 @@
-import React, {useState, useRef, useEffect} from 'react';
-import {View, FlatList, ImageBackground,TouchableOpacity} from 'react-native';
+import React, {useState, useRef, useEffect, useCallback, useMemo} from 'react';
+import {View, FlatList, ImageBackground, TouchableOpacity} from 'react-native';
 import {Screen, Topbar} from '../../Components';
 import styles from '../ChatScene/style';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -11,7 +11,7 @@ import auth from '@react-native-firebase/auth';
 import {ChatInput, ChatNode} from './Components';
 import {colors} from '../../Assets';
 
-const ChatScene = ({route,navigation}) => {
+const ChatScene = ({route, navigation}) => {
   const {user, chatId} = route.params;
   const [messages, setMessages] = useState([]);
   const [selectedMessages, setSelectedMessages] = useState([]);
@@ -108,48 +108,59 @@ const ChatScene = ({route,navigation}) => {
     {icon: 'phone', onPress: () => {}, component: MaterialIcons},
   ];
 
+  const chatView = useMemo(
+    () => (
+      <FlatList
+        style={{flexGrow: 0}}
+        keyboardShouldPersistTaps="handled"
+        inverted={true}
+        data={messages}
+        renderItem={({item}) => (
+          <ChatNode
+            item={item}
+            replyMessage={messages.find(
+              (message) => message.id == item.replyTo,
+            )}
+            onPress={() => onPressChatNode(item.id)}
+            onLongPress={() => toggleSelect(item.id)}
+            selected={selectedMessages.includes(item.id)}
+            onReply={() => setReplyMessage(item)}
+            textRef={textRef}
+          />
+        )}
+        keyExtractor={(item) => item.id}
+      />
+    ),
+    [messages],
+  );
+
   return (
     <Screen>
-      <TouchableOpacity onPress={() => navigation.navigate('ViewContact',{displayName:user.displayName,phoneNumber:user.phoneNumber})}>
-      <Topbar
-        title={user.displayName ?? user.phoneNumber}
-        avatar={user.photoURL}
-        moreMenus={topbarMoreMenus}
-        showOverlayComponent={Boolean(selectedMessages.length)}
-        OverlayComponent={
-          <SelectedMessagesActions
-            closeActions={() => setSelectedMessages([])}
-            data={selectedMessagesActionsData()}
-          />
-        }
-        menus={topbarMenus}
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate('ViewContact', {
+            displayName: user.displayName,
+            phoneNumber: user.phoneNumber,
+          })
+        }>
+        <Topbar
+          title={user.displayName ?? user.phoneNumber}
+          avatar={user.photoURL}
+          moreMenus={topbarMoreMenus}
+          showOverlayComponent={Boolean(selectedMessages.length)}
+          OverlayComponent={
+            <SelectedMessagesActions
+              closeActions={() => setSelectedMessages([])}
+              data={selectedMessagesActionsData()}
+            />
+          }
+          menus={topbarMenus}
         />
-        </TouchableOpacity>
+      </TouchableOpacity>
       <ImageBackground
         source={require('../../Assets/chatBackground.png')}
         style={styles.image}>
-        <View style={{flex: 1}}>
-          <FlatList
-            style={{flexGrow: 0}}
-            keyboardShouldPersistTaps="handled"
-            inverted={true}
-            data={messages}
-            renderItem={({item}) => (
-              <ChatNode
-                item={item}
-                replyMessage={messages.find(
-                  (message) => message.id == item.replyTo,
-                )}
-                onPress={() => onPressChatNode(item.id)}
-                onLongPress={() => toggleSelect(item.id)}
-                selected={selectedMessages.includes(item.id)}
-                onReply={() => setReplyMessage(item)}
-                textRef={textRef}
-              />
-            )}
-            keyExtractor={(item) => item.id}
-          />
-        </View>
+        <View style={{flex: 1}}>{chatView}</View>
         <ChatInput
           textRef={textRef}
           sendMessage={sendMessage}

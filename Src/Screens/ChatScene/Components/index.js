@@ -1,2 +1,4 @@
 export {ChatInput} from './ChatInput';
-export {ChatNode} from './ChatNode';
+import ChatNode from './ChatNode';
+
+export {ChatNode};

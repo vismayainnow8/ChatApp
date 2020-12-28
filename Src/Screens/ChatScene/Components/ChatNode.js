@@ -1,79 +1,73 @@
-import React, {useRef} from 'react';
+import React, {useRef, memo} from 'react';
 import {View, Text, Animated, Pressable, StyleSheet, Image} from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
-import Swipable from 'react-native-gesture-handler/Swipeable';
 import auth from '@react-native-firebase/auth';
 import moment from 'moment';
 import {ReplyMessage} from './ReplyMessage';
 import {consts} from '../../../Assets';
+import Swipable from '../../../Components/Swipable';
 
-export const ChatNode = ({
-  item,
-  onPress,
-  onLongPress,
-  selected,
-  onReply,
-  textRef,
-  replyMessage,
-}) => {
-  const swipableRef = useRef();
-  const isMine = item.uid == auth().currentUser.uid;
-  const derivedContainerStyle = isMine ? styles.myNode : styles.othersNode;
+export default memo(
+  ({item, onPress, onLongPress, selected, onReply, textRef, replyMessage}) => {
+    const swipableRef = useRef();
+    const isMine = item.uid == auth().currentUser.uid;
+    const derivedContainerStyle = isMine ? styles.myNode : styles.othersNode;
 
-  const LeftActions = (progress, dragX) => {
-    const trans = dragX.interpolate({
-      inputRange: [0, 48, 500],
-      outputRange: [-48, 0, 0],
-    });
-    return (
-      <Animated.View
-        style={[styles.actionView, {transform: [{translateX: trans}]}]}>
-        <View style={styles.reply}>
-          <Entypo name={'reply'} size={22} color="white" />
-        </View>
-      </Animated.View>
-    );
-  };
-
-  const swipableWillOpen = () => {
-    swipableRef.current.close();
-    onReply();
-    textRef.current.focus();
-  };
-
-  return (
-    <Swipable
-      ref={swipableRef}
-      renderLeftActions={LeftActions}
-      friction={3}
-      onSwipeableOpen={() => alert('closed')}
-      onSwipeableWillOpen={swipableWillOpen}>
-      <Pressable
-        onPress={onPress}
-        onLongPress={onLongPress}
-        style={{backgroundColor: selected ? '#00BBFF30' : 'transparent'}}>
-        <View style={[styles.chatNode, derivedContainerStyle]}>
-          {/* <Text style={styles.title}>{item.uid}</Text> */}
-          {replyMessage && <ReplyMessage replyMessage={replyMessage} />}
-          {item.media && (
-            <Image style={styles.image} source={{uri: item.media}} />
-          )}
-          <View style={styles.messageContainer}>
-            <Text style={styles.message}>{item.message}</Text>
-            <View style={styles.timePadder} />
-            <Text style={styles.chatNodeTime}>
-              {moment(item.time).format('D MMM h:mm a')}
-            </Text>
+    const LeftActions = (progress, dragX) => {
+      const trans = dragX.interpolate({
+        inputRange: [0, 48, 500],
+        outputRange: [-48, 0, 0],
+      });
+      return (
+        <Animated.View
+          style={[styles.actionView, {transform: [{translateX: trans}]}]}>
+          <View style={styles.reply}>
+            <Entypo name={'reply'} size={22} color="white" />
           </View>
-        </View>
-      </Pressable>
-    </Swipable>
-  );
-};
+        </Animated.View>
+      );
+    };
+
+    const leftAction = async () => {
+      onReply();
+      textRef.current.focus();
+    };
+
+    return (
+      <Swipable
+        ref={swipableRef}
+        renderLeftActions={LeftActions}
+        overshootLeft={false}
+        overshootFriction={3}
+        useNativeAnimations={true}
+        onLeftAction={leftAction}>
+        <Pressable
+          onPress={onPress}
+          onLongPress={onLongPress}
+          style={{backgroundColor: selected ? '#00BBFF30' : 'transparent'}}>
+          <View style={[styles.chatNode, derivedContainerStyle]}>
+            {/* <Text style={styles.title}>{item.uid}</Text> */}
+            {replyMessage && <ReplyMessage replyMessage={replyMessage} />}
+            {item.media && (
+              <Image style={styles.image} source={{uri: item.media}} />
+            )}
+            <View style={styles.messageContainer}>
+              <Text style={styles.message}>{item.message}</Text>
+              <View style={styles.timePadder} />
+              <Text style={styles.chatNodeTime}>
+                {moment(item.time).format('D MMM h:mm a')}
+              </Text>
+            </View>
+          </View>
+        </Pressable>
+      </Swipable>
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   actionView: {
-    width: 96,
+    width: 48,
     justifyContent: 'center',
   },
   chatNode: {
