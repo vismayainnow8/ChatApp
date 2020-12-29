@@ -63,6 +63,7 @@ const ChatScene = ({route, navigation}) => {
   const sendMessage = (message) => {
     message.chatId = chatId;
     database().ref('messages').push(message);
+    message = {...message, time: firestore.Timestamp.now().toMillis()};
     firestore().collection('Chats').doc(chatId).update({
       lastMessage: message,
     });

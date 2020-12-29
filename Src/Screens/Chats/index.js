@@ -136,9 +136,9 @@ const ChatsListItem = ({item, number, onPressed}) => {
           <Text style={styles.newtime}>
             {lastMessage?.time && moment(lastMessage.time).format('h:mm a')}
           </Text>
-          <View style={styles.numbercountContainer}>
+          {/* <View style={styles.numbercountContainer}>
             <Text style={styles.numberCount}>{number}</Text>
-          </View>
+          </View> */}
         </View>
       </View>
     </TouchableOpacity>

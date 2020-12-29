@@ -32,14 +32,13 @@ export const MediaThumbnail = ({
 
 const VideoThumbnail = ({url, iconSize, style, onPress = () => {}}) => {
   const [thumbnailImage, setThumbnailImage] = useState({});
-  useEffect(() => {
-    createThumbnail({
-      url,
-      timeStamp: 1000,
-    })
-      .then((response) => setThumbnailImage(response))
-      .catch((err) => console.log({err}));
-  }, []);
+  // useEffect(() => {
+  // createThumbnail({
+  //   url,
+  // });
+  // .then((response) => setThumbnailImage(response))
+  // .catch((err) => console.log({err}));
+  // }, [url]);
 
   return (
     <Pressable style={[styles.container, style]} onPress={onPress}>

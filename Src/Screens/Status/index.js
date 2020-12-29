@@ -21,16 +21,12 @@ import styles from './styles';
 import PROFILE from '../../Assets/welcomeImage.jpg';
 import BACK from '../../Assets/chatBackground.png';
 
-
-
-
 const Status = (props) => {
   const [loaded, setLoaded] = useState(false);
   const [imageCaptured, setImageCaptured] = useState(null);
   const [imageArray, setImageArray] = useState(null);
   const navigation = useNavigation();
-  
-  
+
   const DATA = [
     {
       id: 1,
@@ -71,23 +67,17 @@ const Status = (props) => {
 
   const onPressStatus = () => {
     if (props.imageUri != null) {
-      navigation.navigate('ViewStatus')
+      navigation.navigate('ViewStatus');
+    } else {
+      openCamera();
     }
-    else {
-      openCamera()
-    
-    }
-  
-  }
-
+  };
 
   const Item = ({image, first_name, missed, time, date, message, number}) => (
     <TouchableOpacity
       style={styles.listItemContainer}
       // onPress={() => onPressed(item.first_name)}
-      onPress={() => navigation.navigate('ViewStatus')}
-
-    >
+      onPress={() => navigation.navigate('ViewStatus')}>
       <View style={styles.iconContainer}>
         <Image
           source={{uri: image}}
@@ -139,17 +129,20 @@ const Status = (props) => {
       cropping: true,
     })
       .then((photo) =>
-        navigation.navigate('ImagePreview',{cameraImageUri:photo.path,time: new Date().toLocaleString()}),
+        navigation.navigate('ImagePreview', {
+          cameraImageUri: photo.path,
+          time: new Date().toLocaleString(),
+        }),
       )
-      .catch((error) => console.log('error',error));
+      .catch((error) => console.log('error', error));
   };
   return (
-    <ScrollView style={styles.mainContainer}>
+    <View style={styles.mainContainer}>
       <StatusBar backgroundColor="#075e54" barStyle="light-content" />
-      <TouchableOpacity style={styles.listItemContainer}
-     onPress={ ()=>onPressStatus()}
-     >
-        <View style={styles.iconContainer} >
+      <TouchableOpacity
+        style={styles.listItemContainer}
+        onPress={() => onPressStatus()}>
+        <View style={styles.iconContainer}>
           <Image
             source={{
               uri: 'https://randomuser.me/api/portraits/men/1.jpg',
@@ -201,7 +194,7 @@ const Status = (props) => {
       />
       <TouchableOpacity
         style={styles.contactsbuttonContainer}
-        onPress={() =>openCamera( )}>
+        onPress={() => openCamera()}>
         <IconMaterialCommunityIcons
           name="camera"
           color="white"
@@ -209,17 +202,16 @@ const Status = (props) => {
           style={{padding: 5}}
         />
       </TouchableOpacity>
-    </ScrollView>
+    </View>
   );
 };
 
-const mapStateToProps = (state,props) => {
+const mapStateToProps = (state, props) => {
   return {
     imageUri: state.imageUri.imageUri,
     imageUriArray: state.imageUriArray,
-    ...props
+    ...props,
   };
 };
 
 export default connect(mapStateToProps, null)(Status);
-

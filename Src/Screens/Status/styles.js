@@ -3,7 +3,7 @@ import {consts} from '../../Assets/Consts';
 // import { Appearance } from 'react-native'
 const styles = StyleSheet.create({
   mainContainer: {
-    width: consts.ScreenWidth,
+    flex: 1,
     backgroundColor: 'white',
   },
   headerContainer: {

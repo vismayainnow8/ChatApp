@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, Text, Image, StyleSheet, Pressable} from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
+import {MediaThumbnail} from '../../../Components';
 
 export const ReplyMessage = ({replyMessage, closeReply}) => {
   return (
@@ -18,9 +19,11 @@ export const ReplyMessage = ({replyMessage, closeReply}) => {
       )}
 
       {Boolean(replyMessage.media) && (
-        <Image
+        <MediaThumbnail
+          iconSize={25}
           style={styles.mediaThumbnail}
-          source={{uri: replyMessage.media}}
+          url={replyMessage.media.url}
+          type={replyMessage.media.type}
         />
       )}
 

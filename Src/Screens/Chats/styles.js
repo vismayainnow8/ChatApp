@@ -74,7 +74,8 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   newtime: {
-    color: '#25d366',
+    color: 'grey',
+    // color: '#25d366',
     fontSize: 10,
   },
   numbercountContainer: {
