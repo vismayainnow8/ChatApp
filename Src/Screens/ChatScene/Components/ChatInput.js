@@ -46,7 +46,7 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
     sendMessage(message);
   };
 
-  const openPicker = () => {
+  const openImagePicker = () => {
     pickerLstRef.current.close();
     ImageCropPicker.openPicker({
       compressImageMaxWidth: 500,
@@ -59,7 +59,7 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
       .catch((error) => console.log(error));
   };
 
-  const openCamera = () => {
+  const openImageCamera = () => {
     pickerLstRef.current.close();
     ImageCropPicker.openCamera({
       compressImageMaxWidth: 500,
@@ -71,16 +71,53 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
       .catch((error) => console.log(error));
   };
 
+  const openVideoPicker = () => {
+    pickerLstRef.current.close();
+    ImageCropPicker.openPicker({
+      mediaType: 'video',
+      multiple: true,
+    })
+      .then((video) => setMedias(video))
+      .catch((error) => console.log(error));
+  };
+
+  const openVideoCamera = () => {
+    pickerLstRef.current.close();
+    ImageCropPicker.openCamera({
+      mediaType: 'video',
+    })
+      .then((video) => setMedias([{...video}]))
+      .catch((error) => console.log(error));
+  };
+
   const attachmentOptions = [
     {color: '#6F3CF6', icon: 'note', title: 'Document', onPress: () => {}},
     {
       color: '#F9227A',
       icon: 'camera-alt',
-      title: 'Camera',
-      onPress: openCamera,
+      title: 'Capture Image',
+      onPress: openImageCamera,
     },
-    {color: '#EF3FDA', icon: 'image', title: 'Gallery', onPress: openPicker},
+    {
+      color: '#EF3FDA',
+      icon: 'image',
+      title: 'Select Image',
+      onPress: openImagePicker,
+    },
+    {
+      color: '#36CD1B',
+      icon: 'videocam',
+      title: 'Capture Video',
+      onPress: openVideoCamera,
+    },
+    {
+      color: '#FDC63D',
+      icon: 'video-library',
+      title: 'Select Video',
+      onPress: openVideoPicker,
+    },
   ];
+
   return (
     <>
       <Input
@@ -95,7 +132,7 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
         medias={medias}
         setMedias={setMedias}
         showMenu={showMenu}
-        openCamera={openCamera}
+        openCamera={openImageCamera}
       />
       <EmojiBoard
         showBoard={inputType == inputTypes.emoji}
@@ -111,7 +148,7 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
       />
       <RBSheet
         ref={pickerLstRef}
-        height={130}
+        height={220}
         customStyles={{
           container: styles.modalView,
         }}>

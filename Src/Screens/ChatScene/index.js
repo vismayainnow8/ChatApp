@@ -131,7 +131,7 @@ const ChatScene = ({route, navigation}) => {
         keyExtractor={(item) => item.id}
       />
     ),
-    [messages],
+    [messages, selectedMessages],
   );
 
   return (

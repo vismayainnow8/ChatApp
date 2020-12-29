@@ -8,7 +8,6 @@ import {
   Keyboard,
   Text,
   Pressable,
-  Image,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -18,6 +17,13 @@ import storage from '@react-native-firebase/storage';
 import {v4 as uuidv4} from 'uuid';
 import {Circle} from 'react-native-progress';
 import {inputTypes} from './ChatInput';
+import {MediaThumbnail} from '../../../Components';
+
+export const attachmentTypes = {
+  video: 'video',
+  image: 'image',
+  file: 'file',
+};
 
 export const Input = ({
   textRef,
@@ -70,7 +76,9 @@ export const Input = ({
       setMedias([]);
       medias.forEach(async (media, index) => {
         setLoading({status: 0.01, fileNumber: index + '/' + medias.length});
-        message.media = await uploadImageAsPromise(media);
+        message.media = {};
+        message.media.url = await uploadImageAsPromise(media);
+        message.media.type = media.mime.split('/')[0];
         console.log(message);
         sendMessage(message);
       });
@@ -116,6 +124,25 @@ export const Input = ({
     ]);
   };
 
+  const renderMediaThumbnail = (media, index) => {
+    return (
+      <View style={styles.mediaThumbnailContainer}>
+        <MediaThumbnail
+          type={media.mime.split('/')[0]}
+          style={styles.videoThumbnail}
+          iconSize={25}
+          url={media.path}
+        />
+        <Pressable
+          onPress={() => closeMedia(index)}
+          style={styles.closeMedia}
+          hitSlop={10}>
+          <Entypo name={'cross'} size={15} color="grey" />
+        </Pressable>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.bottomContainer}>
       <View
@@ -128,20 +155,7 @@ export const Input = ({
         )}
         {!!medias?.length && (
           <View style={styles.mediaContainer}>
-            {medias.map((media, index) => (
-              <View>
-                <Image
-                  style={styles.mediaThumbnail}
-                  source={{uri: media.path}}
-                />
-                <Pressable
-                  onPress={() => closeMedia(index)}
-                  style={styles.closeMedia}
-                  hitSlop={10}>
-                  <Entypo name={'cross'} size={15} color="grey" />
-                </Pressable>
-              </View>
-            ))}
+            {medias.map(renderMediaThumbnail)}
           </View>
         )}
         <View style={styles.textInputContainer}>
@@ -230,18 +244,24 @@ export const styles = StyleSheet.create({
     margin: 7,
     marginBottom: 0,
   },
-  mediaThumbnail: {
+  mediaThumbnailContainer: {
     height: 50,
     width: 50,
     marginRight: 5,
+  },
+  imageThumbnail: {
     borderRadius: 3,
+    flex: 1,
+  },
+  videoThumbnail: {
+    flex: 1,
   },
   closeMedia: {
     backgroundColor: '#FFFFFFA0',
     borderRadius: 20,
     position: 'absolute',
     top: 2,
-    right: 7,
+    right: 2,
   },
   textInputContainer: {
     maxHeight: 150,

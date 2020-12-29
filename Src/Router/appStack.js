@@ -34,6 +34,7 @@ import VideoCalling from '../Screens/VideoCalling';
 import Camera from '../Screens/Camera';
 import ViewStatus from '../Screens/ViewStatus';
 import ViewContact from '../Screens/ViewContact';
+import ViewMedia from '../Screens/ViewMedia';
 import {ImagePreview} from '../Screens/Camera/Components';
 import ProfileInfo from '../Screens/ProfileInfo';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -113,9 +114,18 @@ export const AppStack = ({user}) => {
         <Stack.Screen name="StarredMessages" component={StarredMessages} />
         <Stack.Screen name="Privacy" component={Privacy} />
         <Stack.Screen name="Camera" component={Camera} />
-        <Stack.Screen name="ViewStatus" component={ViewStatus} options= {{headerShown:false} }/>
+        <Stack.Screen
+          name="ViewStatus"
+          component={ViewStatus}
+          options={noTopBar}
+        />
         <Stack.Screen name="ImagePreview" component={ImagePreview} />
         <Stack.Screen name="ViewContact" component={ViewContact} />
+        <Stack.Screen
+          name="ViewMedia"
+          component={ViewMedia}
+          options={noTopBar}
+        />
         <Stack.Screen
           name="TwoStepVerification"
           component={TwoStepVerification}

@@ -1,15 +1,17 @@
 import React, {useRef, memo} from 'react';
-import {View, Text, Animated, Pressable, StyleSheet, Image} from 'react-native';
+import {View, Text, Animated, Pressable, StyleSheet} from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import auth from '@react-native-firebase/auth';
 import moment from 'moment';
 import {ReplyMessage} from './ReplyMessage';
 import {consts} from '../../../Assets';
-import Swipable from '../../../Components/Swipable';
+import {Swipable, MediaThumbnail} from '../../../Components';
+import {useNavigation} from '@react-navigation/native';
 
 export default memo(
   ({item, onPress, onLongPress, selected, onReply, textRef, replyMessage}) => {
     const swipableRef = useRef();
+    const navigation = useNavigation();
     const isMine = item.uid == auth().currentUser.uid;
     const derivedContainerStyle = isMine ? styles.myNode : styles.othersNode;
 
@@ -49,7 +51,13 @@ export default memo(
             {/* <Text style={styles.title}>{item.uid}</Text> */}
             {replyMessage && <ReplyMessage replyMessage={replyMessage} />}
             {item.media && (
-              <Image style={styles.image} source={{uri: item.media}} />
+              <MediaThumbnail
+                type={item.media.type}
+                style={styles.image}
+                url={item.media.url}
+                iconSize={100}
+                onPress={() => navigation.navigate('ViewMedia', item)}
+              />
             )}
             <View style={styles.messageContainer}>
               <Text style={styles.message}>{item.message}</Text>
@@ -99,10 +107,15 @@ const styles = StyleSheet.create({
     color: 'red',
   },
   image: {
+    backgroundColor: '#000',
     width: consts.ScreenWidth * 0.8 - 14,
     aspectRatio: 1,
     margin: 7,
     marginBottom: 0,
+    borderRadius: 3,
+  },
+  videoThumbnail: {
+    height: 10,
   },
   messageContainer: {
     paddingHorizontal: 10,

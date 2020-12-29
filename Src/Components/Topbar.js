@@ -19,6 +19,7 @@ export const Topbar = ({
   avatar = null,
   showOverlayComponent,
   OverlayComponent,
+  style,
 }) => {
   const {goBack} = useNavigation();
   const menuRef = useRef();
@@ -32,7 +33,7 @@ export const Topbar = ({
     menuRef.current.show();
   };
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       {!noBack && (
         <Feather
           name="arrow-left"
