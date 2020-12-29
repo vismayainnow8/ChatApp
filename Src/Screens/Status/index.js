@@ -139,7 +139,7 @@ const Status = (props) => {
       cropping: true,
     })
       .then((photo) =>
-        navigation.navigate('ImagePreview',{cameraImageUri:photo.path}),
+        navigation.navigate('ImagePreview',{cameraImageUri:photo.path,time: new Date().toLocaleString()}),
       )
       .catch((error) => console.log('error',error));
   };
