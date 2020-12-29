@@ -1,10 +1,12 @@
-import React from 'react';
-import {Image, View} from 'react-native';
+import React, {useState} from 'react';
+import {ActivityIndicator, Image, View} from 'react-native';
 
 import Video from 'react-native-video';
+import moment from 'moment';
 import {Screen, Topbar} from '../../Components';
 import {attachmentTypes} from '../ChatScene/Components/Input';
 import styles from './styles';
+import {colors} from '../../Assets';
 
 const ViewMedia = ({route}) => {
   const {displayName, media, time} = route.params;
@@ -22,7 +24,11 @@ const ViewMedia = ({route}) => {
           />
         )}
       </View>
-      <Topbar style={styles.topbar} title={displayName} subtitle={time} />
+      <Topbar
+        style={styles.topbar}
+        title={displayName}
+        subtitle={moment(time).format('D MMM YYYY h:mm a')}
+      />
     </Screen>
   );
 };
@@ -30,14 +36,24 @@ const ViewMedia = ({route}) => {
 export default ViewMedia;
 
 const VideoPlayer = ({url}) => {
+  const [loading, setLoading] = useState(true);
   return (
-    <Video
-      resizeMode="contain"
-      controls
-      source={{
-        uri: url,
-      }}
-      style={styles.container}
-    />
+    <View style={styles.videoContainer}>
+      <Video
+        resizeMode="contain"
+        controls
+        onLoad={() => setLoading(false)}
+        source={{
+          uri: url,
+        }}
+        style={styles.container}></Video>
+      <ActivityIndicator
+        animating={loading}
+        style={styles.loader}
+        color={colors.themePrimary.normal}
+        hidesWhenStopped
+        size={50}
+      />
+    </View>
   );
 };

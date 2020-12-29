@@ -14,6 +14,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  videoContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  loader: {
+    position: 'absolute',
+    alignSelf: 'center',
+  },
 });
 
 export default styles;
