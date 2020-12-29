@@ -22,7 +22,7 @@ export const ImagePreview = ({ navigation, route ,setImageUri,setImageUriArray},
   const [userId, setUserId] = useState(null);
   const [status, setStatus] = useState(null);
   
-  const { cameraImageUri } = route.params;
+  const { cameraImageUri ,time} = route.params;
   
     useLayoutEffect(() => {
       navigation.setOptions({
@@ -30,7 +30,8 @@ export const ImagePreview = ({ navigation, route ,setImageUri,setImageUriArray},
       });
     }, []);
 
-    useEffect(() => {
+  useEffect(() => {
+      // console.log('timessssssssss,time',time)
       // return database()
       //   .ref()
       //   .child('status')
@@ -56,7 +57,7 @@ export const ImagePreview = ({ navigation, route ,setImageUri,setImageUriArray},
       if (!cameraImageUri) return;
 navigation.navigate('Status')
       setImageUri(cameraImageUri)
-      setImageUriArray(cameraImageUri)
+      setImageUriArray({uri:cameraImageUri,time:time})
       // database().ref('status').push({
       //   status: cameraImageUri,
       //   time: database.ServerValue.TIMESTAMP,
