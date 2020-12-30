@@ -1,69 +1,128 @@
-import React, {useState, useRef, useLayoutEffect, useEffect} from 'react';
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  StatusBar,
-  TouchableOpacity,
-  ScrollView,
-  FlatList,
-  Image,
-  View,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import React, {useState} from 'react';
+import {Text, TouchableOpacity, Image, View, SectionList} from 'react-native';
 import {connect} from 'react-redux';
-import IconFontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {consts} from '../../Assets/Consts';
+import {Screen} from '../../Components';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useNavigation} from '@react-navigation/native';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import styles from './styles';
-import PROFILE from '../../Assets/welcomeImage.jpg';
-import BACK from '../../Assets/chatBackground.png';
+
+const DATA = [
+  {
+    title: 'Recent Updates',
+    data: [
+      {
+        id: 1,
+        first_name: 'Glenn',
+        mobile: true,
+        message: 'Hey there! I am using WhatsApp',
+        date: '22-Mar-2016',
+        time: 'Yesterday 5:46 PM',
+        image: 'https://randomuser.me/api/portraits/men/1.jpg',
+        number: 1,
+      },
+      {
+        id: 2,
+        first_name: 'Carl',
+        mobile: false,
+        message: 'Do you smell what the rock is cooking?',
+        date: '22-Feb-2016',
+        time: 'Yesterday 09:38 PM',
+        image: 'https://randomuser.me/api/portraits/women/37.jpg',
+        number: 2,
+      },
+      {
+        id: 3,
+        first_name: 'Rick',
+        mobile: true,
+        message: "Hello there it's been a while. Not much",
+        date: '01-Jul-2016',
+        time: 'Yesterday 1:33 PM',
+        image: 'https://randomuser.me/api/portraits/women/13.jpg',
+        number: 3,
+      },
+      {
+        id: 4,
+        first_name: 'Carl',
+        mobile: false,
+        message: 'Do you smell what the rock is cooking?',
+        date: '22-Feb-2016',
+        time: 'Yesterday 09:38 PM',
+        image: 'https://randomuser.me/api/portraits/women/37.jpg',
+        number: 2,
+      },
+      {
+        id: 5,
+        first_name: 'Rick',
+        mobile: true,
+        message: "Hello there it's been a while. Not much",
+        date: '01-Jul-2016',
+        time: 'Yesterday 1:33 PM',
+        image: 'https://randomuser.me/api/portraits/women/13.jpg',
+        number: 3,
+      },
+    ],
+  },
+  {
+    title: 'Viewed Updates',
+    data: [
+      {
+        id: 1,
+        first_name: 'Glenn',
+        mobile: true,
+        message: 'Hey there! I am using WhatsApp',
+        date: '22-Mar-2016',
+        time: 'Yesterday 5:46 PM',
+        image: 'https://randomuser.me/api/portraits/men/1.jpg',
+        number: 1,
+      },
+      {
+        id: 2,
+        first_name: 'Carl',
+        mobile: false,
+        message: 'Do you smell what the rock is cooking?',
+        date: '22-Feb-2016',
+        time: 'Yesterday 09:38 PM',
+        image: 'https://randomuser.me/api/portraits/women/37.jpg',
+        number: 2,
+      },
+      {
+        id: 3,
+        first_name: 'Rick',
+        mobile: true,
+        message: "Hello there it's been a while. Not much",
+        date: '01-Jul-2016',
+        time: 'Yesterday 1:33 PM',
+        image: 'https://randomuser.me/api/portraits/women/13.jpg',
+        number: 3,
+      },
+      {
+        id: 4,
+        first_name: 'Carl',
+        mobile: false,
+        message: 'Do you smell what the rock is cooking?',
+        date: '22-Feb-2016',
+        time: 'Yesterday 09:38 PM',
+        image: 'https://randomuser.me/api/portraits/women/37.jpg',
+        number: 2,
+      },
+      {
+        id: 5,
+        first_name: 'Rick',
+        mobile: true,
+        message: "Hello there it's been a while. Not much",
+        date: '01-Jul-2016',
+        time: 'Yesterday 1:33 PM',
+        image: 'https://randomuser.me/api/portraits/women/13.jpg',
+        number: 3,
+      },
+    ],
+  },
+];
 
 const Status = (props) => {
-  const [loaded, setLoaded] = useState(false);
-  const [imageCaptured, setImageCaptured] = useState(null);
-  const [imageArray, setImageArray] = useState(null);
+  const [statusData, setStatusData] = useState(DATA);
   const navigation = useNavigation();
-
-  const DATA = [
-    {
-      id: 1,
-      first_name: 'Glenn',
-      mobile: true,
-      message: 'Hey there! I am using WhatsApp',
-      date: '22-Mar-2016',
-      time: '5:46 PM',
-      image: 'https://randomuser.me/api/portraits/men/1.jpg',
-      number: 1,
-    },
-    {
-      id: 2,
-      first_name: 'Carl',
-      mobile: false,
-      message: 'Do you smell what the rock is cooking?',
-      date: '22-Feb-2016',
-      time: '09:38 PM',
-      image: 'https://randomuser.me/api/portraits/women/37.jpg',
-      number: 2,
-    },
-    {
-      id: 3,
-      first_name: 'Rick',
-      mobile: true,
-      message: "Hello there it's been a while. Not much",
-      date: '01-Jul-2016',
-      time: '1:33 PM',
-      image: 'https://randomuser.me/api/portraits/women/13.jpg',
-      number: 3,
-    },
-  ];
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      tabStyle: {width: 100},
-    });
-  });
 
   const onPressStatus = () => {
     if (props.imageUri != null) {
@@ -73,7 +132,7 @@ const Status = (props) => {
     }
   };
 
-  const Item = ({image, first_name, missed, time, date, message, number}) => (
+  const Item = ({image, first_name, time}) => (
     <TouchableOpacity
       style={styles.listItemContainer}
       // onPress={() => onPressed(item.first_name)}
@@ -92,21 +151,16 @@ const Status = (props) => {
         </View>
         <View style={styles.secondContainer}>
           <View style={styles.dateContainer}>
-            <Text
-              numberOfLines={1}
-              style={{
-                fontWeight: '400',
-                color: '#666',
-                fontSize: 12,
-              }}>
-              Yesterday {time}
+            <Text numberOfLines={1} style={styles.listTime}>
+              {time}
             </Text>
           </View>
         </View>
       </View>
     </TouchableOpacity>
   );
-  function renderItem({item, index}) {
+
+  const renderItem = ({item}) => {
     return (
       <Item
         item={item}
@@ -119,7 +173,7 @@ const Status = (props) => {
         number={item.number}
       />
     );
-  }
+  };
 
   const openCamera = () => {
     ImageCropPicker.openCamera({
@@ -136,61 +190,61 @@ const Status = (props) => {
       )
       .catch((error) => console.log('error', error));
   };
+
+  const renderSeparator = () => {
+    return (
+      <View style={styles.itemSeperatorContainer}>
+        <View style={styles.seperatorTransparentPart} />
+        <View style={styles.seperator} />
+      </View>
+    );
+  };
+
+  const renderHeader = (
+    <TouchableOpacity
+      style={styles.listItemContainer}
+      onPress={() => onPressStatus()}>
+      <View style={styles.iconContainer}>
+        <Image
+          source={{
+            uri: 'https://randomuser.me/api/portraits/men/1.jpg',
+          }}
+          style={styles.initStyle}
+          resizeMode="contain"
+        />
+        <View style={styles.numbercountContainer}>
+          <Text style={styles.numberCount}>+</Text>
+        </View>
+      </View>
+
+      <View style={styles.messageContainer}>
+        <View style={styles.firstContainer}>
+          <Text>My Status</Text>
+        </View>
+        <View style={styles.secondContainer}>
+          <View style={styles.dateContainer}>
+            <Text numberOfLines={1} style={styles.listTime}>
+              Tap to add status update
+            </Text>
+          </View>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+
   return (
-    <View style={styles.mainContainer}>
-      <StatusBar backgroundColor="#075e54" barStyle="light-content" />
-      <TouchableOpacity
-        style={styles.listItemContainer}
-        onPress={() => onPressStatus()}>
-        <View style={styles.iconContainer}>
-          <Image
-            source={{
-              uri: 'https://randomuser.me/api/portraits/men/1.jpg',
-            }}
-            style={styles.initStyle}
-            resizeMode="contain"
-          />
-          <View style={styles.numbercountContainer}>
-            <Text style={styles.numberCount}>+</Text>
-          </View>
-        </View>
-
-        <View style={styles.messageContainer}>
-          <View style={styles.firstContainer}>
-            <Text>My Status</Text>
-          </View>
-          <View style={styles.secondContainer}>
-            <View style={styles.dateContainer}>
-              <Text
-                numberOfLines={1}
-                style={{
-                  fontWeight: '400',
-                  color: '#666',
-                  fontSize: 12,
-                }}>
-                Tap to add status update
-              </Text>
-            </View>
-          </View>
-        </View>
-      </TouchableOpacity>
-
-      <View style={styles.updateContainer}>
-        <Text style={styles.grey}>Recent Updates</Text>
-      </View>
-      <FlatList
-        data={DATA}
-        renderItem={renderItem}
+    <Screen style={styles.screen}>
+      <SectionList
+        sections={statusData}
+        ListHeaderComponent={renderHeader}
         keyExtractor={(item) => item.id.toString()}
-      />
-
-      <View style={styles.updateContainer}>
-        <Text style={styles.grey}>Viewed Updates</Text>
-      </View>
-      <FlatList
-        data={DATA}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
+        ItemSeparatorComponent={renderSeparator}
+        renderSectionHeader={({section: {title}}) => (
+          <View style={styles.updateContainer}>
+            <Text style={styles.grey}>{title}</Text>
+          </View>
+        )}
       />
       <TouchableOpacity
         style={styles.contactsbuttonContainer}
@@ -202,7 +256,7 @@ const Status = (props) => {
           style={{padding: 5}}
         />
       </TouchableOpacity>
-    </View>
+    </Screen>
   );
 };
 
