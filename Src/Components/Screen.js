@@ -10,7 +10,7 @@ import {
 import {useHeaderHeight} from '@react-navigation/stack';
 import {colors} from '../Assets';
 
-export const Screen = ({children, style}) => {
+export const Screen = ({children, style, statusBarColor = '#075e54'}) => {
   const headerHeight = useHeaderHeight();
   return (
     <SafeAreaView style={styles.container}>
@@ -18,7 +18,7 @@ export const Screen = ({children, style}) => {
         style={styles.container}
         keyboardVerticalOffset={headerHeight}
         behavior={Platform.OS === 'ios' ? 'padding' : 'null'}>
-        <StatusBar backgroundColor="#075e54" barStyle="light-content" />
+        <StatusBar backgroundColor={statusBarColor} barStyle="light-content" />
         <View style={[styles.container, style]}>{children}</View>
       </KeyboardAvoidingView>
     </SafeAreaView>

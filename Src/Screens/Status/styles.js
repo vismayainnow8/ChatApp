@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   },
   numberCount: {
     color: 'white',
-    fontSize: consts.textSizes(10),
+    fontSize: consts.textSizes(20),
   },
   messageContainer: {
     flex: 1,

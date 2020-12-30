@@ -10,15 +10,15 @@ import {colors} from '../Assets';
 
 export const Topbar = ({
   title,
-  subtitle,
-  noBack,
+  subtitle = null,
+  noBack = false,
   moreMenus = [],
   menus = [],
   avatar = null,
-  showOverlayComponent,
-  OverlayComponent,
-  style,
-  onPress,
+  showOverlayComponent = false,
+  OverlayComponent = null,
+  style = null,
+  onPress = () => {},
 }) => {
   const {goBack} = useNavigation();
   const menuRef = useRef();

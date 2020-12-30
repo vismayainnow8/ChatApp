@@ -1,47 +1,35 @@
-import React, { useEffect, useState, CSSProperties } from "react";
-import { StoryViewProps } from "../utils/interfaceHelper";
-import { View, Image, StyleSheet, Text, SafeAreaView, Dimensions } from "react-native"; 
-// import {Button, TouchableOpacity, Text, View} from 'react-native';
-
-import ProgressiveImage from "./ProgressiveImage"; 
-
+import React from 'react';
+import {StoryViewProps} from '../utils/interfaceHelper';
+import {View, StyleSheet, Dimensions} from 'react-native';
+import FastImage from 'react-native-fast-image';
+const {height, width} = Dimensions.get('window');
 function StoryView(props: StoryViewProps) {
-  const [refresh, setRefresh] = useState(true);
-
-  const image = props.images[props.progressIndex]
-  // console.log('image',image);
+  const {images, progressIndex} = props;
 
   return (
-    <SafeAreaView style={styles.divStory}>
-      <View style={styles.divStory}>
-        <ProgressiveImage
-          style={props.imageStyle ? props.imageStyle : styles.imgStyle}
-          imgSource={{ uri: image }}
-          thumbnailSource={{ uri: image }}
-        /> 
-      </View>
-    </SafeAreaView>
+    <View style={styles.divStory}>
+      <FastImage
+        style={styles.imgStyle}
+        source={{
+          uri: images[progressIndex].uri,
+          priority: FastImage.priority.high,
+        }}
+        resizeMode={FastImage.resizeMode.contain}
+      />
+    </View>
   );
 }
 
 export default StoryView;
 
-
 const styles = StyleSheet.create({
   divStory: {
     flex: 1,
-    flexDirection: 'row',
     justifyContent: 'center',
-    width: '100%',
-    height: '100%',
-    alignContent: 'center',
     alignItems: 'center',
-    backgroundColor:"black"
   },
   imgStyle: {
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").width,
-    alignSelf: 'center',
-    resizeMode: 'stretch'
-  }
+    width: width,
+    height: height * 0.9,
+  },
 });
