@@ -14,7 +14,7 @@ export const TabView = () => {
       {/* <Tab.Screen name="CAMERA" component={Status} /> */}
       <Tab.Screen name="CHATS" component={Chats} />
       <Tab.Screen name="STATUS" component={Status} />
-      <Tab.Screen name="CALLS" component={Calls} />
+      {/* <Tab.Screen name="CALLS" component={Calls} /> */}
     </Tab.Navigator>
   );
 };

@@ -120,7 +120,11 @@ export const AppStack = ({user}) => {
           options={noTopBar}
         />
         <Stack.Screen name="ImagePreview" component={ImagePreview} />
-        <Stack.Screen name="ViewContact" component={ViewContact} />
+        <Stack.Screen
+          name="ViewContact"
+          component={ViewContact}
+          options={noTopBar}
+        />
         <Stack.Screen
           name="ViewMedia"
           component={ViewMedia}

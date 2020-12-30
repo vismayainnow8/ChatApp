@@ -1,12 +1,10 @@
 import {useNavigation} from '@react-navigation/native';
-// import React from 'react';
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useRef} from 'react';
 
-import {View, StyleSheet, Image, Text} from 'react-native';
+import {View, StyleSheet, Image, Text, Pressable} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Menu, {MenuItem} from 'react-native-material-menu';
-// import {useRef} from 'react/cjs/react.development';
 
 import {colors} from '../Assets';
 
@@ -20,6 +18,7 @@ export const Topbar = ({
   showOverlayComponent,
   OverlayComponent,
   style,
+  onPress,
 }) => {
   const {goBack} = useNavigation();
   const menuRef = useRef();
@@ -43,11 +42,13 @@ export const Topbar = ({
           style={styles.icons}
         />
       )}
-      {avatar !== null && <Avatar avatar={avatar} />}
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>{title}</Text>
-        {!!subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
-      </View>
+      <Pressable style={styles.pressable} onPress={onPress}>
+        {avatar !== null && <Avatar avatar={avatar} />}
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>{title}</Text>
+          {!!subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
+        </View>
+      </Pressable>
       {menus.map((menu) => (
         <menu.component
           key={menu.icon}
@@ -114,6 +115,10 @@ const styles = StyleSheet.create({
   icons: {
     paddingVertical: 15,
     paddingHorizontal: 10,
+  },
+  pressable: {
+    flex: 1,
+    flexDirection: 'row',
   },
   titleContainer: {
     flex: 1,

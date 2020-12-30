@@ -135,29 +135,24 @@ const ChatScene = ({route, navigation}) => {
     [messages, selectedMessages],
   );
 
+  const onPressTopbar = () => navigation.navigate('ViewContact', user);
+
   return (
     <Screen>
-      <TouchableOpacity
-        onPress={() =>
-          navigation.navigate('ViewContact', {
-            displayName: user.displayName,
-            phoneNumber: user.phoneNumber,
-          })
-        }>
-        <Topbar
-          title={user.displayName ?? user.phoneNumber}
-          avatar={user.photoURL}
-          moreMenus={topbarMoreMenus}
-          showOverlayComponent={Boolean(selectedMessages.length)}
-          OverlayComponent={
-            <SelectedMessagesActions
-              closeActions={() => setSelectedMessages([])}
-              data={selectedMessagesActionsData()}
-            />
-          }
-          menus={topbarMenus}
-        />
-      </TouchableOpacity>
+      <Topbar
+        title={user.displayName ?? user.phoneNumber}
+        avatar={user.photoURL}
+        moreMenus={topbarMoreMenus}
+        showOverlayComponent={Boolean(selectedMessages.length)}
+        OverlayComponent={
+          <SelectedMessagesActions
+            closeActions={() => setSelectedMessages([])}
+            data={selectedMessagesActionsData()}
+          />
+        }
+        menus={topbarMenus}
+        onPress={onPressTopbar}
+      />
       <ImageBackground
         source={require('../../Assets/chatBackground.png')}
         style={styles.image}>
