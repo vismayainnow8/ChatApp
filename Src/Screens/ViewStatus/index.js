@@ -12,6 +12,10 @@ const ViewStatus = ({route}) => {
     pagerRef.current.setPage(page + 1);
   };
 
+  const previousPage = () => {
+    pagerRef.current.setPage(page - 1);
+  };
+
   return (
     <Screen style={styles.screen} statusBarColor={'#000000'}>
       <ViewPager
@@ -25,9 +29,9 @@ const ViewStatus = ({route}) => {
               user={user}
               data={user.statuses}
               visible={index === page}
-              enableProgress={true}
               duration={20}
-              onEndReached={nextPage}
+              goToNextPage={nextPage}
+              goToPreviousPage={previousPage}
             />
           </View>
         ))}

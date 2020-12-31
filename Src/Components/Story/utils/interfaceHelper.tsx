@@ -26,9 +26,9 @@ export interface StoryContainerProps {
   user?: UserProps;
   data: Array<ImageData>;
   visible?: boolean | undefined;
-  enableProgress?: boolean | undefined;
   duration?: number | undefined;
-  onEndReached?: Function;
+  goToPreviousPage?: Function;
+  goToNextPage?: Function;
 }
 
 export interface ProgressViewProps {
@@ -52,6 +52,9 @@ export interface StoryViewProps {
   images: Array<ImageData>;
   duration?: number | undefined;
   progressIndex: number;
+  goToPrevious: Function;
+  goToNext: Function;
+  onProgressStateChange: Function;
 }
 
 export interface ArrowViewProps extends CommonProps {

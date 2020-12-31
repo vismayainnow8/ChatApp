@@ -1,21 +1,56 @@
 import React from 'react';
 import {StoryViewProps} from '../utils/interfaceHelper';
-import {View, StyleSheet, Dimensions} from 'react-native';
+import {View, StyleSheet, Dimensions, Pressable} from 'react-native';
 import FastImage from 'react-native-fast-image';
 const {height, width} = Dimensions.get('window');
+
 function StoryView(props: StoryViewProps) {
-  const {images, progressIndex} = props;
+  const {
+    images,
+    progressIndex,
+    goToPrevious,
+    goToNext,
+    onProgressStateChange,
+  } = props;
 
   return (
     <View style={styles.divStory}>
-      <FastImage
-        style={styles.imgStyle}
-        source={{
-          uri: images[progressIndex].uri,
-          priority: FastImage.priority.high,
-        }}
-        resizeMode={FastImage.resizeMode.contain}
-      />
+      <View>
+        <FastImage
+          style={styles.imgStyle}
+          source={{
+            uri: images[progressIndex].uri,
+            priority: FastImage.priority.high,
+          }}
+          resizeMode={FastImage.resizeMode.contain}
+        />
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            flexDirection: 'row',
+          }}>
+          <Pressable
+            delayLongPress={400}
+            onLongPress={() => {}}
+            style={{flex: 1}}
+            onPress={() => goToPrevious()}
+            onPressIn={() => onProgressStateChange(true)}
+            onPressOut={() => onProgressStateChange(false)}
+          />
+          <Pressable
+            delayLongPress={400}
+            onLongPress={() => {}}
+            style={{flex: 4}}
+            onPress={() => goToNext()}
+            onPressIn={() => onProgressStateChange(true)}
+            onPressOut={() => onProgressStateChange(false)}
+          />
+        </View>
+      </View>
     </View>
   );
 }
