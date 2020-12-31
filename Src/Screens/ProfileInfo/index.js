@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   Text,
@@ -16,6 +16,8 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import {SmallButton} from '../../Components';
 import styles from './styles';
 import {StackActions} from '@react-navigation/native';
+import {useDispatch} from 'react-redux';
+import {generateContacts} from '../../StateManagement/Actions/contacts';
 
 const ProfileInfo = ({navigation}) => {
   const [name, setName] = useState(null);
@@ -23,6 +25,10 @@ const ProfileInfo = ({navigation}) => {
   const [image, setImage] = useState({});
   const pickerLstRef = useRef(null);
   const {phoneNumber, uid} = auth().currentUser;
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(generateContacts());
+  }, []);
 
   const next = async () => {
     if (!name) return;
