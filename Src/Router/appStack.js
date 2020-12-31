@@ -98,7 +98,11 @@ export const AppStack = ({user}) => {
           }}
         />
         <Stack.Screen name="Profile" component={Profile} />
-        <Stack.Screen name="Select contact" component={Contacts} />
+        <Stack.Screen
+          name="Select contact"
+          component={Contacts}
+          options={noTopBar}
+        />
         <Stack.Screen name="Message" component={Message} />
         <Stack.Screen name="NewBroadCast" component={NewBroadCast} />
         <Stack.Screen name="NewGroup" component={NewGroup} />
@@ -144,7 +148,7 @@ export const AppStack = ({user}) => {
           component={ChatScene}
           options={noTopBar}
         />
-        <Stack.Screen name="Contacts" component={Contacts} />
+        <Stack.Screen name="Contacts" component={Contacts} options={noTopBar} />
         <Stack.Screen name="CallingScreen" component={CallingScreen} />
         <Stack.Screen name="VideoCalling" component={VideoCalling} />
       </Stack.Navigator>

@@ -134,7 +134,7 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
         showMenu={showMenu}
         openCamera={openImageCamera}
       />
-      <EmojiBoard
+      {/* <EmojiBoard
         showBoard={inputType == inputTypes.emoji}
         tabBarPosition="top"
         onClick={onClick}
@@ -145,7 +145,7 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
           position: 'relative',
         }}
         onRemove={onRemove}
-      />
+      /> */}
       <RBSheet
         ref={pickerLstRef}
         height={220}

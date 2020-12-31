@@ -8,3 +8,6 @@ export const USER = 'user';
 export const CHATID = 'chatId';
 export const IMAGEURI = 'imageUri';
 export const IMAGEURIARRAY = 'imageUriArray';
+export const ADD_CONTACTS = 'addContacts';
+export const RESET_CONTACTS = 'resetContacts';
+export const SET_LOADING_CONTACTS = 'setLoadingContacts';

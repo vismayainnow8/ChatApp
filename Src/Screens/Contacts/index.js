@@ -1,100 +1,26 @@
-import React, {useState, useEffect, useRef} from 'react';
-import {
-  Text,
-  FlatList,
-  Platform,
-  PermissionsAndroid,
-  SafeAreaView,
-  StatusBar,
-  Image,
-  View,
-  ActivityIndicator,
-} from 'react-native';
-import Contact from 'react-native-contacts';
+import React from 'react';
+import {Text, FlatList, Image, View, ActivityIndicator} from 'react-native';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
-import IconMaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/Entypo';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import styles from './styles';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useCallback} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {Screen, Topbar} from '../../Components';
+import {generateContacts} from '../../StateManagement/Actions/contacts';
 
-let start;
 const Contacts = ({navigation}) => {
-  const [contacts, setContacts] = useState([]);
-  const contactsMap = useRef();
-  const contactsArray = useRef();
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    start = new Date().getTime();
-    if (Platform.OS === 'android') {
-      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
-        title: 'Contacts',
-        message: 'This app would like to view your contacts.',
-      }).then(() => {
-        loadContacts();
-        console.log('useffected worked');
-      });
-    } else {
-      loadContacts();
-      console.log('useffected failed');
-    }
-  }, []);
-
-  const loadContacts = () => {
-    console.log('A', new Date().getTime() - start);
-    Contact.getAll().then((contacts) => {
-      setLoading(true);
-      setContacts([]);
-      let filteredContacts = contacts.filter((item) =>
-        Boolean(item.phoneNumbers.length),
-      );
-      contactsMap.current = filteredContacts.reduce((prev, current) => {
-        let newMap = current.phoneNumbers.reduce((newPrev, newCurrent) => {
-          if (newCurrent.number.replace(/[^0-9+]/g, '').length < 7) {
-            return newPrev;
-          }
-          return {
-            ...newPrev,
-            [newCurrent.number.replace(/[^0-9+]/g, '')]: current.displayName,
-          };
-        }, {});
-        return {...prev, ...newMap};
-      }, {});
-      contactsArray.current = Object.keys(contactsMap.current);
-      checkContactsInServer(contactsArray.current);
-    });
-  };
-
-  const checkContactsInServer = (phoneContacts) => {
-    let contactsChunks = [];
-    for (let i = 0; i < Math.ceil(phoneContacts.length / 10); i++) {
-      contactsChunks.push(phoneContacts.slice(i * 10, (i + 1) * 10));
-    }
-    console.log('B', new Date().getTime() - start);
-    Promise.all(
-      contactsChunks.map((chunk) =>
-        firestore()
-          .collection('Users')
-          .where('phoneNumber', 'in', chunk)
-          .get()
-          .then((querySnapshot) => {
-            let data = [];
-            querySnapshot.forEach((documentSnapshot) => {
-              data.push({
-                uid: documentSnapshot.id,
-                ...documentSnapshot.data(),
-              });
-            });
-            setContacts((contacts) => [...contacts, ...data]);
-          }),
-      ),
-    ).finally(() => {
-      setLoading(false);
-    });
-  };
+  const contacts = useSelector((state) =>
+    Object.keys(state.contacts.contacts).map(
+      (key) => state.contacts.contacts[key],
+    ),
+  );
+  const loading = useSelector((state) => state.contacts.loading);
+  const dispatch = useDispatch();
+  const reloadContacts = () => dispatch(generateContacts());
 
   const openChat = useCallback((item) => {
     const key =
@@ -146,16 +72,20 @@ const Contacts = ({navigation}) => {
       });
   }, []);
 
+  const topbarMenus = [
+    {icon: 'refresh', onPress: reloadContacts, component: MaterialIcons},
+  ];
+
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <StatusBar backgroundColor="#075e54" barStyle="light-content" />
+    <Screen>
+      <Topbar title="Contacts" menus={topbarMenus} />
       <FlatList
         style={styles.mainContainer}
         ListHeaderComponent={
           <>
             <View style={styles.listItemContainer}>
               <View style={styles.iconContainer}>
-                <IconMaterialIcons
+                <MaterialIcons
                   name="group"
                   color="white"
                   size={23}
@@ -178,7 +108,7 @@ const Contacts = ({navigation}) => {
             </View>
             <View style={styles.listItemContainer}>
               <View style={styles.iconContainer}>
-                <IconMaterialIcons
+                <MaterialIcons
                   name="group"
                   color="white"
                   size={23}
@@ -251,7 +181,7 @@ const Contacts = ({navigation}) => {
           </>
         }
       />
-    </SafeAreaView>
+    </Screen>
   );
 };
 
@@ -271,7 +201,7 @@ const Item = ({photoURL, displayName, phoneNumber, onPress}) => (
       {photoURL ? (
         <Image source={{uri: photoURL}} style={styles.initStyle} />
       ) : (
-        <IconMaterialIcons name="person" color="white" size={23} />
+        <MaterialIcons name="person" color="white" size={23} />
       )}
     </View>
     <View style={styles.nameContainer}>
