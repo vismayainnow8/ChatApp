@@ -41,6 +41,7 @@ const StoryContainer = (props: StoryContainerProps) => {
       }}>
       <ProgressView
         enableProgress={!progressDisabled && visible}
+        visible={visible}
         length={data.length}
         duration={duration ?? DEFAULT_DURATION}
         progressIndex={progressIndex}

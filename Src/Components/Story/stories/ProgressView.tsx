@@ -1,32 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import ProgressItem from './ProgressItem';
 import {ProgressViewProps} from '../utils/interfaceHelper';
 import {View, StyleSheet} from 'react-native';
 
 function ProgressView(props: ProgressViewProps) {
-  const [progressIndex, setProgressIndex] = useState(0);
-
-  useEffect(() => {
-    setProgressIndex(props.progressIndex);
-  }, [props.progressIndex]);
-
-  useEffect(() => {
-    setProgressIndex(progressIndex);
-  }, [props.enableProgress]);
+  const {progressIndex} = props;
 
   function changePosition() {
-    if (props.enableProgress) {
-      if (progressIndex < props.length) {
-        const mProgress = progressIndex + 1;
-        props.onChange(mProgress);
-
-        setTimeout(() => {
-          setProgressIndex(mProgress);
-        }, 1500);
-      }
-    } else {
-      setProgressIndex(progressIndex);
-    }
+    const mProgress = progressIndex + 1;
+    props.onChange(mProgress);
   }
 
   return (
@@ -35,6 +17,7 @@ function ProgressView(props: ProgressViewProps) {
         <ProgressItem
           key={index.toString()}
           enableProgress={props.enableProgress}
+          visible={props.visible}
           size={props.length}
           duration={props.duration}
           progressIndex={progressIndex}

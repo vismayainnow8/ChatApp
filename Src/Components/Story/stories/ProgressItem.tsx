@@ -20,13 +20,11 @@ function ProgressItem(props: ProgressItemProps) {
   });
 
   const startProgress = () => {
-    if (props.currentIndex === props.progressIndex) {
-      animation.start(({finished}) => {
-        if (finished) {
-          props.onChangePosition();
-        }
-      });
-    }
+    animation.start(({finished}) => {
+      if (finished) {
+        props.onChangePosition();
+      }
+    });
   };
 
   const stopProgress = () => {
@@ -38,19 +36,23 @@ function ProgressItem(props: ProgressItemProps) {
   };
 
   React.useEffect(() => {
-    if (props.enableProgress) {
-      startProgress();
-    } else {
-      stopProgress();
+    if (props.currentIndex === props.progressIndex) {
+      if (props.enableProgress) {
+        startProgress();
+      } else {
+        stopProgress();
+      }
     }
   }, [props.enableProgress]);
 
   React.useEffect(() => {
     resetProgress();
-    if (props.enableProgress) {
-      startProgress();
+    if (props.currentIndex === props.progressIndex) {
+      if (props.enableProgress) {
+        startProgress();
+      }
     }
-  }, [props.progressIndex]);
+  }, [props.progressIndex, props.visible]);
 
   return (
     <View

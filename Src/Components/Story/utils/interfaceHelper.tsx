@@ -34,12 +34,14 @@ export interface StoryContainerProps {
 export interface ProgressViewProps {
   duration?: number | undefined;
   enableProgress?: boolean | undefined;
+  visible?: boolean | undefined;
   length: number;
   onChange: Function;
   progressIndex: number;
 }
 
 export interface ProgressItemProps {
+  visible?: boolean | undefined;
   enableProgress?: boolean | undefined;
   size: number;
   duration?: number | undefined;
