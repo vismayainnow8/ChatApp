@@ -29,7 +29,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   iconContainer: {
-    padding: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
   },
   initStyle: {
     borderRadius: 55,

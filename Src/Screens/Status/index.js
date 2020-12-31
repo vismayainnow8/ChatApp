@@ -6,6 +6,7 @@ import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommun
 import ImageCropPicker from 'react-native-image-crop-picker';
 import styles from './styles';
 import {DATA} from '../../Assets/Consts';
+import {StatusListImage} from './components/StatusListImage';
 
 const Status = ({navigation, route, ...props}) => {
   const [statusData] = useState(DATA);
@@ -18,26 +19,22 @@ const Status = ({navigation, route, ...props}) => {
     }
   };
 
-  const Item = ({index, section, photoURL, displayName, time}) => (
+  const Item = ({item, index, section}) => (
     <TouchableOpacity
       style={styles.listItemContainer}
       onPress={() => navigation.navigate('ViewStatus', {section, index})}>
       <View style={styles.iconContainer}>
-        <Image
-          source={{uri: photoURL}}
-          style={styles.initStyle}
-          resizeMode="contain"
-        />
+        <StatusListImage photoURL={item.photoURL} data={item.statuses} />
       </View>
 
       <View style={styles.messageContainer}>
         <View style={styles.firstContainer}>
-          <Text>{displayName}</Text>
+          <Text>{item.displayName}</Text>
         </View>
         <View style={styles.secondContainer}>
           <View style={styles.dateContainer}>
             <Text numberOfLines={1} style={styles.listTime}>
-              {time}
+              {item.time}
             </Text>
           </View>
         </View>
@@ -109,13 +106,7 @@ const Status = ({navigation, route, ...props}) => {
         ListHeaderComponent={renderHeader}
         keyExtractor={(item) => item.uid.toString()}
         renderItem={({item, index, section}) => (
-          <Item
-            photoURL={item.photoURL}
-            displayName={item.displayName}
-            time={item.time}
-            index={index}
-            section={section}
-          />
+          <Item item={item} time={item.time} index={index} section={section} />
         )}
         ItemSeparatorComponent={renderSeparator}
         renderSectionHeader={({section: {title}}) => (

@@ -4,4 +4,5 @@ export const colors = {
     normal: '#128c7e',
     light: '#128c7e',
   },
+  barInactive: '#87888ACC',
 };
