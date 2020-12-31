@@ -26,14 +26,14 @@ export const DATA = [
               'https://s3.ap-south-1.amazonaws.com/hsdreams1/pins/2019/01/big/7d1e5e0b31a650b9314023921b9e161b.jpeg',
             time: 1609324897235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
               'https://boostupliving.com/wp-content/uploads/2019/06/best-motivational-quote-mobile-wallpapers-53.jpg',
             time: 1609324907235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
@@ -69,28 +69,28 @@ export const DATA = [
               'https://s3.ap-south-1.amazonaws.com/hsdreams1/pins/2019/01/big/7d1e5e0b31a650b9314023921b9e161b.jpeg',
             time: 1609324897235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
               'https://boostupliving.com/wp-content/uploads/2019/06/best-motivational-quote-mobile-wallpapers-53.jpg',
             time: 1609324907235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
               'https://i.pinimg.com/originals/51/bd/4c/51bd4c1e72d5d6ae5f2a4f31e31d2ef5.jpg',
             time: 1609324917235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
               'https://pumpernickelpixie.com/wp-content/uploads/2016/01/15-phone-wallpaper.jpg',
             time: 1609324927235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
@@ -112,7 +112,7 @@ export const DATA = [
               'https://s3.ap-south-1.amazonaws.com/hsdreams1/pins/2019/01/big/7d1e5e0b31a650b9314023921b9e161b.jpeg',
             time: 1609324897235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
@@ -155,14 +155,14 @@ export const DATA = [
               'https://s3.ap-south-1.amazonaws.com/hsdreams1/pins/2019/01/big/7d1e5e0b31a650b9314023921b9e161b.jpeg',
             time: 1609324897235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
               'https://boostupliving.com/wp-content/uploads/2019/06/best-motivational-quote-mobile-wallpapers-53.jpg',
             time: 1609324907235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
@@ -247,35 +247,35 @@ export const DATA = [
               'https://s3.ap-south-1.amazonaws.com/hsdreams1/pins/2019/01/big/7d1e5e0b31a650b9314023921b9e161b.jpeg',
             time: 1609324897235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
               'https://boostupliving.com/wp-content/uploads/2019/06/best-motivational-quote-mobile-wallpapers-53.jpg',
             time: 1609324907235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
               'https://i.pinimg.com/originals/51/bd/4c/51bd4c1e72d5d6ae5f2a4f31e31d2ef5.jpg',
             time: 1609324917235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
               'https://pumpernickelpixie.com/wp-content/uploads/2016/01/15-phone-wallpaper.jpg',
             time: 1609324927235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
               'https://i.pinimg.com/originals/5a/f0/e5/5af0e538f7437fd13a73f7c96601ccb6.jpg',
             time: 1609324937235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
         ],
       },
@@ -290,35 +290,35 @@ export const DATA = [
               'https://s3.ap-south-1.amazonaws.com/hsdreams1/pins/2019/01/big/7d1e5e0b31a650b9314023921b9e161b.jpeg',
             time: 1609324897235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
               'https://boostupliving.com/wp-content/uploads/2019/06/best-motivational-quote-mobile-wallpapers-53.jpg',
             time: 1609324907235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
               'https://i.pinimg.com/originals/51/bd/4c/51bd4c1e72d5d6ae5f2a4f31e31d2ef5.jpg',
             time: 1609324917235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
               'https://pumpernickelpixie.com/wp-content/uploads/2016/01/15-phone-wallpaper.jpg',
             time: 1609324927235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
               'https://i.pinimg.com/originals/5a/f0/e5/5af0e538f7437fd13a73f7c96601ccb6.jpg',
             time: 1609324937235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
         ],
       },
@@ -333,35 +333,35 @@ export const DATA = [
               'https://s3.ap-south-1.amazonaws.com/hsdreams1/pins/2019/01/big/7d1e5e0b31a650b9314023921b9e161b.jpeg',
             time: 1609324897235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
               'https://boostupliving.com/wp-content/uploads/2019/06/best-motivational-quote-mobile-wallpapers-53.jpg',
             time: 1609324907235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
               'https://i.pinimg.com/originals/51/bd/4c/51bd4c1e72d5d6ae5f2a4f31e31d2ef5.jpg',
             time: 1609324917235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
               'https://pumpernickelpixie.com/wp-content/uploads/2016/01/15-phone-wallpaper.jpg',
             time: 1609324927235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
               'https://i.pinimg.com/originals/5a/f0/e5/5af0e538f7437fd13a73f7c96601ccb6.jpg',
             time: 1609324937235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
         ],
       },
@@ -376,35 +376,35 @@ export const DATA = [
               'https://s3.ap-south-1.amazonaws.com/hsdreams1/pins/2019/01/big/7d1e5e0b31a650b9314023921b9e161b.jpeg',
             time: 1609324897235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
               'https://boostupliving.com/wp-content/uploads/2019/06/best-motivational-quote-mobile-wallpapers-53.jpg',
             time: 1609324907235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
               'https://i.pinimg.com/originals/51/bd/4c/51bd4c1e72d5d6ae5f2a4f31e31d2ef5.jpg',
             time: 1609324917235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
               'https://pumpernickelpixie.com/wp-content/uploads/2016/01/15-phone-wallpaper.jpg',
             time: 1609324927235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
               'https://i.pinimg.com/originals/5a/f0/e5/5af0e538f7437fd13a73f7c96601ccb6.jpg',
             time: 1609324937235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
         ],
       },
@@ -419,35 +419,35 @@ export const DATA = [
               'https://s3.ap-south-1.amazonaws.com/hsdreams1/pins/2019/01/big/7d1e5e0b31a650b9314023921b9e161b.jpeg',
             time: 1609324897235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
               'https://boostupliving.com/wp-content/uploads/2019/06/best-motivational-quote-mobile-wallpapers-53.jpg',
             time: 1609324907235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
               'https://i.pinimg.com/originals/51/bd/4c/51bd4c1e72d5d6ae5f2a4f31e31d2ef5.jpg',
             time: 1609324917235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
               'https://pumpernickelpixie.com/wp-content/uploads/2016/01/15-phone-wallpaper.jpg',
             time: 1609324927235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
           {
             uri:
               'https://i.pinimg.com/originals/5a/f0/e5/5af0e538f7437fd13a73f7c96601ccb6.jpg',
             time: 1609324937235,
             type: 'image',
-            seen: false,
+            seen: true,
           },
         ],
       },

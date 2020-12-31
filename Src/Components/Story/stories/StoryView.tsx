@@ -44,7 +44,7 @@ function StoryView(props: StoryViewProps) {
           <Pressable
             delayLongPress={400}
             onLongPress={() => {}}
-            style={{flex: 4}}
+            style={{flex: 3}}
             onPress={() => goToNext()}
             onPressIn={() => onProgressStateChange(true)}
             onPressOut={() => onProgressStateChange(false)}

@@ -32,7 +32,6 @@ const StoryContainer = (props: StoryContainerProps) => {
   const onProgressStateChange = (value: boolean) => {
     setProgressDisabled(value);
   };
-  // console.log(progressIndex);
 
   return (
     <View

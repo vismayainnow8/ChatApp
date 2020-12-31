@@ -3,12 +3,15 @@ import {View, StyleSheet} from 'react-native';
 import ViewPager from '@react-native-community/viewpager';
 import {StoryContainer} from '../../Components/Story';
 import {Screen} from '../../Components';
-const ViewStatus = ({route}) => {
+const ViewStatus = ({navigation, route}) => {
   const {section, index} = route.params;
   const [page, setPage] = useState(index);
   const pagerRef = useRef();
 
   const nextPage = () => {
+    if (section.data.length <= page + 1) {
+      return navigation.goBack();
+    }
     pagerRef.current.setPage(page + 1);
   };
 
