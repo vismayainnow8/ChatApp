@@ -16,6 +16,7 @@ export interface BarStyleProps {
 }
 
 export interface ImageData {
+  id: string;
   uri: string;
   time: number;
   type: string;
@@ -51,6 +52,7 @@ export interface ProgressItemProps {
 }
 
 export interface StoryViewProps {
+  onViewed: Function;
   images: Array<ImageData>;
   duration?: number | undefined;
   progressIndex: number;
@@ -64,6 +66,7 @@ export interface ArrowViewProps extends CommonProps {
 }
 
 export interface UserProps {
+  uid: string;
   photoURL?: ImageSourcePropType | undefined;
   displayName?: string | undefined;
 }

@@ -4,7 +4,9 @@ import setTextInputReducer from './textInput';
 import countryReducer from './country';
 import firebaseUserReducer from './firebaseUser';
 import imageUriReducer from './imageUri';
+
 import contactsReducer from './contacts';
+import viewedStatusesReducer from './viewedStatuses';
 
 export default {
   searchPressed: searchPressedReducer,
@@ -14,4 +16,5 @@ export default {
   firebaseUser: firebaseUserReducer,
   imageUri: imageUriReducer,
   contacts: contactsReducer,
+  viewedStatuses: viewedStatusesReducer,
 };

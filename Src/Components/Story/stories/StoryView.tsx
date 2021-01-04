@@ -11,8 +11,11 @@ function StoryView(props: StoryViewProps) {
     goToPrevious,
     goToNext,
     onProgressStateChange,
+    onViewed,
   } = props;
 
+  const onLoadEnd = () =>
+    !images[progressIndex].seen && onViewed(images[progressIndex].id);
   return (
     <View style={styles.divStory}>
       <View>
@@ -23,6 +26,7 @@ function StoryView(props: StoryViewProps) {
             priority: FastImage.priority.high,
           }}
           resizeMode={FastImage.resizeMode.contain}
+          onLoadEnd={onLoadEnd}
         />
         <View
           style={{

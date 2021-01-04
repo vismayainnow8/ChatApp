@@ -17,7 +17,7 @@ import {SmallButton} from '../../Components';
 import styles from './styles';
 import {StackActions} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
-import {generateContacts} from '../../StateManagement/Actions/contacts';
+import {generateContacts} from '../../StateManagement/Actions';
 
 const ProfileInfo = ({navigation}) => {
   const [name, setName] = useState(null);

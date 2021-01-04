@@ -10,7 +10,7 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useCallback} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Screen, Topbar} from '../../Components';
-import {generateContacts} from '../../StateManagement/Actions/contacts';
+import {generateContacts} from '../../StateManagement/Actions';
 
 const Contacts = ({navigation}) => {
   const contacts = useSelector((state) =>

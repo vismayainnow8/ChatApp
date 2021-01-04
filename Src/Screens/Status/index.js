@@ -1,15 +1,28 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Text, TouchableOpacity, Image, View, SectionList} from 'react-native';
-import {connect} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {Screen} from '../../Components';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import styles from './styles';
-import {DATA} from '../../Assets/Consts';
+import {DATA2, BASE_STATUSES_SECTIONLIST_STRUCTURE} from '../../Assets/Consts';
 import {StatusListImage} from './components/StatusListImage';
+import {useNavigation} from '@react-navigation/native';
 
 const Status = ({navigation, route, ...props}) => {
-  const [statusData] = useState(DATA);
+  const [statusData, setStatusData] = useState([]);
+  const selector = (state) =>
+    statusData.reduce(
+      reduceFunctionForStatusCategorising(state),
+      BASE_STATUSES_SECTIONLIST_STRUCTURE,
+    );
+
+  const sectionListData = useSelector(selector);
+
+  useEffect(() => {
+    const data = formatStatusesData(DATA2);
+    setStatusData(data);
+  }, []);
 
   const onPressStatus = () => {
     if (props.imageUri != null) {
@@ -18,29 +31,6 @@ const Status = ({navigation, route, ...props}) => {
       openCamera();
     }
   };
-
-  const Item = ({item, index, section}) => (
-    <TouchableOpacity
-      style={styles.listItemContainer}
-      onPress={() => navigation.navigate('ViewStatus', {section, index})}>
-      <View style={styles.iconContainer}>
-        <StatusListImage photoURL={item.photoURL} data={item.statuses} />
-      </View>
-
-      <View style={styles.messageContainer}>
-        <View style={styles.firstContainer}>
-          <Text>{item.displayName}</Text>
-        </View>
-        <View style={styles.secondContainer}>
-          <View style={styles.dateContainer}>
-            <Text numberOfLines={1} style={styles.listTime}>
-              {item.time}
-            </Text>
-          </View>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
 
   const openCamera = () => {
     ImageCropPicker.openCamera({
@@ -102,7 +92,7 @@ const Status = ({navigation, route, ...props}) => {
   return (
     <Screen style={styles.screen}>
       <SectionList
-        sections={statusData}
+        sections={sectionListData}
         ListHeaderComponent={renderHeader}
         keyExtractor={(item) => item.uid.toString()}
         renderItem={({item, index, section}) => (
@@ -129,12 +119,70 @@ const Status = ({navigation, route, ...props}) => {
   );
 };
 
-const mapStateToProps = (state, props) => {
-  return {
-    imageUri: state.imageUri.imageUri,
-    imageUriArray: state.imageUriArray,
-    ...props,
-  };
+export default Status;
+
+const Item = ({item, index, section}) => {
+  const {time, statuses} = item;
+  const navigation = useNavigation();
+
+  return (
+    <TouchableOpacity
+      style={styles.listItemContainer}
+      onPress={() => navigation.navigate('ViewStatus', {section, index})}>
+      <View style={styles.iconContainer}>
+        <StatusListImage photoURL={item.photoURL} data={statuses} />
+      </View>
+
+      <View style={styles.messageContainer}>
+        <View style={styles.firstContainer}>
+          <Text>{item.displayName}</Text>
+        </View>
+        <View style={styles.secondContainer}>
+          <View style={styles.dateContainer}>
+            <Text numberOfLines={1} style={styles.listTime}>
+              {time}
+            </Text>
+          </View>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
 };
 
-export default connect(mapStateToProps, null)(Status);
+function reduceFunctionForStatusCategorising(state) {
+  return (prev, data) => {
+    const statuses = data.statuses.map((status) => ({
+      ...status,
+      seen: (state.viewedStatuses[data.uid] ?? []).includes(status.id),
+    }));
+    const isAllSeen = statuses.every((status) => status.seen);
+    if (isAllSeen) {
+      prev[1].data.push({...data, statuses});
+    } else {
+      prev[0].data.push({...data, statuses});
+    }
+    return prev;
+  };
+}
+
+function formatStatusesData(statuses) {
+  const data = statuses.reduce((prev, newVal) => {
+    const isNew = Boolean(!prev[newVal.user.uid]);
+    if (isNew) {
+      prev[newVal.user.uid] = {
+        ...newVal.user,
+        time: newVal.data.time,
+        statuses: [newVal.data],
+      };
+    } else {
+      prev[newVal.user.uid].statuses.push(newVal.data);
+      prev[newVal.user.uid].time =
+        prev[newVal.user.uid].time > newVal.data.time
+          ? prev[newVal.user.uid].time
+          : newVal.data.time;
+    }
+    return prev;
+  }, {});
+  const dataArray = Object.keys(data).map((key) => data[key]);
+  return dataArray;
+}

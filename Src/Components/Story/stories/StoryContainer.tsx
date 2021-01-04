@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {useDispatch} from 'react-redux';
 import ProgressView from './ProgressView';
 import StoryView from './StoryView';
 import {StoryContainerProps} from '../utils/interfaceHelper';
@@ -6,11 +7,13 @@ import {View} from 'react-native';
 import {DEFAULT_DURATION} from '../utils/constant';
 import moment from 'moment';
 import {Topbar} from '../../Topbar';
+import {addViewedStatus} from '../../../StateManagement/Actions';
 
 const StoryContainer = (props: StoryContainerProps) => {
   const {data, duration, user, visible, goToPreviousPage, goToNextPage} = props;
   const [progressIndex, setProgressIndex] = useState(0);
   const [progressDisabled, setProgressDisabled] = useState(false);
+  const dispatch = useDispatch();
 
   const onChange = (position: number) => {
     if (position < 0) {
@@ -31,6 +34,10 @@ const StoryContainer = (props: StoryContainerProps) => {
 
   const onProgressStateChange = (value: boolean) => {
     setProgressDisabled(value);
+  };
+
+  const dispatchViewed = (id: string) => {
+    visible && dispatch(addViewedStatus({uid: user.uid, item: id}));
   };
 
   return (
@@ -59,6 +66,7 @@ const StoryContainer = (props: StoryContainerProps) => {
         goToNext={goToNext}
         goToPrevious={goToPrevious}
         onProgressStateChange={onProgressStateChange}
+        onViewed={dispatchViewed}
       />
     </View>
   );
