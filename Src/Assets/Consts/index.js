@@ -10,7 +10,7 @@ export const consts = {
 export default consts;
 export * from './countryList';
 
-export const BASE_STATUSES_SECTIONLIST_STRUCTURE = [
+export const BASE_STATUSES_SECTIONLIST_STRUCTURE = () => [
   {
     id: 1,
     title: 'Recent Updates',

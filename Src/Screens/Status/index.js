@@ -13,8 +13,9 @@ const Status = ({navigation, route, ...props}) => {
   const [statusData, setStatusData] = useState([]);
   const selector = (state) =>
     statusData.reduce(
-      reduceFunctionForStatusCategorising(state),
-      BASE_STATUSES_SECTIONLIST_STRUCTURE,
+      (prev, data) =>
+        reduceFunctionForStatusCategorising(state.viewedStatuses, prev, data),
+      BASE_STATUSES_SECTIONLIST_STRUCTURE(),
     );
 
   const sectionListData = useSelector(selector);
@@ -149,21 +150,26 @@ const Item = ({item, index, section}) => {
   );
 };
 
-function reduceFunctionForStatusCategorising(state) {
-  return (prev, data) => {
-    const statuses = data.statuses.map((status) => ({
-      ...status,
-      seen: (state.viewedStatuses[data.uid] ?? []).includes(status.id),
-    }));
-    const isAllSeen = statuses.every((status) => status.seen);
-    if (isAllSeen) {
-      prev[1].data.push({...data, statuses});
+const reduceFunctionForStatusCategorising = (viewedStatuses, prev, data) => {
+  const statuses = data.statuses.map((status) => ({
+    ...status,
+    seen: (viewedStatuses[data.uid] ?? []).includes(status.id),
+  }));
+  statuses.sort((a, b) => {
+    if (a.seen ^ b.seen) {
+      return b.seen && 1;
     } else {
-      prev[0].data.push({...data, statuses});
+      return a.time - b.time;
     }
-    return prev;
-  };
-}
+  });
+  const isAllSeen = statuses.every((status) => status.seen);
+  if (isAllSeen) {
+    prev[1].data.push({...data, statuses});
+  } else {
+    prev[0].data.push({...data, statuses});
+  }
+  return prev;
+};
 
 function formatStatusesData(statuses) {
   const data = statuses.reduce((prev, newVal) => {

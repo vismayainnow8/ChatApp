@@ -11,7 +11,10 @@ import {addViewedStatus} from '../../../StateManagement/Actions';
 
 const StoryContainer = (props: StoryContainerProps) => {
   const {data, duration, user, visible, goToPreviousPage, goToNextPage} = props;
-  const [progressIndex, setProgressIndex] = useState(0);
+  const initialNotSeenIndex = data.findIndex((item) => !item.seen);
+  const initialProgressIndex =
+    initialNotSeenIndex < 0 ? 0 : initialNotSeenIndex;
+  const [progressIndex, setProgressIndex] = useState(initialProgressIndex);
   const [progressDisabled, setProgressDisabled] = useState(false);
   const dispatch = useDispatch();
 
@@ -37,7 +40,7 @@ const StoryContainer = (props: StoryContainerProps) => {
   };
 
   const dispatchViewed = (id: string) => {
-    visible && dispatch(addViewedStatus({uid: user.uid, item: id}));
+    dispatch(addViewedStatus({uid: user.uid, item: id}));
   };
 
   return (
@@ -60,6 +63,7 @@ const StoryContainer = (props: StoryContainerProps) => {
         style={{backgroundColor: '#00000000'}}
       />
       <StoryView
+        visible={visible}
         images={data}
         duration={duration ?? DEFAULT_DURATION}
         progressIndex={progressIndex}

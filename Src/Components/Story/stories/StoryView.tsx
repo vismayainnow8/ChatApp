@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {StoryViewProps} from '../utils/interfaceHelper';
 import {View, StyleSheet, Dimensions, Pressable} from 'react-native';
 import FastImage from 'react-native-fast-image';
@@ -12,10 +12,23 @@ function StoryView(props: StoryViewProps) {
     goToNext,
     onProgressStateChange,
     onViewed,
+    visible,
   } = props;
+  const [loaded, setLoaded] = useState(false);
 
-  const onLoadEnd = () =>
-    !images[progressIndex].seen && onViewed(images[progressIndex].id);
+  const onLoadEnd = () => setLoaded(true);
+
+  useEffect(() => {
+    visible &&
+      loaded &&
+      !images[progressIndex].seen &&
+      onViewed(images[progressIndex].id);
+  }, [visible, loaded]);
+
+  useEffect(() => {
+    setLoaded(false);
+  }, [progressIndex]);
+
   return (
     <View style={styles.divStory}>
       <View>

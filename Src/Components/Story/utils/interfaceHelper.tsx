@@ -53,6 +53,7 @@ export interface ProgressItemProps {
 
 export interface StoryViewProps {
   onViewed: Function;
+  visible?: boolean | undefined;
   images: Array<ImageData>;
   duration?: number | undefined;
   progressIndex: number;
