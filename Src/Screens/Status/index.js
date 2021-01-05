@@ -1,16 +1,26 @@
-import React, {useEffect, useState} from 'react';
-import {Text, TouchableOpacity, Image, View, SectionList} from 'react-native';
-import {useSelector} from 'react-redux';
-import {Screen} from '../../Components';
-import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import ImageCropPicker from 'react-native-image-crop-picker';
-import styles from './styles';
-import {DATA2, BASE_STATUSES_SECTIONLIST_STRUCTURE} from '../../Assets/Consts';
-import {StatusListImage} from './components/StatusListImage';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 import {useNavigation} from '@react-navigation/native';
+import moment from 'moment';
+import React, {useEffect, useState} from 'react';
+import {Image, SectionList, Text, TouchableOpacity, View} from 'react-native';
+import ImageCropPicker from 'react-native-image-crop-picker';
+import {Circle} from 'react-native-progress';
+import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useSelector, useStore} from 'react-redux';
+import {v4 as uuidv4} from 'uuid';
+import {BASE_STATUSES_SECTIONLIST_STRUCTURE} from '../../Assets/Consts';
+import {Screen} from '../../Components';
+import {StatusListImage} from './components/StatusListImage';
+import styles from './styles';
 
 const Status = ({navigation, route, ...props}) => {
   const [statusData, setStatusData] = useState([]);
+  const store = useStore();
+  const [myStatus, setMyStatus] = useState(myStatusData());
+  const [uploading, setUploading] = useState({status: false, fileNumber: ''});
+  // const dispatch = useDispatch();
   const selector = (state) =>
     statusData.reduce(
       (prev, data) =>
@@ -21,16 +31,39 @@ const Status = ({navigation, route, ...props}) => {
   const sectionListData = useSelector(selector);
 
   useEffect(() => {
-    const data = formatStatusesData(DATA2);
-    setStatusData(data);
+    return firestore()
+      .collection('Statuses')
+      .where('contacts', 'array-contains', auth().currentUser.uid)
+      .onSnapshot(
+        (res) => {
+          let data = [];
+          let myData = [];
+          res.forEach((item) => {
+            let formatedItem = item.data();
+            formatedItem.data.id = item.id;
+            if (formatedItem.user.uid == auth().currentUser.uid) {
+              myData.push(formatedItem);
+            } else {
+              data.push(formatedItem);
+            }
+          });
+          formatAndSetMyStatusData(myData);
+          setStatusData(formatStatusesData(data));
+          // setStatusData(formatStatusesData(DATA2));
+        },
+        (error) => {},
+      );
   }, []);
 
+  const formatAndSetMyStatusData = (myData) => {
+    myData = formatStatusesData(myData);
+    const data = myStatusData();
+    data.data = myData;
+    setMyStatus(data);
+  };
+
   const onPressStatus = () => {
-    if (props.imageUri != null) {
-      navigation.navigate('ViewStatus', {statusData});
-    } else {
-      openCamera();
-    }
+    !uploading && openCamera();
   };
 
   const openCamera = () => {
@@ -40,13 +73,59 @@ const Status = ({navigation, route, ...props}) => {
       mediaType: 'image',
       cropping: true,
     })
-      .then((photo) =>
-        navigation.navigate('ImagePreview', {
-          cameraImageUri: photo.path,
-          time: new Date().toLocaleString(),
-        }),
-      )
+      .then(uploadPhoto)
       .catch((error) => console.log('error', error));
+  };
+
+  const uploadPhoto = async (photo) => {
+    const contacts = Object.keys(store.getState().contacts.contacts);
+    const {photoURL, uid, displayName} = auth().currentUser;
+    contacts.push(uid);
+    const user = {photoURL, uid, displayName};
+    let status = {
+      data: {},
+      contacts,
+      user,
+    };
+    setUploading({status: 0.01, fileNumber: 1});
+    status.data.uri = await uploadImageAsPromise(photo);
+    status.data.type = photo.mime.split('/')[0];
+    status.data.time = firestore.Timestamp.now().toMillis();
+    addStatus(status);
+  };
+
+  const addStatus = (status) => {
+    firestore().collection('Statuses').add(status);
+  };
+
+  const uploadImageAsPromise = async (image) => {
+    return new Promise((resolve, reject) => {
+      const imageStorageRef = storage().ref(
+        'images/statuses/' + uuidv4() + '.jpeg',
+      );
+      const task = imageStorageRef.putFile(image.path);
+
+      task.on(
+        'state_changed',
+        (taskSnapshot) => {
+          const fraction =
+            taskSnapshot.bytesTransferred / taskSnapshot.totalBytes;
+          setUploading((data) => ({
+            ...data,
+            status: fraction > 0 ? fraction : 0.01,
+          }));
+        },
+        (err) => {
+          console.log(err);
+          reject(err);
+        },
+        async () => {
+          setUploading({status: false, fileNumber: ''});
+          const downloadURL = await imageStorageRef.getDownloadURL();
+          resolve(downloadURL);
+        },
+      );
+    });
   };
 
   const renderSeparator = () => {
@@ -58,37 +137,44 @@ const Status = ({navigation, route, ...props}) => {
     );
   };
 
-  const renderHeader = (
-    <TouchableOpacity
-      style={styles.listItemContainer}
-      onPress={() => onPressStatus()}>
-      <View style={styles.iconContainer}>
-        <Image
-          source={{
-            uri: 'https://randomuser.me/api/portraits/men/1.jpg',
-          }}
-          style={styles.initStyle}
-          resizeMode="contain"
-        />
-        <View style={styles.numbercountContainer}>
-          <Text style={styles.numberCount}>+</Text>
-        </View>
-      </View>
-
-      <View style={styles.messageContainer}>
-        <View style={styles.firstContainer}>
-          <Text>My Status</Text>
-        </View>
-        <View style={styles.secondContainer}>
-          <View style={styles.dateContainer}>
-            <Text numberOfLines={1} style={styles.listTime}>
-              Tap to add status update
-            </Text>
+  const renderHeader = () => {
+    if (myStatus?.data[0]?.statuses?.length) {
+      const item = myStatus.data[0];
+      return <Item item={item} time={item.time} index={0} section={myStatus} />;
+    } else {
+      return (
+        <TouchableOpacity
+          style={styles.listItemContainer}
+          onPress={() => onPressStatus()}>
+          <View style={styles.iconContainer}>
+            <Image
+              source={{
+                uri: auth().currentUser.photoURL,
+              }}
+              style={styles.initStyle}
+              resizeMode="contain"
+            />
+            <View style={styles.numbercountContainer}>
+              <Text style={styles.numberCount}>+</Text>
+            </View>
           </View>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
+
+          <View style={styles.messageContainer}>
+            <View style={styles.firstContainer}>
+              <Text>My Status</Text>
+            </View>
+            <View style={styles.secondContainer}>
+              <View style={styles.dateContainer}>
+                <Text numberOfLines={1} style={styles.listTime}>
+                  Tap to add status update
+                </Text>
+              </View>
+            </View>
+          </View>
+        </TouchableOpacity>
+      );
+    }
+  };
 
   return (
     <Screen style={styles.screen}>
@@ -106,15 +192,25 @@ const Status = ({navigation, route, ...props}) => {
           </View>
         )}
       />
-      <TouchableOpacity
-        style={styles.contactsbuttonContainer}
-        onPress={() => openCamera()}>
-        <IconMaterialCommunityIcons
-          name="camera"
-          color="white"
-          size={23}
-          style={{padding: 5}}
-        />
+      <TouchableOpacity style={styles.contactsbuttonContainer}>
+        {uploading.status ? (
+          <Circle progress={uploading.status} size={48} color="white">
+            <View style={styles.percentageContainer}>
+              <Text style={styles.percentage}>
+                {Math.ceil(uploading.status * 100)}%
+              </Text>
+              <Text style={styles.percentage}>of {uploading.fileNumber}</Text>
+            </View>
+          </Circle>
+        ) : (
+          <IconMaterialCommunityIcons
+            name="camera"
+            color="white"
+            size={24}
+            style={styles.fabIcon}
+            onPress={openCamera}
+          />
+        )}
       </TouchableOpacity>
     </Screen>
   );
@@ -131,7 +227,7 @@ const Item = ({item, index, section}) => {
       style={styles.listItemContainer}
       onPress={() => navigation.navigate('ViewStatus', {section, index})}>
       <View style={styles.iconContainer}>
-        <StatusListImage photoURL={item.photoURL} data={statuses} />
+        <StatusListImage data={statuses} />
       </View>
 
       <View style={styles.messageContainer}>
@@ -141,7 +237,7 @@ const Item = ({item, index, section}) => {
         <View style={styles.secondContainer}>
           <View style={styles.dateContainer}>
             <Text numberOfLines={1} style={styles.listTime}>
-              {time}
+              {moment(time).format('D MMM YYYY h:mm a')}
             </Text>
           </View>
         </View>
@@ -192,3 +288,15 @@ function formatStatusesData(statuses) {
   const dataArray = Object.keys(data).map((key) => data[key]);
   return dataArray;
 }
+
+const myStatusData = () => {
+  return {
+    id: auth().currentUser.uid,
+    title: 'My Status',
+    data: [
+      {
+        statuses: [],
+      },
+    ],
+  };
+};
