@@ -52,13 +52,13 @@ export const generateContacts = () => {
     start = new Date().getTime();
     try {
       Platform.OS === 'android' &&
-        PermissionsAndroid.request(
+        (await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
           {
             title: 'Contacts',
             message: 'This app would like to view your contacts.',
           },
-        );
+        ));
       dispatch(resetContacts());
       dispatch(setContactsLoading(true));
       const mobileContactsArray = await loadContacts();
@@ -72,6 +72,7 @@ export const generateContacts = () => {
         dispatch(setContactsLoading(false));
       });
     } catch (error) {
+      console.log(error);
       dispatch(setContactsLoading(false));
 
       throw error;
