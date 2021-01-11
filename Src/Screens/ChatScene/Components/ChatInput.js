@@ -3,6 +3,9 @@ import {View, StyleSheet, Text, Pressable} from 'react-native';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import IconMaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import EmojiBoard from 'react-native-emoji-board';
+// import EmojiSelector from 'react-native-emoji-selector'
+// import EmojiInput from 'react-native-emoji-input'
+
 import database from '@react-native-firebase/database';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import auth from '@react-native-firebase/auth';
@@ -26,7 +29,8 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
   };
 
   const onClick = (emoji) => {
-    setWrittenMessage((writtenMessage ?? '') + emoji.code);
+    console.log(emoji)
+    setWrittenMessage((writtenMessage ?? '') + emoji);
   };
 
   const onRemove = () => {
@@ -134,7 +138,7 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
         showMenu={showMenu}
         openCamera={openImageCamera}
       />
-      {/* <EmojiBoard
+      <EmojiBoard
         showBoard={inputType == inputTypes.emoji}
         tabBarPosition="top"
         onClick={onClick}
@@ -145,7 +149,27 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
           position: 'relative',
         }}
         onRemove={onRemove}
-      /> */}
+      />
+      {/* <View style={{
+        // height: inputType == inputTypes.emoji ? 300 : 0,
+        height: inputType == inputTypes.emoji ? 300 : 0,
+
+          backgroundColor: 'white',
+        // position: 'relative'
+      }}>
+      <EmojiSelector
+        showTabs={inputType == inputTypes.emoji}
+        onEmojiSelected={emoji => onClick(emoji)}
+        showHistory={true}
+        />
+        </View> */}
+      
+      {/* <EmojiInput
+        numColumns={5}
+        emojiFontSize={20}
+        categoryLabelTextStyle={fontSize=12}
+		onEmojiSelected={emoji => onClick(emoji)}
+	/> */}
       <RBSheet
         ref={pickerLstRef}
         height={220}
