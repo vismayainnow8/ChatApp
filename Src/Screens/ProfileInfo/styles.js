@@ -53,6 +53,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     padding: 20,
+    height:consts.ScreenHeight/4,
+    alignItems:"center"
   },
   gridHeader: {
     marginBottom: 20,
@@ -60,10 +62,12 @@ const styles = StyleSheet.create({
   },
   gridContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    // flexWrap: 'wrap',
+    // justifyContent: "space-evenly",
+    // backgroundColor:"yellow"
   },
   gridButtonContainer: {
-    flexBasis: '25%',
+    flexBasis: '40%',
     justifyContent: 'center',
     alignItems: 'center',
   },

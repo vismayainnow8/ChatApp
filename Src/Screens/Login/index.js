@@ -7,13 +7,15 @@ import {
   ActivityIndicator,
   TextInput,
 } from 'react-native';
+import { connect } from 'react-redux';
 import auth from '@react-native-firebase/auth';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {SmallButton} from '../../Components';
 import styles from './styles';
 import {consts, countryList} from '../../Assets/Consts';
+import { setConfirmation } from "../../StateManagement/Actions";
 
-const Login = ({navigation, route}) => {
+const Login = ({navigation, route,setConfirmation}) => {
   const [number, setNumber] = useState(null);
   const [country, setCountry] = useState(countryList[0]);
 
@@ -46,13 +48,15 @@ const Login = ({navigation, route}) => {
       const phoneNumber = country.code + number;
       const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
       if (confirmation) {
-        navigation.navigate('OTPScreen', {
-          confirmation: confirmation,
+        navigation.navigate('OTPScreen' 
+        );
+        setConfirmation( {
+          confirmation:confirmation,
           number: phoneNumber,
-        });
+          })
       }
     } catch (error) {
-      console.log(error);
+      console.log('error',error);
     } finally {
       setLoading(false);
     }
@@ -125,4 +129,12 @@ const Login = ({navigation, route}) => {
   );
 };
 
-export default Login;
+
+const mapDispatchToProps = dispatch => {
+  return {
+    setConfirmation: (data) => dispatch(setConfirmation(data)),
+  };
+};
+
+
+export default connect(null, mapDispatchToProps)(Login);

@@ -6,7 +6,10 @@ import {
   TextInput,
   Image,
   Pressable,
+  Alert
 } from 'react-native';
+import {consts} from '../../Assets/Consts';
+
 import ImageCropPicker from 'react-native-image-crop-picker';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
@@ -18,7 +21,7 @@ import styles from './styles';
 import {StackActions} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import {generateContacts} from '../../StateManagement/Actions';
-
+import User from '../../Assets/user.png'
 const ProfileInfo = ({navigation}) => {
   const [name, setName] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -31,28 +34,37 @@ const ProfileInfo = ({navigation}) => {
   }, []);
 
   const next = async () => {
-    if (!name) return;
+    // if (!name) return;
+    if (image.path && name) {
     setLoading(true);
-    try {
-      const imageStorageRef = storage().ref('images/dp/' + uid + '.jpeg');
-      await imageStorageRef.putFile(image.path);
-      const url = await storage()
-        .ref('images/dp/' + uid + '.jpeg')
-        .getDownloadURL();
-      await firestore()
-        .collection('Users')
-        .doc(uid)
-        .set({phoneNumber, photoURL: url, displayName: name});
-      await auth().currentUser.updateProfile({
-        displayName: name,
-        photoURL: url,
-      });
-      navigation.dispatch(StackActions.replace('WhatsApp'));
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
+      try {
+        const imageStorageRef = storage().ref('images/dp/' + uid + '.jpeg');
+        // await imageStorageRef.putFile(new File([""],'../../Assets/user.png'));
+        await imageStorageRef.putFile(image.path);
+        const url = await storage()
+          .ref('images/dp/' + uid + '.jpeg')
+          .getDownloadURL();
+        await firestore()
+          .collection('Users')
+          .doc(uid)
+          .set({phoneNumber, photoURL: url, displayName: name});
+        await auth().currentUser.updateProfile({
+          displayName: name,
+          photoURL: url,
+        });
+        navigation.dispatch(StackActions.replace('WhatsApp'));
+      } catch (error) {
+        console.log('error',error);
+      } finally {
+        setLoading(false);
+      }
     }
+    else {
+      Alert.alert('', 'Please provide your profile photo or name', [
+        {text: 'OK', onPress: () => console.log('Cancel Pressed')},
+      ]);
+    }
+    
   };
 
   const changeProfilePic = () => {
@@ -84,15 +96,15 @@ const ProfileInfo = ({navigation}) => {
   return (
     <View style={styles.mainContainer}>
       <Text style={styles.line}>
-        Please provide your name and an optional profile photo
+        Please provide your name and a profile photo
       </Text>
       <Pressable onPress={changeProfilePic}>
         <ImageBackground
           style={styles.imageBackgroundContainer}
           imageStyle={styles.imageBackground}
-          source={{
-            uri: 'https://reactnative.dev/img/tiny_logo.png',
-          }}>
+        source={require('../../Assets/user.png')}
+
+        >
           {image?.path && (
             <Image source={{uri: image.path}} style={styles.image} />
           )}
@@ -117,7 +129,7 @@ const ProfileInfo = ({navigation}) => {
       />
       <RBSheet
         ref={pickerLstRef}
-        height={160}
+        height={560}
         customStyles={{
           container: styles.rbSheet,
         }}>

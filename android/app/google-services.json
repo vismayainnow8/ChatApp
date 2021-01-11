@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "786658223348",
+    "firebase_url": "https://whatsappclone-d67ba-default-rtdb.firebaseio.com",
     "project_id": "whatsappclone-d67ba",
     "storage_bucket": "whatsappclone-d67ba.appspot.com"
   },
@@ -14,11 +15,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "786658223348-37e99vhea8931qrmuu3r8d9auftr382k.apps.googleusercontent.com",
+          "client_id": "786658223348-0hde5ahlc4l98ftbrurd26d00o5sgi03.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.chatapp",
-            "certificate_hash": "c9d8a7edc55319d6436f379e8b88e992b6beba6d"
+            "certificate_hash": "123776d3c9afea360a5d15bf8e2163a3dd5f8565"
+          }
+        },
+        {
+          "client_id": "786658223348-ecumu0s3t1ebij4b9rkbahjoont58rpm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.chatapp",
+            "certificate_hash": "56f500b9ffe165a77d0845b1f503220fc2e7ddb8"
           }
         },
         {
@@ -37,6 +46,13 @@
             {
               "client_id": "786658223348-hmmi30lqi4u74nnuugt51utqsrpbartp.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "786658223348-631gh1cdee01lrj6vlotq3pohnghja7f.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.ChatApp"
+              }
             }
           ]
         }

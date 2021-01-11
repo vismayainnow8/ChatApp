@@ -1,16 +1,15 @@
-import React, {useLayoutEffect,useEffect} from 'react';
-import {View, Text} from 'react-native';
+import React, {useLayoutEffect,useEffect,useState} from 'react';
+import {View, Text,Alert} from 'react-native';
 import CodeInput from 'react-native-confirmation-code-input';
+import auth from '@react-native-firebase/auth';
+import { connect } from 'react-redux';
 import styles from './styles';
+import {AppStack} from '../../Router/appStack';
 
-const OTPScreen = ({navigation, route}) => {
-  const {number, confirmation} = route.params;
-  useEffect(() => {
-    console.log("jkjk",number)
-  })
+const OTPScreen = (props) => {
   const confirmCode = async (code) => {
     try {
-      await confirmation.confirm(code);
+      await props.confirmation.confirm(code);
     } catch (error) {
       Alert.alert('', 'Invalid OTP .Please try again', [
         {text: 'OK', onPress: () => console.log('Cancel Pressed')},
@@ -19,8 +18,8 @@ const OTPScreen = ({navigation, route}) => {
   };
 
   useLayoutEffect(() => {
-    navigation.setOptions({
-      headerTitle: 'Verify ' + number,
+    props.navigation.setOptions({
+      headerTitle: 'Verify ' + props.phoneNumber,
       headerStyle: {
         backgroundColor: 'white',
         elevation: 0,
@@ -36,7 +35,7 @@ const OTPScreen = ({navigation, route}) => {
   return (
     <View style={styles.mainContainer}>
       <Text style={styles.firstLine}>
-        Waiting to automatically detect anSMS sent to {number}. Wrong number?
+        Waiting to automatically detect anSMS sent to {props.phoneNumber}. Wrong number?
       </Text>
       <View style={{flex: 1}}>
         <CodeInput
@@ -60,4 +59,14 @@ const OTPScreen = ({navigation, route}) => {
   );
 };
 
-export default OTPScreen;
+// export default OTPScreen;
+
+const mapStateToProps = (state,props) => {
+  return {
+    confirmation: state.confirmation.confirmation,
+    phoneNumber: state.confirmation.number,
+    ...props
+  };
+};
+
+export default connect(mapStateToProps, null)(OTPScreen);

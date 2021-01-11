@@ -154,10 +154,10 @@ android {
             keyPassword 'android'
         }
      release {
-            storeFile file('debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
+            storeFile file('release.keystore')
+            storePassword 'Innow8apps'
+            keyAlias 'androidreleasekey'
+            keyPassword 'Innow8apps'
         }
     }
     buildTypes {
@@ -168,7 +168,6 @@ android {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.release
-            signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
@@ -193,6 +192,7 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
+    // implementation "androidx.browser:browser:1.2.0"
     implementation "com.facebook.react:react-native:+"  // From node_modules
     // implementation project(path: ":@react-native-firebase_auth")
   // Import the BoM for the Firebase platform
@@ -201,7 +201,7 @@ dependencies {
         implementation 'com.google.firebase:firebase-storage'
         // implementation 'com.google.firebase:firebase-messaging'
 implementation project(':react-native-camera')
-
+//   implementation 'androidx.multidex:multidex:2.0.1'
     // Declare the dependency for the Realtime Database library
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation 'com.google.firebase:firebase-database'

@@ -30,7 +30,7 @@ const ChooseCountry = ({navigation}) => {
   }, []);
 
   const onPressItem = (item) => {
-    navigation.navigate('Login', {country: item});
+    navigation.navigate('Login', { country: item });
   };
 
   return (
@@ -38,8 +38,14 @@ const ChooseCountry = ({navigation}) => {
       <StatusBar backgroundColor="#075e54" />
       <FlatList
         data={countryList}
+        initialNumToRender={20}
+        removeClippedSubviews={true}
+        legacyImplementation={true}
+        windowSize={30}
+        maxToRenderPerBatch={50}
+        updateCellsBatchingPeriod={5}
         renderItem={({item}) => (
-          <CountryRenderItem item={item} onPressItem={onPressItem} />
+          <CountryRenderItem item={item}  onPressItem={onPressItem} />
         )}
         keyExtractor={(item) => item.iso}
       />

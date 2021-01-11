@@ -7,7 +7,7 @@ const initialState = {
 const setConfirmation = (state = initialState, action) => {
   switch (action.type) {
     case SET_CONFIRMATION:
-      return {...state, confirmation: action.data};
+      return action.data
     default:
       return state;
   }
