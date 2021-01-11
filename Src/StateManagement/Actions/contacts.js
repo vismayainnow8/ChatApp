@@ -61,10 +61,19 @@ export const generateContacts = () => {
         ));
       dispatch(resetContacts());
       dispatch(setContactsLoading(true));
-      const mobileContactsArray = await loadContacts();
+      var mobileContactsArray = await loadContacts();
+    
+      var formattedData = [];
+      mobileContactsArray.forEach(item => {
+        item = '+91' + item;
+          formattedData.push(item);
+      });
+      // return formattedData;
+      console.log('formattedData',formattedData)
+
       let contactsChunks = [];
-      for (let i = 0; i < Math.ceil(mobileContactsArray.length / 10); i++) {
-        contactsChunks.push(mobileContactsArray.slice(i * 10, (i + 1) * 10));
+      for (let i = 0; i < Math.ceil(formattedData.length / 10); i++) {
+        contactsChunks.push(formattedData.slice(i * 10, (i + 1) * 10));
       }
       Promise.all(
         contactsChunks.map((chunk) => dispatch(checkContactsInServer(chunk))),
@@ -82,6 +91,7 @@ export const generateContacts = () => {
 };
 
 const checkContactsInServer = (chunk) => {
+ 
   return (dispatch) => {
     return firestore()
       .collection('Users')
