@@ -9,16 +9,16 @@ const ChooseCountry = ({navigation}) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: 'Choose a country',
-      headerRight: () => {
-        return (
-          <Ionicons
-            name="search"
-            size={24}
-            color="#128c7e"
-            style={{paddingRight: 15}}
-          />
-        );
-      },
+      // headerRight: () => {
+      //   return (
+      //     <Ionicons
+      //       name="search"
+      //       size={24}
+      //       color="#128c7e"
+      //       style={{paddingRight: 15}}
+      //     />
+      //   );
+      // },
       headerStyle: {
         backgroundColor: 'white',
         elevation: 0,

@@ -1,4 +1,4 @@
-import React, {useRef, memo} from 'react';
+import React, {useRef,useState, memo, useEffect} from 'react';
 import {View, Text, Animated, Pressable, StyleSheet} from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import auth from '@react-native-firebase/auth';
@@ -7,7 +7,7 @@ import {ReplyMessage} from './ReplyMessage';
 import {consts} from '../../../Assets';
 import {Swipable, MediaThumbnail} from '../../../Components';
 import {useNavigation} from '@react-navigation/native';
-
+import FileViewer from 'react-native-file-viewer';
 export default ({
   item,
   onPress,
@@ -42,6 +42,18 @@ export default ({
     textRef.current.focus();
   };
 
+  const MediaThumbnailPress = () => {
+    if (item.media.type!='image' &&item.media.type!= 'video') {
+      FileViewer.open(item.media.path, { showOpenWithDialog: true })
+      .catch(error => {
+          // error
+      })
+    }
+    else {
+    navigation.navigate('ViewMedia', item)               
+      
+    }
+}
   return (
     <Swipable
       ref={swipableRef}
@@ -60,10 +72,14 @@ export default ({
           {item.media && (
             <MediaThumbnail
               type={item.media.type}
-              style={styles.image}
+              style={[styles.image,
+              { aspectRatio: (item.media.type != 'image' && item.media.type != 'video') ? 4.9 : 1 }
+              ]}
               url={item.media.url}
               iconSize={100}
-              onPress={() => navigation.navigate('ViewMedia', item)}
+              fileName={item.media.fileName}
+              path={item.media.path}
+              onPress={()=>MediaThumbnailPress()}
             />
           )}
           <View style={styles.messageContainer}>
@@ -113,9 +129,9 @@ const styles = StyleSheet.create({
     color: 'red',
   },
   image: {
-    backgroundColor: '#000',
+    backgroundColor: 'white',
+    justifyContent:"center",
     width: consts.ScreenWidth * 0.8 - 14,
-    aspectRatio: 1,
     margin: 7,
     marginBottom: 0,
     borderRadius: 3,

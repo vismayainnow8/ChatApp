@@ -21,7 +21,6 @@ const Contacts = ({navigation}) => {
   const loading = useSelector((state) => state.contacts.loading);
   const dispatch = useDispatch();
   const reloadContacts = () => dispatch(generateContacts());
-
   const openChat = useCallback((item) => {
     const key =
       item.uid > auth().currentUser.uid
@@ -69,7 +68,9 @@ const Contacts = ({navigation}) => {
           });
           navigation.navigate('ChatScene', chat);
         }
-      });
+      }).catch((error) => {
+        console.log('errorcatch',error)
+      })
   }, []);
 
   const topbarMenus = [
@@ -189,7 +190,7 @@ export default Contacts;
 
 const ListFooterLoader = ({loading = false}) => (
   <ActivityIndicator
-    color="red"
+  color="#128c7e"
     animating={loading}
     style={{height: 50, alignSelf: 'center'}}
   />

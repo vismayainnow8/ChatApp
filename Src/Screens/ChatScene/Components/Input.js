@@ -77,9 +77,10 @@ export const Input = ({
       medias.forEach(async (media, index) => {
         setLoading({status: 0.01, fileNumber: index + '/' + medias.length});
         message.media = {};
+        message.media.fileName = media.fileName;
+        message.media.path = media.path;
         message.media.url = await uploadImageAsPromise(media);
-        message.media.type = media.mime.split('/')[0];
-        console.log(message);
+        message.media.type = media.type?media.type.split('/')[0]:media.mime.split('/')[0];
         sendMessage(message);
       });
     } else {
@@ -126,12 +127,13 @@ export const Input = ({
 
   const renderMediaThumbnail = (media, index) => {
     return (
-      <View style={styles.mediaThumbnailContainer}>
+      <View style={[styles.mediaThumbnailContainer,{width:(media.type!='image' &&media.type!= 'video')?150:50}]}>
         <MediaThumbnail
-          type={media.mime.split('/')[0]}
+          type={media.type?media.type.split('/')[0]:media.mime.split('/')[0]}
           style={styles.videoThumbnail}
           iconSize={25}
           url={media.path}
+          fileName={media.fileName}
         />
         <Pressable
           onPress={() => closeMedia(index)}
@@ -246,7 +248,7 @@ export const styles = StyleSheet.create({
   },
   mediaThumbnailContainer: {
     height: 50,
-    width: 50,
+    // width: 50,
     marginRight: 5,
   },
   imageThumbnail: {

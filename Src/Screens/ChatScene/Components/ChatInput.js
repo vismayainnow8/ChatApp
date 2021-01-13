@@ -1,14 +1,12 @@
 import React, {useState, useRef} from 'react';
-import {View, StyleSheet, Text, Pressable} from 'react-native';
+import {View, StyleSheet, Text, Pressable,Platform} from 'react-native';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import IconMaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import EmojiBoard from 'react-native-emoji-board';
-// import EmojiSelector from 'react-native-emoji-selector'
-// import EmojiInput from 'react-native-emoji-input'
-
+import EmojiSelector,{Categories} from 'react-native-emoji-selector'
 import database from '@react-native-firebase/database';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import auth from '@react-native-firebase/auth';
+import FilePickerManager from 'react-native-file-picker';
 import {Input} from './Input';
 
 export const inputTypes = {
@@ -29,7 +27,6 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
   };
 
   const onClick = (emoji) => {
-    console.log(emoji)
     setWrittenMessage((writtenMessage ?? '') + emoji);
   };
 
@@ -63,6 +60,23 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
       .catch((error) => console.log(error));
   };
 
+  const openDocumentPicker = async() => {
+    pickerLstRef.current.close();
+    FilePickerManager.showFilePicker(null, (response) => {
+      console.log('Response = ', response);
+     
+      if (response.didCancel) {
+        console.log('User cancelled file picker');
+      }
+      else if (response.error) {
+        console.log('FilePickerManager Error: ', response.error);
+      }
+      else {
+        setMedias([{...response}])
+      }
+    });
+}
+
   const openImageCamera = () => {
     pickerLstRef.current.close();
     ImageCropPicker.openCamera({
@@ -95,7 +109,12 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
   };
 
   const attachmentOptions = [
-    {color: '#6F3CF6', icon: 'note', title: 'Document', onPress: () => {}},
+    {
+      color: '#6F3CF6',
+      icon: 'note',
+      title: 'Document',
+      onPress: openDocumentPicker,
+    },
     {
       color: '#F9227A',
       icon: 'camera-alt',
@@ -138,38 +157,18 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
         showMenu={showMenu}
         openCamera={openImageCamera}
       />
-      <EmojiBoard
-        showBoard={inputType == inputTypes.emoji}
-        tabBarPosition="top"
-        onClick={onClick}
-        categoryIconSize={22}
-        containerStyle={{
-          height: inputType == inputTypes.emoji ? 300 : 0,
-          backgroundColor: 'white',
-          position: 'relative',
-        }}
-        onRemove={onRemove}
-      />
-      {/* <View style={{
-        // height: inputType == inputTypes.emoji ? 300 : 0,
+     
+      <View style={{
         height: inputType == inputTypes.emoji ? 300 : 0,
-
           backgroundColor: 'white',
-        // position: 'relative'
       }}>
-      <EmojiSelector
+        <EmojiSelector
         showTabs={inputType == inputTypes.emoji}
         onEmojiSelected={emoji => onClick(emoji)}
         showHistory={true}
+        showSearchBar	={false}
         />
-        </View> */}
-      
-      {/* <EmojiInput
-        numColumns={5}
-        emojiFontSize={20}
-        categoryLabelTextStyle={fontSize=12}
-		onEmojiSelected={emoji => onClick(emoji)}
-	/> */}
+        </View>
       <RBSheet
         ref={pickerLstRef}
         height={220}

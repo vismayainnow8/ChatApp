@@ -1,14 +1,16 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Pressable, Image} from 'react-native';
+import {StyleSheet, Pressable, Text,Image} from 'react-native';
 import {createThumbnail} from 'react-native-create-thumbnail';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {attachmentTypes} from '../Screens/ChatScene/Components/Input';
+import {colors,consts} from '../Assets';
 
 export const MediaThumbnail = ({
   url,
   iconSize,
   style,
   type,
+  fileName,
   onPress = () => {},
 }) => {
   switch (type) {
@@ -23,9 +25,10 @@ export const MediaThumbnail = ({
       );
     case attachmentTypes.image:
       return <ImageThumbnail url={url} style={style} onPress={onPress} />;
-
     default:
-      return <></>;
+      // return <></>;
+    return <FileThumbnail url={url} fileName={fileName} style={style} onPress={onPress} />;
+
       break;
   }
 };
@@ -65,15 +68,31 @@ const ImageThumbnail = ({url, style, onPress = () => {}}) => {
   );
 };
 
+const FileThumbnail = ({url,fileName, style, onPress = () => {}}) => {
+  return (
+    <Pressable style={[styles.fileContainer, {flexDirection:"row"}, style]} onPress={onPress}>
+      <Text style={{fontSize:11}}>{fileName} </Text>
+    </Pressable>
+  );
+};
+
 export const styles = StyleSheet.create({
   container: {
     borderRadius: 3,
     backgroundColor: 'black',
     justifyContent: 'center',
   },
+  fileContainer: {
+    borderRadius: 3,
+    padding: 10,
+    backgroundColor: '#dcf8c6',
+    alignItems: "center",
+    // aspectRatio:4.9,
+  },
   thumbnail: {
     flex: 1,
     borderRadius: 3,
+
   },
   thumbnailIcon: {
     position: 'absolute',
