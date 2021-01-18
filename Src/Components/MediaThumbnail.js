@@ -10,7 +10,7 @@ export const MediaThumbnail = ({
   iconSize,
   style,
   type,
-  fileName,
+  name,
   onPress = () => {},
 }) => {
   switch (type) {
@@ -27,7 +27,7 @@ export const MediaThumbnail = ({
       return <ImageThumbnail url={url} style={style} onPress={onPress} />;
     default:
       // return <></>;
-    return <FileThumbnail url={url} fileName={fileName} style={style} onPress={onPress} />;
+    return <FileThumbnail url={url} name={name} style={style} onPress={onPress} />;
 
       break;
   }
@@ -68,10 +68,10 @@ const ImageThumbnail = ({url, style, onPress = () => {}}) => {
   );
 };
 
-const FileThumbnail = ({url,fileName, style, onPress = () => {}}) => {
+const FileThumbnail = ({url,name, style, onPress = () => {}}) => {
   return (
     <Pressable style={[styles.fileContainer, {flexDirection:"row"}, style]} onPress={onPress}>
-      <Text style={{fontSize:11}}>{fileName} </Text>
+      <Text style={{fontSize:11}}>{name} </Text>
     </Pressable>
   );
 };

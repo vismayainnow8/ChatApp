@@ -7,6 +7,8 @@ import database from '@react-native-firebase/database';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import auth from '@react-native-firebase/auth';
 import FilePickerManager from 'react-native-file-picker';
+import DocumentPicker from 'react-native-document-picker';
+
 import {Input} from './Input';
 
 export const inputTypes = {
@@ -62,19 +64,33 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
 
   const openDocumentPicker = async() => {
     pickerLstRef.current.close();
-    FilePickerManager.showFilePicker(null, (response) => {
-      console.log('Response = ', response);
+    // FilePickerManager.showFilePicker(null, (response) => {
+    //   console.log('Response = ', response);
      
-      if (response.didCancel) {
-        console.log('User cancelled file picker');
+    //   if (response.didCancel) {
+    //     console.log('User cancelled file picker');
+    //   }
+    //   else if (response.error) {
+    //     console.log('FilePickerManager Error: ', response.error);
+    //   }
+    //   else {
+    //     setMedias([{...response}])
+    //   }
+    // });
+    try {
+      const res = await DocumentPicker.pick({
+        type: [DocumentPicker.types. allFiles],
+      });
+      res['path'] = res.uri
+        setMedias([{...res}])
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        // User cancelled the picker, exit any dialogs or menus and move on
+      } else {
+        throw err;
       }
-      else if (response.error) {
-        console.log('FilePickerManager Error: ', response.error);
-      }
-      else {
-        setMedias([{...response}])
-      }
-    });
+    
+  }
 }
 
   const openImageCamera = () => {
@@ -109,12 +125,12 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
   };
 
   const attachmentOptions = [
-    {
-      color: '#6F3CF6',
-      icon: 'note',
-      title: 'Document',
-      onPress: openDocumentPicker,
-    },
+    // {
+    //   color: '#6F3CF6',
+    //   icon: 'note',
+    //   title: 'Document',
+    //   onPress: openDocumentPicker,
+    // },
     {
       color: '#F9227A',
       icon: 'camera-alt',

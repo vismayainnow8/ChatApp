@@ -90,11 +90,18 @@ export const Topbar = ({
 const Avatar = ({avatar}) => {
   return (
     <View style={styles.avatarContainer}>
-      {avatar == '' ? (
+      {avatar='group'?<MaterialIcons name="person" color="white" size={23} />:(avatar == '' ? (
         <MaterialIcons name="person" color="white" size={23} />
       ) : (
         <Image source={{uri: avatar}} style={styles.avatar} />
-      )}
+        ))}
+      
+      
+      {/* {avatar == '' ? (
+        <MaterialIcons name="person" color="white" size={23} />
+      ) : (
+        <Image source={{uri: avatar}} style={styles.avatar} />
+      )} */}
     </View>
   );
 };

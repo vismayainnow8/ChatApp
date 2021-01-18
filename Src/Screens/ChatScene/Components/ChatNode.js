@@ -43,10 +43,11 @@ export default ({
   };
 
   const MediaThumbnailPress = () => {
-    if (item.media.type!='image' &&item.media.type!= 'video') {
+    if (item.media.type != 'image' && item.media.type != 'video') {
+      console.log('mediaaa',item.media)
       FileViewer.open(item.media.path, { showOpenWithDialog: true })
       .catch(error => {
-          // error
+          console.log('docerror',error)
       })
     }
     else {
@@ -77,7 +78,7 @@ export default ({
               ]}
               url={item.media.url}
               iconSize={100}
-              fileName={item.media.fileName}
+              name={item.media.name}
               path={item.media.path}
               onPress={()=>MediaThumbnailPress()}
             />

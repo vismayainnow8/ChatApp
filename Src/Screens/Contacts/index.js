@@ -1,12 +1,12 @@
 import React from 'react';
-import {Text, FlatList, Image, View, ActivityIndicator} from 'react-native';
+import {Text, FlatList,Pressable, Image, View, TouchableOpacity,ActivityIndicator} from 'react-native';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/Entypo';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import styles from './styles';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+// import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useCallback} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Screen, Topbar} from '../../Components';
@@ -21,6 +21,8 @@ const Contacts = ({navigation}) => {
   const loading = useSelector((state) => state.contacts.loading);
   const dispatch = useDispatch();
   const reloadContacts = () => dispatch(generateContacts());
+
+
   const openChat = useCallback((item) => {
     const key =
       item.uid > auth().currentUser.uid
@@ -77,6 +79,7 @@ const Contacts = ({navigation}) => {
     {icon: 'refresh', onPress: reloadContacts, component: MaterialIcons},
   ];
 
+  
   return (
     <Screen>
       <Topbar title="Contacts" menus={topbarMenus} />
@@ -84,7 +87,7 @@ const Contacts = ({navigation}) => {
         style={styles.mainContainer}
         ListHeaderComponent={
           <>
-            <View style={styles.listItemContainer}>
+            <Pressable style={styles.listItemContainer} onPress={()=>navigation.navigate('NewGroup')}>
               <View style={styles.iconContainer}>
                 <MaterialIcons
                   name="group"
@@ -106,8 +109,8 @@ const Contacts = ({navigation}) => {
                   />
                 </View>
               </View>
-            </View>
-            <View style={styles.listItemContainer}>
+            </Pressable>
+            {/* <View style={styles.listItemContainer} >
               <View style={styles.iconContainer}>
                 <MaterialIcons
                   name="group"
@@ -129,7 +132,7 @@ const Contacts = ({navigation}) => {
                   />
                 </View>
               </View>
-            </View>
+            </View> */}
           </>
         }
         data={contacts}
@@ -145,7 +148,7 @@ const Contacts = ({navigation}) => {
         ListFooterComponent={
           <>
             <ListFooterLoader loading={loading} />
-            <View style={styles.listItemContainer}>
+            {/* <View style={styles.listItemContainer}>
               <View style={styles.iconContainerWoColor}>
                 <Icon
                   name="share"
@@ -161,7 +164,7 @@ const Contacts = ({navigation}) => {
                   </View>
                 </View>
               </View>
-            </View>
+            </View> */}
             <View style={styles.listItemContainer}>
               <View style={styles.iconContainerWoColor}>
                 <IconAntDesign
@@ -171,13 +174,13 @@ const Contacts = ({navigation}) => {
                   style={{padding: 5}}
                 />
               </View>
-              <View style={styles.callerDetailsContainer}>
+              <TouchableOpacity style={styles.callerDetailsContainer} onPress={()=>navigation.navigate('ContactHelp')}>
                 <View style={styles.callerDetailsContainerWrap}>
                   <View style={styles.nameContainer}>
                     <Text>Contacts help</Text>
                   </View>
                 </View>
-              </View>
+              </TouchableOpacity>
             </View>
           </>
         }

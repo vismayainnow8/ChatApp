@@ -12,7 +12,7 @@ import {ChatInput, ChatNode} from './Components';
 import {colors} from '../../Assets';
 
 const ChatScene = ({route, navigation}) => {
-  const {user, chatId} = route.params;
+  const {user, chatId,groupName} = route.params;
   const [messages, setMessages] = useState([]);
   const [selectedMessages, setSelectedMessages] = useState([]);
   const [replyMessage, setReplyMessage] = useState(null);
@@ -34,10 +34,10 @@ const ChatScene = ({route, navigation}) => {
           formatedValues.push({
             ...value[item],
             id: item,
-            displayName:
-              value[item].uid == auth().currentUser.uid
+            displayName:groupName?groupName:
+           (   value[item].uid == auth().currentUser.uid
                 ? 'You'
-                : user.displayName ?? user.phoneNumber,
+                : user?.displayName ?? user?.phoneNumber)
           });
         });
         formatedValues.sort((a, b) => b.time - a.time);
@@ -135,14 +135,15 @@ const ChatScene = ({route, navigation}) => {
     [messages, selectedMessages],
   );
 
-  const onPressTopbar = () => navigation.navigate('ViewContact', user);
+  const onPressTopbar = () => navigation.navigate('ViewContact', user,groupName);
 
   return (
     <Screen>
       <Topbar
-        title={user.displayName ?? user.phoneNumber}
-        avatar={user.photoURL}
-        moreMenus={topbarMoreMenus}
+        title={groupName? groupName :(user?.displayName ?? user?.phoneNumber)}
+      //  avatar={user?.photoURL ?user.photoURL:'group'}
+        avatar={user?(user.photoURL):'group'}
+        // moreMenus={topbarMoreMenus}
         showOverlayComponent={Boolean(selectedMessages.length)}
         OverlayComponent={
           <SelectedMessagesActions

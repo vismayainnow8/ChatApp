@@ -1,6 +1,7 @@
 import 'react-native-gesture-handler';
 import {consts} from '../Assets/Consts';
-import React, {useState} from 'react';
+import React, { useState, useRef } from 'react';
+import {useNavigation} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {
   View,
@@ -35,17 +36,42 @@ import Camera from '../Screens/Camera';
 import ViewStatus from '../Screens/ViewStatus';
 import ViewContact from '../Screens/ViewContact';
 import ViewMedia from '../Screens/ViewMedia';
+import ContactHelp from '../Screens/ContactHelp';
 import {ImagePreview} from '../Screens/Camera/Components';
 import ProfileInfo from '../Screens/ProfileInfo';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
-
+import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import {TabView} from './homeTabs';
 import {appStackTopbar, noTopBar, signInStackTopbar} from './options';
 
 const Stack = createStackNavigator();
 
-const HomeRightButtons = ({openSearch}) => {
+const HomeRightButtons = ({ openSearch }) => {
+  const navigation = useNavigation();
+
+  var _menu = null;
+
+  const showMenu = () => {
+    _menu.show();
+  };
+
+ const onPress = () => {
+    _menu.hide();
+    navigation.navigate('Profile')
+  };
+  const setMenuRef = (ref) => {
+    _menu = ref;
+  };
+  const MenuOptions = (
+    <View style={{backgroundColor: 'white'}}>
+      <MenuItem onPress={() => onPress()}
+      >
+       Profile 
+      </MenuItem>
+    
+    </View>
+  );
   return (
     <View
       style={{
@@ -53,23 +79,31 @@ const HomeRightButtons = ({openSearch}) => {
         alignItems: 'center',
         paddingHorizontal: 10,
       }}>
-      <Feather
-        onPress={openSearch}
+      {/* <Feather
+        onPress={openSearch}r
         name="search"
         size={24}
         color="#FFF"
         style={{
           paddingRight: 20,
         }}
-      />
-      <Entypo
-        name="dots-three-vertical"
-        size={24}
-        color="#FFF"
-        style={{
-          paddingLeft: 15,
-        }}
-      />
+      /> */}
+         <View>
+          <Menu
+            ref={(ref) => setMenuRef(ref)}
+            button={
+                <Entypo
+                  onPress={() => showMenu()}
+                  name="dots-three-vertical"
+                  size={24}
+                  color="white"
+                />
+            }>
+            {MenuOptions}
+          </Menu>
+        </View>
+     
+     
     </View>
   );
 };
@@ -105,7 +139,7 @@ export const AppStack = ({user}) => {
         />
         <Stack.Screen name="Message" component={Message} />
         <Stack.Screen name="NewBroadCast" component={NewBroadCast} />
-        <Stack.Screen name="NewGroup" component={NewGroup} />
+        <Stack.Screen name="NewGroup" component={NewGroup}  options={{ headerShown: false, }} />
         <Stack.Screen name="WhatsAppWeb" component={WhatsAppWeb} />
         <Stack.Screen name="Settings" component={Settings} />
         <Stack.Screen name="Account" component={Account} />
@@ -118,6 +152,7 @@ export const AppStack = ({user}) => {
         <Stack.Screen name="StarredMessages" component={StarredMessages} />
         <Stack.Screen name="Privacy" component={Privacy} />
         <Stack.Screen name="Camera" component={Camera} />
+        <Stack.Screen name="ContactHelp" component={ContactHelp} />
         <Stack.Screen
           name="ViewStatus"
           component={ViewStatus}

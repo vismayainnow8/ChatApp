@@ -9,7 +9,7 @@ import styles from './styles';
 const renderNavBar = () => <Topbar style={styles.topbar} />;
 
 const ViewContact = ({route}) => {
-  const {displayName, photoURL} = route.params;
+  const {displayName, photoURL,groupName} = route.params;
   const renderContent = () => {
     return (
       <View style={styles.contentContainer}>
@@ -53,10 +53,10 @@ const ViewContact = ({route}) => {
       navbarColor={colors.themePrimary.dark}
       title={
         <View style={styles.titleContainer}>
-          <Text style={styles.titleStyle}>{displayName}</Text>
+          <Text style={styles.titleStyle}>{groupName?groupName:displayName}</Text>
         </View>
       }
-      backgroundImage={{uri: photoURL}}
+      backgroundImage={{uri: photoURL?photoURL:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSq_izSXwEL-JxYjjfIK-eevSIr-9JCBSS_vw&usqp=CAU'}}
       backgroundImageScale={1.2}
       renderNavBar={renderNavBar}
       renderContent={renderContent}

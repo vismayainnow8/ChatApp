@@ -24,7 +24,7 @@ export const ReplyMessage = ({replyMessage, closeReply}) => {
           style={styles.mediaThumbnail}
           url={replyMessage.media.url}
           type={replyMessage.media.type}
-          fileName={replyMessage.media.fileName}
+          name={replyMessage.media.name}
         />
       )}
 

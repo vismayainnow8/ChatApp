@@ -73,15 +73,17 @@ export const Input = ({
     };
     setWrittenMessage('');
     if (medias.length) {
+      console.log('media',medias)
       setMedias([]);
       medias.forEach(async (media, index) => {
         setLoading({status: 0.01, fileNumber: index + '/' + medias.length});
         message.media = {};
-        message.media.fileName = media.fileName;
+        message.media.name = media.name;
         message.media.path = media.path;
         message.media.url = await uploadImageAsPromise(media);
         message.media.type = media.type?media.type.split('/')[0]:media.mime.split('/')[0];
         sendMessage(message);
+        console.log('message',message)
       });
     } else {
       sendMessage(message);
@@ -133,7 +135,7 @@ export const Input = ({
           style={styles.videoThumbnail}
           iconSize={25}
           url={media.path}
-          fileName={media.fileName}
+          name={media.name}
         />
         <Pressable
           onPress={() => closeMedia(index)}
