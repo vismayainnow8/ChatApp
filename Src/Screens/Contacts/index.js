@@ -82,18 +82,15 @@ const SelectContact = ({navigation}) => {
 
   openContactPicker = () => {
     console.log('jj')
-    // let number="1234567890"; //replace with any number
-    // let newPerson = {
-    //   phoneNumbers: [{
-    //     number: number,
-    //   }],
-    // };
-
-    // Contacts.openContactForm(newPerson, (err) => {
-    //   if (err) console.warn(err) ;
-    //   // form is open
-    // });
-    Contacts.openContactForm().then(contact => {
+    var newPerson = {
+      phoneNumbers: [{
+        label: "mobile",
+        number: "",
+      }],
+      displayName: ""
+    }
+     
+    Contacts.openContactForm(newPerson).then(contact => {
       // contact has been saved
     })
   };
@@ -131,7 +128,7 @@ const SelectContact = ({navigation}) => {
             <Pressable style={styles.listItemContainer} onPress={()=>openContactPicker()} >
               <View style={styles.iconContainer}>
                 <MaterialIcons
-                  name="group"
+                  name="person-add"
                   color="white"
                   size={23}
                   style={styles.specialIcon}
