@@ -5,6 +5,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/Entypo';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import Contacts from 'react-native-contacts';
 import styles from './styles';
 // import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useCallback} from 'react';
@@ -12,7 +13,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Screen, Topbar} from '../../Components';
 import {generateContacts} from '../../StateManagement/Actions';
 
-const Contacts = ({navigation}) => {
+const SelectContact = ({navigation}) => {
   const contacts = useSelector((state) =>
     Object.keys(state.contacts.contacts).map(
       (key) => state.contacts.contacts[key],
@@ -79,6 +80,23 @@ const Contacts = ({navigation}) => {
     {icon: 'refresh', onPress: reloadContacts, component: MaterialIcons},
   ];
 
+  openContactPicker = () => {
+    console.log('jj')
+    // let number="1234567890"; //replace with any number
+    // let newPerson = {
+    //   phoneNumbers: [{
+    //     number: number,
+    //   }],
+    // };
+
+    // Contacts.openContactForm(newPerson, (err) => {
+    //   if (err) console.warn(err) ;
+    //   // form is open
+    // });
+    Contacts.openContactForm().then(contact => {
+      // contact has been saved
+    })
+  };
   
   return (
     <Screen>
@@ -110,7 +128,7 @@ const Contacts = ({navigation}) => {
                 </View>
               </View>
             </Pressable>
-            {/* <View style={styles.listItemContainer} >
+            <Pressable style={styles.listItemContainer} onPress={()=>openContactPicker()} >
               <View style={styles.iconContainer}>
                 <MaterialIcons
                   name="group"
@@ -132,7 +150,7 @@ const Contacts = ({navigation}) => {
                   />
                 </View>
               </View>
-            </View> */}
+            </Pressable>
           </>
         }
         data={contacts}
@@ -189,7 +207,7 @@ const Contacts = ({navigation}) => {
   );
 };
 
-export default Contacts;
+export default SelectContact;
 
 const ListFooterLoader = ({loading = false}) => (
   <ActivityIndicator

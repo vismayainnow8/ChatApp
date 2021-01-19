@@ -4,6 +4,7 @@ import React, {useRef} from 'react';
 import {View, StyleSheet, Image, Text, Pressable} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Menu, {MenuItem} from 'react-native-material-menu';
 
 import {colors} from '../Assets';
@@ -90,13 +91,15 @@ export const Topbar = ({
 const Avatar = ({avatar}) => {
   return (
     <View style={styles.avatarContainer}>
-      {avatar='group'?<MaterialIcons name="person" color="white" size={23} />:(avatar == '' ? (
+      {/* {console.log('avatar', avatar)} */}
+      
+      {avatar=='group'?<MaterialCommunityIcons name="account-group" color="white" size={23} />:(avatar == '' ? (
         <MaterialIcons name="person" color="white" size={23} />
       ) : (
         <Image source={{uri: avatar}} style={styles.avatar} />
         ))}
       
-      
+
       {/* {avatar == '' ? (
         <MaterialIcons name="person" color="white" size={23} />
       ) : (

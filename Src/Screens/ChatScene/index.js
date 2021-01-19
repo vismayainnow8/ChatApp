@@ -12,7 +12,7 @@ import {ChatInput, ChatNode} from './Components';
 import {colors} from '../../Assets';
 
 const ChatScene = ({route, navigation}) => {
-  const {user, chatId,groupName} = route.params;
+  const {user, chatId,groupName,image,chat} = route.params;
   const [messages, setMessages] = useState([]);
   const [selectedMessages, setSelectedMessages] = useState([]);
   const [replyMessage, setReplyMessage] = useState(null);
@@ -141,8 +141,8 @@ const ChatScene = ({route, navigation}) => {
     <Screen>
       <Topbar
         title={groupName? groupName :(user?.displayName ?? user?.phoneNumber)}
-      //  avatar={user?.photoURL ?user.photoURL:'group'}
-        avatar={user?(user.photoURL):'group'}
+        avatar={image?.path?(image.path):(user?.photoURL?(user?.photoURL):'group')}
+
         // moreMenus={topbarMoreMenus}
         showOverlayComponent={Boolean(selectedMessages.length)}
         OverlayComponent={

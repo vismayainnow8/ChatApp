@@ -37,6 +37,7 @@ import ViewStatus from '../Screens/ViewStatus';
 import ViewContact from '../Screens/ViewContact';
 import ViewMedia from '../Screens/ViewMedia';
 import ContactHelp from '../Screens/ContactHelp';
+import MakeNewGroup from '../Screens/MakeNewGroup';
 import {ImagePreview} from '../Screens/Camera/Components';
 import ProfileInfo from '../Screens/ProfileInfo';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -153,6 +154,7 @@ export const AppStack = ({user}) => {
         <Stack.Screen name="Privacy" component={Privacy} />
         <Stack.Screen name="Camera" component={Camera} />
         <Stack.Screen name="ContactHelp" component={ContactHelp} />
+        <Stack.Screen name="MakeNewGroup" component={MakeNewGroup}  options={{ headerShown: false, }}/>
         <Stack.Screen
           name="ViewStatus"
           component={ViewStatus}
@@ -183,7 +185,7 @@ export const AppStack = ({user}) => {
           component={ChatScene}
           options={noTopBar}
         />
-        <Stack.Screen name="Contacts" component={Contacts} options={noTopBar} />
+        {/* <Stack.Screen name="Contacts" component={Contacts} options={noTopBar} /> */}
         <Stack.Screen name="CallingScreen" component={CallingScreen} />
         <Stack.Screen name="VideoCalling" component={VideoCalling} />
       </Stack.Navigator>

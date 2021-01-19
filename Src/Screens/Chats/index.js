@@ -104,7 +104,7 @@ const Chats = (props) => {
 };
 
 const ChatsListItem = ({ item, number, onPressed }) => {
-  const {user, lastMessage} = item;
+  const { user, lastMessage } = item;
   return (
     <TouchableOpacity
       style={styles.listItemContainer}
@@ -115,7 +115,7 @@ const ChatsListItem = ({ item, number, onPressed }) => {
           <Image source={{uri: user.photoURL}} style={styles.initStyle} />
         ) : (
           <IconMaterialCommunityIcons name="person" color="white" size={23} />
-            )):   <IconMaterialCommunityIcons name="account-group" color="white" size={23} />
+            )):   <IconMaterialCommunityIcons name="account-group" color="white" size={38} />
         }
       
       </View>

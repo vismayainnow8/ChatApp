@@ -4,13 +4,13 @@ import {consts} from '../../Assets/Consts';
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: '#F5FCFF',
+                backgroundColor: '#F5FCFF',
+                marginTop:15,
+    padding:15
   },
   callerDetailsContainer: {
     flex: 4,
     justifyContent: 'center',
-    // borderBottomColor: 'rgba(92,94,94,0.5)',
-    // borderBottomWidth: 0.25,
   },
   callerDetailsContainerWrap: {
     flex: 1,
@@ -157,15 +157,6 @@ const styles = StyleSheet.create({
     height: 40,
     backgroundColor: '#D9E3E2',
     alignItems: 'center',
-    paddingHorizontal: 20,
-  },
-  outerIconContainerperson: {
-    justifyContent: 'center',
-    borderRadius: 20,
-    width: 55,
-    height: 50,
-    // backgroundColor: 'pink',
-    alignItems: 'center',
     marginRight: 20,
   },
   rbsheetHeading: {
@@ -224,12 +215,6 @@ const styles = StyleSheet.create({
     // justifyContent: 'center',
     // alignItems: 'center',
   },
-  check: {
-    position: 'absolute',
-    bottom:0,
-    right: 0,
-    zIndex:1000
-  },
   textInput: {
     // backgroundColor:"yellow",
     height:45,
@@ -240,7 +225,50 @@ const styles = StyleSheet.create({
     // alignSelf:"flex-end",
     borderBottomColor: '#128c7e',
     borderBottomWidth: 2,
-    paddingBottom: 0,}
+                paddingBottom: 0,
+        },
+        rbSheet: {
+                borderTopLeftRadius: 10,
+                borderTopRightRadius: 10,
+                padding: 20,
+                height:consts.ScreenHeight/4,
+                alignItems:"center"
+              },
+              gridHeader: {
+                marginBottom: 20,
+                fontSize: 20,
+              },
+              gridContainer: {
+                flexDirection: 'row',
+                // flexWrap: 'wrap',
+                // justifyContent: "space-evenly",
+                // backgroundColor:"yellow"
+              },
+              gridButtonContainer: {
+                flexBasis: '40%',
+                justifyContent: 'center',
+                alignItems: 'center',
+              },
+              gridButton: {
+                width: 50,
+                height: 50,
+                justifyContent: 'center',
+                alignItems: 'center',
+              },
+              gridIcon: {
+                fontSize: 30,
+                color: '#666',
+              },
+              gridLabel: {
+                fontSize: 14,
+                paddingTop: 10,
+                color: '#333',
+        },
+        image: {
+                height: consts.ScreenWidth * 0.55,
+                width: consts.ScreenWidth * 0.55,
+                borderRadius: consts.ScreenWidth * 0.4,
+              }
 });
 
 export default styles;
