@@ -12,6 +12,7 @@ const NewGroup = ({ navigation }) => {
   const [groupName, setGroupName] = useState(null);
   const [usersId, setUsersId] = useState([]);
   const [selectedUsers, setselectedUsers] = useState([]);
+  var usersIdVariable = [];
   
   const contacts = useSelector((state) =>
     Object.keys(state.contacts.contacts).map(
@@ -24,7 +25,7 @@ const NewGroup = ({ navigation }) => {
   ];
 
   const selectContact = (selectedItem) => {
-    let selectedUsersVariable = selectedUsers;
+    var selectedUsersVariable = selectedUsers;
     let isItemSelected =
     selectedUsersVariable.filter(item => {
         return item.uid.includes(selectedItem.uid);
@@ -42,13 +43,15 @@ const NewGroup = ({ navigation }) => {
     }
    
     setselectedUsers(selectedUsersVariable)
-    var usersIdVariable = [];
+
+    // var usersIdVariable = [];
     selectedUsersVariable.forEach(item => {
       let user = {};
       user = item.uid;
       usersIdVariable.push(user);
     });
     setUsersId(usersIdVariable)
+
   }
 
   const Item = ({photoURL, displayName,uid, phoneNumber, onPress}) => (
@@ -100,7 +103,8 @@ const NewGroup = ({ navigation }) => {
             color="white"
             size={24}
             style={styles.fabIcon}
-            onPress={()=>navigation.navigate('MakeNewGroup',selectedUsers,usersId)}
+            onPress={()=>navigation.navigate('MakeNewGroup',{selectedUsers,usersId})}
+          
           />
       </TouchableOpacity>
      

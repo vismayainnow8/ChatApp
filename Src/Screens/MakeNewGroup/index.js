@@ -14,12 +14,11 @@ import {Screen, Topbar} from '../../Components';
 import {setUsersArray} from '../../StateManagement/Actions';
 import MDIcon from 'react-native-vector-icons/MaterialIcons';
 
-const NewGroup = ({ navigation,route }) => {
+const MakeNewGroup = ({ navigation,route }) => {
   const pickerLstRef = useRef(null);
   const [image, setImage] = useState({});
   const [groupName, setGroupName] = useState(null);
   const { selectedUsers, usersId } = route.params;
-
 
   const changeProfilePic = () => {
     pickerLstRef.current.open();
@@ -47,26 +46,59 @@ const NewGroup = ({ navigation,route }) => {
       .catch((error) => console.log('errorfffff',error));
   };
 
+
+
+
   const openChat = () => {
     pickerLstRef.current.close()
-    firestore()
-      .collection('Chats')
-      .where('type', '==', 'indirect')
-      .get()
-      .then((querySnapshot) => {
-          let chat = {};
-          querySnapshot.forEach((data) => {
-            chat = {
-              groupName:groupName,
-              chatId: data.id,
-              groupName,
-              image:image
-            };
-          });
-          navigation.navigate('ChatScene', chat,groupName,image);
-      }).catch((error) => {
-        console.log('errorcatch',error)
-      })
+      
+    let formated = {}
+    selectedUsers.forEach(item => {
+      formated[item.uid] = item
+    });
+     var formatphonenumber = [];
+    selectedUsers.forEach(item => {
+      let user = {};
+      user = item.phoneNumber;
+      formatphonenumber.push(user);
+    });
+  
+    try {
+      firestore()
+        .collection('Group')
+        .add({
+          createdBy:auth().currentUser.displayName,
+          createdAt:'',
+          members: [...usersId, auth().currentUser.uid],
+          type: 'indirect',
+          groupName: groupName,
+          groupIcon: image,
+          details: {
+            ...formated,
+            [auth().currentUser.uid]: {
+              displayName: auth().currentUser.displayName,
+              phoneNumber: auth().currentUser.phoneNumber,
+              photoURL: auth().currentUser.photoURL,
+            },
+          },
+          
+          lastMessage: {},
+        }).then((data) => {
+          let chat = {
+            chatId: data.id,
+            user: {
+              displayName: groupName,
+              image: image,
+              phoneNumber: formatphonenumber
+            }
+          }
+              navigation.navigate('ChatScene', chat)
+        })
+    }
+    catch (error) {
+      console.log('error',error);
+    } 
+     
   }
 
   const topbarMenus = [
@@ -143,7 +175,7 @@ const NewGroup = ({ navigation,route }) => {
   );
 };
 
-export default NewGroup;
+export default MakeNewGroup;
 
 
 

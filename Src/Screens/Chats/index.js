@@ -12,6 +12,7 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconFontAwesome5 from 'react-native-vector-icons/MaterialCommunityIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
 import {setUser, setChatId} from '../../StateManagement/Actions';
 import {useSelector} from 'react-redux';
@@ -23,11 +24,13 @@ const Chats = (props) => {
   const [searchPressedState, setSearchPressedState] = useState(false);
   const [tabState, setTabState] = useState(false);
   const [chats, setChats] = useState([]);
-
+  const [group, setGroup] = useState([]);
+  var newdata 
   var searchPressed = useSelector((state) => state.searchPressed.searchPressed);
   var tab = useSelector((state) => state.searchPressed.tabState);
 
   useEffect(() => {
+    console.log('auth().currentUser.uid',auth().currentUser.uid)
     return firestore()
       .collection('Chats')
       .where('members', 'array-contains', auth().currentUser.uid)
@@ -47,21 +50,49 @@ const Chats = (props) => {
             delete formatedItem.details;
             data.push(formatedItem);
           });
-          console.log(data);
-          setChats(data);
+          setChats(data)
+          console.log('chatschats',chats)
+
+          callGroupData(data)
+            
         },
         (error) => {},
-      );
+    )
   }, []);
+
+
+  const callGroupData = (data) => {
+    firestore()
+      .collection('Group')
+      .where('members', 'array-contains', auth().currentUser.uid)
+      .onSnapshot(
+        (res) => {
+          let groupVariable = [];
+          res.forEach((item) => {
+            const formatedItem = {
+              chatId: item.id,
+              ...item.data(),
+            };
+            formatedItem.user = formatedItem.members
+            delete formatedItem.details;
+            groupVariable.push(formatedItem);
+          });
+          setGroup(groupVariable);
+           newdata = [...data, ...groupVariable]
+          setChats(...newdata)
+          console.log('chats',chats)
+          console.log('groupVariable',groupVariable)
+          console.log('newdata',newdata)
+
+        })
+}
+
 
   useEffect(() => {
     setSearchPressedState(searchPressed);
     setTabState(tab);
   }, [searchPressed, searchPressedState, tab, tabState]);
 
-  useEffect(() => {
-    console.log('gotreduxonaschatstate', props.textInput);
-  }, [props.textInput]);
 
   const onPressed = (item) => {
     navigation.navigate('ChatScene', item);
@@ -74,7 +105,7 @@ const Chats = (props) => {
       <StatusBar backgroundColor="#075e54" />
       <View style={styles.mainContainer}>
         <FlatList
-          data={chats}
+          data={group}
           renderItem={({item}) => (
             <ChatsListItem
               item={item}
@@ -86,6 +117,7 @@ const Chats = (props) => {
               message={item.message}
               number={item.number}
               onPressed={onPressed}
+
             />
           )}
           keyExtractor={(item) => item.chatId}
@@ -114,7 +146,7 @@ const ChatsListItem = ({ item, number, onPressed }) => {
          ( user.photoURL ? (
           <Image source={{uri: user.photoURL}} style={styles.initStyle} />
         ) : (
-          <IconMaterialCommunityIcons name="person" color="white" size={23} />
+          <Ionicons name="person" color="white" size={23} />
             )):   <IconMaterialCommunityIcons name="account-group" color="white" size={38} />
         }
       
