@@ -1,6 +1,6 @@
-import React, {useState, useRef, useEffect, useCallback, useMemo} from 'react';
-import {View, FlatList, ImageBackground, TouchableOpacity} from 'react-native';
-import {Screen, Topbar} from '../../Components';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { View, FlatList, ImageBackground, TouchableOpacity } from 'react-native';
+import { Screen, Topbar } from '../../Components';
 import styles from '../ChatScene/style';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -8,11 +8,11 @@ import Feather from 'react-native-vector-icons/Feather';
 import database from '@react-native-firebase/database';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import {ChatInput, ChatNode} from './Components';
-import {colors} from '../../Assets';
+import { ChatInput, ChatNode } from './Components';
+import { colors } from '../../Assets';
 
-const ChatScene = ({route, navigation}) => {
-  const {user, chatId,groupName,image,chat} = route.params;
+const ChatScene = ({ route, navigation }) => {
+  const { user, chatId, groupName, groupIcon, type, chat } = route.params;
   const [messages, setMessages] = useState([]);
   const [selectedMessages, setSelectedMessages] = useState([]);
   const [replyMessage, setReplyMessage] = useState(null);
@@ -28,16 +28,20 @@ const ChatScene = ({route, navigation}) => {
         if (!snapshot) {
           return;
         }
+
         const value = snapshot.val();
         let formatedValues = [];
         Object.keys(value ?? {}).forEach((item) => {
           formatedValues.push({
             ...value[item],
             id: item,
-            displayName:groupName?groupName:
-           (   value[item].uid == auth().currentUser.uid
+            // type: type,
+            // groupUserName: user?.displayName,
+            displayName: groupName ? groupName :
+              (value[item].uid == auth().currentUser.uid
                 ? 'You'
                 : user?.displayName ?? user?.phoneNumber)
+
           });
         });
         formatedValues.sort((a, b) => b.time - a.time);
@@ -62,8 +66,13 @@ const ChatScene = ({route, navigation}) => {
 
   const sendMessage = (message) => {
     message.chatId = chatId;
+    message.groupUserName = auth().currentUser.displayName
+    message.groupUserPhone = auth().currentUser.phoneNumber
+    message = { ...message, time: firestore.Timestamp.now().toMillis() };
+    console.log('lastMessage', message)
+
     database().ref('messages').push(message);
-    message = {...message, time: firestore.Timestamp.now().toMillis()};
+    // message = { ...message, time: firestore.Timestamp.now().toMillis() };
     firestore().collection('Chats').doc(chatId).update({
       lastMessage: message,
     });
@@ -101,22 +110,22 @@ const ChatScene = ({route, navigation}) => {
   };
 
   const topbarMoreMenus = [
-    {title: 'test', onPress: () => alert('test')},
-    {title: 'test2', onPress: () => alert('test2')},
+    { title: 'test', onPress: () => alert('test') },
+    { title: 'test2', onPress: () => alert('test2') },
   ];
   const topbarMenus = [
-    {icon: 'videocam', onPress: () => {}, component: Ionicons},
-    {icon: 'phone', onPress: () => {}, component: MaterialIcons},
+    { icon: 'videocam', onPress: () => { }, component: Ionicons },
+    { icon: 'phone', onPress: () => { }, component: MaterialIcons },
   ];
 
   const chatView = useMemo(
     () => (
       <FlatList
-        style={{flexGrow: 0}}
+        style={{ flexGrow: 0 }}
         keyboardShouldPersistTaps="handled"
         inverted={true}
         data={messages}
-        renderItem={({item}) => (
+        renderItem={({ item }) => (
           <ChatNode
             item={item}
             replyMessage={messages.find(
@@ -135,14 +144,20 @@ const ChatScene = ({route, navigation}) => {
     [messages, selectedMessages],
   );
 
-  const onPressTopbar = () => navigation.navigate('ViewContact', user,groupName);
+  // const onPressTopbar = () => {
+  //   console.log('user',
+  //     user,
+  //     groupName, groupIcon, type)
+  // }
+  const onPressTopbar = () => navigation.navigate('ViewContact', { user, groupName, groupIcon, type });
 
   return (
     <Screen>
       <Topbar
-        title={groupName? groupName :(user?.displayName ?? user?.phoneNumber)}
-        avatar={image?.path?(image.path):(user?.photoURL?(user?.photoURL):'group')}
-
+        type={type}
+        title={groupName ? groupName : (user?.displayName ?? user?.phoneNumber)}
+        // avatar={groupIcon?groupIcon:(user?.photoURL?(user?.photoURL))}
+        avatar={groupIcon ?? user?.photoURL}
         // moreMenus={topbarMoreMenus}
         showOverlayComponent={Boolean(selectedMessages.length)}
         OverlayComponent={
@@ -157,7 +172,7 @@ const ChatScene = ({route, navigation}) => {
       <ImageBackground
         source={require('../../Assets/chatBackground.png')}
         style={styles.image}>
-        <View style={{flex: 1}}>{chatView}</View>
+        <View style={{ flex: 1 }}>{chatView}</View>
         <ChatInput
           textRef={textRef}
           sendMessage={sendMessage}
@@ -171,7 +186,7 @@ const ChatScene = ({route, navigation}) => {
 
 export default ChatScene;
 
-const SelectedMessagesActions = ({data, closeActions}) => {
+const SelectedMessagesActions = ({ data, closeActions }) => {
   return (
     <View
       style={{
@@ -186,7 +201,7 @@ const SelectedMessagesActions = ({data, closeActions}) => {
         onPress={closeActions}
         style={styles.icons}
       />
-      <View style={{flex: 1}} />
+      <View style={{ flex: 1 }} />
       {data.map((item) => (
         <item.component
           name={item.icon}

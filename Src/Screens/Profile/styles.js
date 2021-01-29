@@ -1,5 +1,6 @@
-import {consts} from '../../Assets/Consts';
-import {StyleSheet} from 'react-native';
+import { consts } from '../../Assets/Consts';
+import { StyleSheet } from 'react-native';
+import { colors } from '../../Assets';
 const styles = StyleSheet.create({
   profileContainer: {
     flex: 1,
@@ -18,8 +19,8 @@ const styles = StyleSheet.create({
   textContainer: {
     flex: 6,
     width: consts.ScreenWidth,
-    paddingHorizontal: 25,
-    alignSelf:"center",
+    paddingHorizontal: 15,
+    alignSelf: "center",
     // backgroundColor: "green"
   },
   image: {
@@ -39,31 +40,60 @@ const styles = StyleSheet.create({
     // backgroundColor: 'green',
     flexDirection: 'row',
     paddingVertical: 15,
+    justifyContent: "space-between"
+
+  },
+  editPhoneContainer: {
+    // backgroundColor: 'green',
+    flexDirection: 'row',
+    paddingVertical: 15,
+
+  },
+  textInput: {
+    width: '80%',
+    // backgroundColor: "grey"
+    borderBottomWidth: 2,
+    // borderColor: "#075e54"
+    borderBottomColor: "#075e54",
+    paddingBottom: 0
+  },
+  alertText: {
+    fontSize: consts.textSizes(12),
+    color: "#075e54",
+    fontWeight: "bold"
   },
   icon: {
     paddingHorizontal: 20,
   },
+  iconEdit: {
+    paddingHorizontal: 10,
+  },
   text: {
     fontSize: consts.textSizes(14),
     color: 'black',
-    fontWeight:"bold",
+    fontWeight: "bold",
     paddingBottom: 10,
   },
   heading: {
     fontSize: consts.textSizes(15),
-    paddingBottom:10,
+    paddingBottom: 10,
     color: 'grey',
   },
   itemContainer: {
     flexDirection: "row",
     // backgroundColor:"pink"
   },
+  itemNameContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    backgroundColor: "pink",
+  },
   cameraIconContainer: {
     backgroundColor: '#075e54',
     // position: 'absolute',
     zIndex: 1000,
-    left:40,
-  bottom:50,
+    left: 40,
+    bottom: 50,
     height: 50,
     width: 50,
     borderRadius: 25,
@@ -74,11 +104,15 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     padding: 20,
-    height:consts.ScreenHeight/4,
-    alignItems:"center"
+    height: consts.ScreenHeight / 4,
+    alignItems: "center"
   },
   gridHeader: {
     marginBottom: 20,
+    fontSize: 20,
+  },
+  textInputHeader: {
+    marginBottom: 12,
     fontSize: 20,
   },
   gridContainer: {

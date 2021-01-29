@@ -1,8 +1,8 @@
 import 'react-native-gesture-handler';
-import {consts} from '../Assets/Consts';
+import { consts } from '../Assets/Consts';
 import React, { useState, useRef } from 'react';
-import {useNavigation} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import {
   View,
   TextInput,
@@ -38,13 +38,13 @@ import ViewContact from '../Screens/ViewContact';
 import ViewMedia from '../Screens/ViewMedia';
 import ContactHelp from '../Screens/ContactHelp';
 import MakeNewGroup from '../Screens/MakeNewGroup';
-import {ImagePreview} from '../Screens/Camera/Components';
+import { ImagePreview } from '../Screens/Camera/Components';
 import ProfileInfo from '../Screens/ProfileInfo';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
-import {TabView} from './homeTabs';
-import {appStackTopbar, noTopBar, signInStackTopbar} from './options';
+import { TabView } from './homeTabs';
+import { appStackTopbar, noTopBar, signInStackTopbar } from './options';
 
 const Stack = createStackNavigator();
 
@@ -57,7 +57,7 @@ const HomeRightButtons = ({ openSearch }) => {
     _menu.show();
   };
 
- const onPress = () => {
+  const onPress = () => {
     _menu.hide();
     navigation.navigate('Profile')
   };
@@ -65,12 +65,12 @@ const HomeRightButtons = ({ openSearch }) => {
     _menu = ref;
   };
   const MenuOptions = (
-    <View style={{backgroundColor: 'white'}}>
+    <View style={{ backgroundColor: 'white' }}>
       <MenuItem onPress={() => onPress()}
       >
-       Profile 
+        Profile
       </MenuItem>
-    
+
     </View>
   );
   return (
@@ -89,27 +89,27 @@ const HomeRightButtons = ({ openSearch }) => {
           paddingRight: 20,
         }}
       /> */}
-         <View>
-          <Menu
-            ref={(ref) => setMenuRef(ref)}
-            button={
-                <Entypo
-                  onPress={() => showMenu()}
-                  name="dots-three-vertical"
-                  size={24}
-                  color="white"
-                />
-            }>
-            {MenuOptions}
-          </Menu>
-        </View>
-     
-     
+      <View>
+        <Menu
+          ref={(ref) => setMenuRef(ref)}
+          button={
+            <Entypo
+              onPress={() => showMenu()}
+              name="dots-three-vertical"
+              size={24}
+              color="white"
+            />
+          }>
+          {MenuOptions}
+        </Menu>
+      </View>
+
+
     </View>
   );
 };
 
-export const AppStack = ({user}) => {
+export const AppStack = ({ user }) => {
   const [searchbarVisible, setSearchbarVisible] = useState(false);
   return (
     <>
@@ -140,7 +140,7 @@ export const AppStack = ({user}) => {
         />
         <Stack.Screen name="Message" component={Message} />
         <Stack.Screen name="NewBroadCast" component={NewBroadCast} />
-        <Stack.Screen name="NewGroup" component={NewGroup}  options={{ headerShown: false, }} />
+        <Stack.Screen name="NewGroup" component={NewGroup} options={{ headerShown: false, }} />
         <Stack.Screen name="WhatsAppWeb" component={WhatsAppWeb} />
         <Stack.Screen name="Settings" component={Settings} />
         <Stack.Screen name="Account" component={Account} />
@@ -154,7 +154,7 @@ export const AppStack = ({user}) => {
         <Stack.Screen name="Privacy" component={Privacy} />
         <Stack.Screen name="Camera" component={Camera} />
         <Stack.Screen name="ContactHelp" component={ContactHelp} />
-        <Stack.Screen name="MakeNewGroup" component={MakeNewGroup}  options={{ headerShown: false, }}/>
+        <Stack.Screen name="MakeNewGroup" component={MakeNewGroup} />
         <Stack.Screen
           name="ViewStatus"
           component={ViewStatus}
@@ -204,7 +204,7 @@ if (
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-const SearchBar = ({visible, closeSearch}) => {
+const SearchBar = ({ visible, closeSearch }) => {
   LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
   return (

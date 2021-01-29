@@ -1,5 +1,5 @@
-import React from 'react';
-import {Text, FlatList,TextInput,Pressable, Image, View, TouchableOpacity,ActivityIndicator} from 'react-native';
+import React, { useLayoutEffect } from 'react';
+import { Text, FlatList, TextInput, Pressable, Image, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/Entypo';
@@ -8,17 +8,54 @@ import firestore from '@react-native-firebase/firestore';
 import styles from './styles';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import ImageCropPicker from 'react-native-image-crop-picker';
-import {useCallback,useRef,useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {Screen, Topbar} from '../../Components';
-import {setUsersArray} from '../../StateManagement/Actions';
+import { useCallback, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Screen, Topbar } from '../../Components';
+import { setUsersArray } from '../../StateManagement/Actions';
 import MDIcon from 'react-native-vector-icons/MaterialIcons';
+import storage from '@react-native-firebase/storage';
+import { StackActions } from '@react-navigation/native';
+import { consts } from '../../Assets/Consts';
 
-const MakeNewGroup = ({ navigation,route }) => {
+const MakeNewGroup = ({ navigation, route }) => {
   const pickerLstRef = useRef(null);
   const [image, setImage] = useState({});
   const [groupName, setGroupName] = useState(null);
+  const [loading, setLoading] = useState(false);
   const { selectedUsers, usersId } = route.params;
+  const { phoneNumber, uid } = auth().currentUser;
+  const dispatch = useDispatch();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      // headerRight: () => {
+      //   return (
+      //     <IconAntDesign
+      //       onPress={() => alert('search')}
+      //       name="search1"
+      //       size={24}
+      //       color="white"
+      //       style={{ paddingRight: 10 }}
+      //     />
+      //   );
+      // },
+      headerTitle: (
+        <View style={{ justifyContent: "flex-end" }}>
+          <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'white' }}>
+            New Group
+          </Text>
+          <Text style={{ color: 'white' }}>Add subject and icon</Text>
+        </View>
+      ),
+      headerStyle: {
+        backgroundColor: '#075e54',
+        elevation: 0,
+      },
+      headerTintColor: 'white',
+    });
+  });
+
+
 
   const changeProfilePic = () => {
     pickerLstRef.current.open();
@@ -31,8 +68,8 @@ const MakeNewGroup = ({ navigation,route }) => {
       height: 300,
       cropping: true,
     })
-      .then((image) =>setImage(image))
-      .catch((error) => console.log('errorddddddddd',error));
+      .then((image) => setImage(image))
+      .catch((error) => console.log('errorddddddddd', error));
   };
 
   const openCamera = () => {
@@ -42,37 +79,46 @@ const MakeNewGroup = ({ navigation,route }) => {
       height: 300,
       cropping: true,
     })
-      .then((image) => setImage(image) )
-      .catch((error) => console.log('errorfffff',error));
+      .then(
+        (image) =>
+          // console.log('image',image)
+          setImage(image)
+      )
+      .catch((error) => console.log('errorfffff', error));
   };
 
 
 
 
-  const openChat = () => {
+  const openChat = async () => {
     pickerLstRef.current.close()
-      
+    setLoading(true)
     let formated = {}
     selectedUsers.forEach(item => {
       formated[item.uid] = item
     });
-     var formatphonenumber = [];
+    var formatphonenumber = [];
     selectedUsers.forEach(item => {
       let user = {};
       user = item.phoneNumber;
       formatphonenumber.push(user);
     });
-  
     try {
-      firestore()
+      const imageStorageRef = storage().ref('images/dp/' + uid + '.jpeg');
+      await imageStorageRef.putFile(image.path);
+      const url = await storage()
+        .ref('images/dp/' + uid + '.jpeg')
+        .getDownloadURL();
+
+      await firestore()
         .collection('Group')
         .add({
-          createdBy:auth().currentUser.displayName,
-          createdAt:'',
+          createdBy: auth().currentUser.displayName,
+          createdAt: '',
           members: [...usersId, auth().currentUser.uid],
           type: 'indirect',
           groupName: groupName,
-          groupIcon: image,
+          groupIcon: url,
           details: {
             ...formated,
             [auth().currentUser.uid]: {
@@ -81,7 +127,7 @@ const MakeNewGroup = ({ navigation,route }) => {
               photoURL: auth().currentUser.photoURL,
             },
           },
-          
+
           lastMessage: {},
         }).then((data) => {
           let chat = {
@@ -92,55 +138,64 @@ const MakeNewGroup = ({ navigation,route }) => {
               phoneNumber: formatphonenumber
             }
           }
-              navigation.navigate('ChatScene', chat)
+          navigation.navigate('WhatsApp')
+          // navigation.dispatch(StackActions.replace('WhatsApp'));
+          // onPress={() =>}
+
+          setLoading(false)
         })
     }
     catch (error) {
-      console.log('error',error);
-    } 
-     
+      console.log('error', error);
+    }
+
   }
 
   const topbarMenus = [
-    {icon: 'refresh',  component: MaterialIcons},
+    { icon: 'refresh', component: MaterialIcons },
   ];
 
-  
+
   return (
     <Screen>
-      <Topbar title="NewGroup" menus={topbarMenus} />
+      {/* <Topbar title="New Group" menus={topbarMenus} noavatar={'noavatar'} /> */}
       <View style={styles.mainContainer}>
         <Text style={styles.rbsheetHeading}>PROVIDE GROUP SUBJECT  AND GROUP ICON</Text>
-     
+
         {
-         image?.path?   ( <Image source={{uri: image.path}} style={styles.roundButtonContainer} />): <TouchableOpacity style={styles.roundButtonContainer}>
-         <Icon
-           name="camera"
-           color="white"
-           size={24}
-           style={styles.cameraIcon}
-           onPress={()=>changeProfilePic()}
-         />
-           </TouchableOpacity>
+          image?.path ? (<Image source={{ uri: image.path }} style={styles.roundButtonContainer} />) : <TouchableOpacity style={styles.roundButtonContainer}>
+            <Icon
+              name="camera"
+              color="white"
+              size={24}
+              style={styles.cameraIcon}
+              onPress={() => changeProfilePic()}
+            />
+          </TouchableOpacity>
         }
-           
-            <TextInput
-         style={styles.textInput}
-         color="black"
-         placeholder="Type here..."
-         placeholderTextColor="grey"
-              onChangeText={(text)=> setGroupName(text)}
-              onSubmitEditing={() => openChat()}
-              />
-           <TouchableOpacity style={styles.rooundButtonContainer}>
-          <Icon
-            name="check"
-            color="white"
-            size={24}
-            style={styles.fabIcon}
-            onPress={()=>openChat()}
+
+        <TextInput
+          style={styles.textInput}
+          color="black"
+          placeholder="Type here..."
+          placeholderTextColor="grey"
+          onChangeText={(text) => setGroupName(text)}
+          onSubmitEditing={() => openChat()}
+        />
+
+        {loading ? (
+          <ActivityIndicator
+            color="#128c7e"
+            size={consts.textSizes(20)}
+            style={{ flex: 1, paddingVertical: 30 }}
           />
+        ) : (
+            <TouchableOpacity style={styles.rooundButtonContainer}>
+              <Icon name="check" color="white" size={24} style={styles.fabIcon}
+                onPress={() => openChat()}
+              />
             </TouchableOpacity>
+          )}
       </View>
       <RBSheet
         ref={pickerLstRef}
@@ -170,7 +225,7 @@ const MakeNewGroup = ({ navigation,route }) => {
           </Pressable>
         </View>
       </RBSheet>
-     
+
     </Screen>
   );
 };

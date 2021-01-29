@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Text,
   TouchableOpacity,
@@ -13,9 +13,9 @@ import firestore from '@react-native-firebase/firestore';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconFontAwesome5 from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useNavigation} from '@react-navigation/native';
-import {setUser, setChatId} from '../../StateManagement/Actions';
-import {useSelector} from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import { setUser, setChatId } from '../../StateManagement/Actions';
+import { useSelector } from 'react-redux';
 import moment from 'moment';
 import styles from './styles';
 
@@ -25,12 +25,12 @@ const Chats = (props) => {
   const [tabState, setTabState] = useState(false);
   const [chats, setChats] = useState([]);
   const [group, setGroup] = useState([]);
-  var newdata 
+  const [combinedChats, setCombinedChats] = useState([]);
+  var newdata
   var searchPressed = useSelector((state) => state.searchPressed.searchPressed);
   var tab = useSelector((state) => state.searchPressed.tabState);
 
   useEffect(() => {
-    console.log('auth().currentUser.uid',auth().currentUser.uid)
     return firestore()
       .collection('Chats')
       .where('members', 'array-contains', auth().currentUser.uid)
@@ -44,22 +44,18 @@ const Chats = (props) => {
             };
             const userId =
               formatedItem.members[
-                formatedItem.members[1] == auth().currentUser.uid ? 0 : 1
+              formatedItem.members[1] == auth().currentUser.uid ? 0 : 1
               ];
             formatedItem.user = formatedItem.details[userId];
             delete formatedItem.details;
             data.push(formatedItem);
           });
           setChats(data)
-          console.log('chatschats',chats)
-
           callGroupData(data)
-            
         },
-        (error) => {},
-    )
+        (error) => { },
+      )
   }, []);
-
 
   const callGroupData = (data) => {
     firestore()
@@ -73,19 +69,20 @@ const Chats = (props) => {
               chatId: item.id,
               ...item.data(),
             };
-            formatedItem.user = formatedItem.members
+            formatedItem.user = Object.values(formatedItem.details);
             delete formatedItem.details;
             groupVariable.push(formatedItem);
           });
           setGroup(groupVariable);
-           newdata = [...data, ...groupVariable]
-          setChats(...newdata)
-          console.log('chats',chats)
-          console.log('groupVariable',groupVariable)
-          console.log('newdata',newdata)
+          newdata = [...data, ...groupVariable]
+          setChats(newdata)
+          setCombinedChats(...newdata)
+          console.log('chats', chats)
+          console.log('groupVariable', groupVariable)
+          console.log('newdata', newdata)
 
         })
-}
+  }
 
 
   useEffect(() => {
@@ -105,8 +102,8 @@ const Chats = (props) => {
       <StatusBar backgroundColor="#075e54" />
       <View style={styles.mainContainer}>
         <FlatList
-          data={group}
-          renderItem={({item}) => (
+          data={chats}
+          renderItem={({ item }) => (
             <ChatsListItem
               item={item}
               image={item.image}
@@ -116,8 +113,10 @@ const Chats = (props) => {
               date={item.date}
               message={item.message}
               number={item.number}
+              type={item.type}
+              groupName={item.groupName}
+              groupIcon={item.groupIcon}
               onPressed={onPressed}
-
             />
           )}
           keyExtractor={(item) => item.chatId}
@@ -135,27 +134,34 @@ const Chats = (props) => {
   );
 };
 
-const ChatsListItem = ({ item, number, onPressed }) => {
+const ChatsListItem = ({ item, number, onPressed, type, groupIcon, groupName }) => {
   const { user, lastMessage } = item;
   return (
     <TouchableOpacity
       style={styles.listItemContainer}
       onPress={() => onPressed(item)}>
       <View style={styles.iconContainerperson}>
-        {user?
-         ( user.photoURL ? (
-          <Image source={{uri: user.photoURL}} style={styles.initStyle} />
-        ) : (
-          <Ionicons name="person" color="white" size={23} />
-            )):   <IconMaterialCommunityIcons name="account-group" color="white" size={38} />
+        {
+          type == 'direct' && (user.photoURL ?
+            <Image source={{ uri: user.photoURL }} style={styles.initStyle} /> :
+            <Ionicons name="person" color="white" size={23} />)
         }
-      
+        {
+          type == 'indirect' && (groupIcon ?
+            <Image source={{ uri: groupIcon }} style={styles.initStyle} /> :
+            <IconMaterialCommunityIcons name="account-group" color="white" size={33} />)
+        }
       </View>
 
       <View style={styles.messageContainer}>
         <View style={styles.firstContainer}>
-          <Text>{user?.displayName ?? user?.phoneNumber}</Text>
-
+          {/* <Text>{user?.displayName ?? user?.phoneNumber}</Text> */}
+          {
+            type == 'direct' && <Text>{user?.displayName ?? user?.phoneNumber}</Text>
+          }
+          {
+            type == 'indirect' && <Text>{groupName ?? 'Group'}</Text>
+          }
           <View style={styles.dateContainer}>
             <IconFontAwesome5
               name={lastMessage?.status ? 'check-double' : 'check'}

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, FlatList,Pressable, Image, View, TouchableOpacity,ActivityIndicator} from 'react-native';
+import { Text, FlatList, Pressable, Image, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/Entypo';
@@ -8,12 +8,12 @@ import firestore from '@react-native-firebase/firestore';
 import Contacts from 'react-native-contacts';
 import styles from './styles';
 // import {TouchableOpacity} from 'react-native-gesture-handler';
-import {useCallback} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {Screen, Topbar} from '../../Components';
-import {generateContacts} from '../../StateManagement/Actions';
+import { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Screen, Topbar } from '../../Components';
+import { generateContacts } from '../../StateManagement/Actions';
 
-const SelectContact = ({navigation}) => {
+const SelectContact = ({ navigation }) => {
   const contacts = useSelector((state) =>
     Object.keys(state.contacts.contacts).map(
       (key) => state.contacts.contacts[key],
@@ -72,15 +72,15 @@ const SelectContact = ({navigation}) => {
           navigation.navigate('ChatScene', chat);
         }
       }).catch((error) => {
-        console.log('errorcatch',error)
+        console.log('errorcatch', error)
       })
   }, []);
 
   const topbarMenus = [
-    {icon: 'refresh', onPress: reloadContacts, component: MaterialIcons},
+    { icon: 'refresh', onPress: reloadContacts, component: MaterialIcons },
   ];
 
-  openContactPicker = () => {
+  const openContactPicker = () => {
     console.log('jj')
     var newPerson = {
       phoneNumbers: [{
@@ -89,20 +89,20 @@ const SelectContact = ({navigation}) => {
       }],
       displayName: ""
     }
-     
+
     Contacts.openContactForm(newPerson).then(contact => {
       // contact has been saved
     })
   };
-  
+
   return (
     <Screen>
-      <Topbar title="Contacts" menus={topbarMenus} />
+      <Topbar title="Contacts" menus={topbarMenus} noavatar={'noavatar'} />
       <FlatList
         style={styles.mainContainer}
         ListHeaderComponent={
           <>
-            <Pressable style={styles.listItemContainer} onPress={()=>navigation.navigate('NewGroup')}>
+            <Pressable style={styles.listItemContainer} onPress={() => navigation.navigate('NewGroup')}>
               <View style={styles.iconContainer}>
                 <MaterialIcons
                   name="group"
@@ -125,7 +125,7 @@ const SelectContact = ({navigation}) => {
                 </View>
               </View>
             </Pressable>
-            <Pressable style={styles.listItemContainer} onPress={()=>openContactPicker()} >
+            <Pressable style={styles.listItemContainer} onPress={() => openContactPicker()} >
               <View style={styles.iconContainer}>
                 <MaterialIcons
                   name="person-add"
@@ -151,7 +151,7 @@ const SelectContact = ({navigation}) => {
           </>
         }
         data={contacts}
-        renderItem={({item}) => (
+        renderItem={({ item }) => (
           <Item
             displayName={item.displayName}
             photoURL={item.photoURL}
@@ -186,10 +186,10 @@ const SelectContact = ({navigation}) => {
                   name="questioncircle"
                   color="grey"
                   size={23}
-                  style={{padding: 5}}
+                  style={{ padding: 5 }}
                 />
               </View>
-              <TouchableOpacity style={styles.callerDetailsContainer} onPress={()=>navigation.navigate('ContactHelp')}>
+              <TouchableOpacity style={styles.callerDetailsContainer} onPress={() => navigation.navigate('ContactHelp')}>
                 <View style={styles.callerDetailsContainerWrap}>
                   <View style={styles.nameContainer}>
                     <Text>Contacts help</Text>
@@ -206,29 +206,29 @@ const SelectContact = ({navigation}) => {
 
 export default SelectContact;
 
-const ListFooterLoader = ({loading = false}) => (
+const ListFooterLoader = ({ loading = false }) => (
   <ActivityIndicator
-  color="#128c7e"
+    color="#128c7e"
     animating={loading}
-    style={{height: 50, alignSelf: 'center'}}
+    style={{ height: 50, alignSelf: 'center' }}
   />
 );
 
-const Item = ({photoURL, displayName, phoneNumber, onPress}) => (
+const Item = ({ photoURL, displayName, phoneNumber, onPress }) => (
   <TouchableOpacity onPress={onPress} style={styles.listItemContainer}>
     <View style={styles.iconContainerperson}>
       {photoURL ? (
-        <Image source={{uri: photoURL}} style={styles.initStyle} />
+        <Image source={{ uri: photoURL }} style={styles.initStyle} />
       ) : (
-        <MaterialIcons name="person" color="white" size={23} />
-      )}
+          <MaterialIcons name="person" color="white" size={23} />
+        )}
     </View>
     <View style={styles.nameContainer}>
       <Text>{displayName}</Text>
       <View style={styles.dateContainer}>
         <Text
           numberOfLines={1}
-          style={{fontWeight: '400', color: '#666', fontSize: 12}}>
+          style={{ fontWeight: '400', color: '#666', fontSize: 12 }}>
           {phoneNumber}
         </Text>
       </View>

@@ -1,12 +1,12 @@
-import React, {useRef,useState, memo, useEffect} from 'react';
-import {View, Text, Animated, Pressable, StyleSheet} from 'react-native';
+import React, { useRef, useState, memo, useEffect } from 'react';
+import { View, Text, Animated, Pressable, StyleSheet } from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import auth from '@react-native-firebase/auth';
 import moment from 'moment';
-import {ReplyMessage} from './ReplyMessage';
-import {consts} from '../../../Assets';
-import {Swipable, MediaThumbnail} from '../../../Components';
-import {useNavigation} from '@react-navigation/native';
+import { ReplyMessage } from './ReplyMessage';
+import { consts } from '../../../Assets';
+import { Swipable, MediaThumbnail } from '../../../Components';
+import { useNavigation } from '@react-navigation/native';
 import FileViewer from 'react-native-file-viewer';
 export default ({
   item,
@@ -21,7 +21,6 @@ export default ({
   const navigation = useNavigation();
   const isMine = item.uid == auth().currentUser.uid;
   const derivedContainerStyle = isMine ? styles.myNode : styles.othersNode;
-
   const LeftActions = (progress, dragX) => {
     const trans = dragX.interpolate({
       inputRange: [0, 48, 500],
@@ -29,7 +28,7 @@ export default ({
     });
     return (
       <Animated.View
-        style={[styles.actionView, {transform: [{translateX: trans}]}]}>
+        style={[styles.actionView, { transform: [{ translateX: trans }] }]}>
         <View style={styles.reply}>
           <Entypo name={'reply'} size={22} color="white" />
         </View>
@@ -44,17 +43,17 @@ export default ({
 
   const MediaThumbnailPress = () => {
     if (item.media.type != 'image' && item.media.type != 'video') {
-      console.log('mediaaa',item.media)
+      console.log('mediaaa', item.media)
       FileViewer.open(item.media.path, { showOpenWithDialog: true })
-      .catch(error => {
-          console.log('docerror',error)
-      })
+        .catch(error => {
+          console.log('docerror', error)
+        })
     }
     else {
-    navigation.navigate('ViewMedia', item)               
-      
+      navigation.navigate('ViewMedia', item)
+
     }
-}
+  }
   return (
     <Swipable
       ref={swipableRef}
@@ -66,9 +65,11 @@ export default ({
       <Pressable
         onPress={onPress}
         onLongPress={onLongPress}
-        style={{backgroundColor: selected ? '#00BBFF30' : 'transparent'}}>
+        style={{ backgroundColor: selected ? '#00BBFF30' : 'transparent' }}>
         <View style={[styles.chatNode, derivedContainerStyle]}>
-          {/* <Text style={styles.title}>{item.uid}</Text> */}
+          {auth().currentUser.uid != item.uid && <Text style={styles.groupUserNameStyle}>{item.groupUserName}</Text>}
+
+          {/* <Text style={styles.title}>{item.type}</Text> */}
           {replyMessage && <ReplyMessage replyMessage={replyMessage} />}
           {item.media && (
             <MediaThumbnail
@@ -80,7 +81,7 @@ export default ({
               iconSize={100}
               name={item.media.name}
               path={item.media.path}
-              onPress={()=>MediaThumbnailPress()}
+              onPress={() => MediaThumbnailPress()}
             />
           )}
           <View style={styles.messageContainer}>
@@ -129,9 +130,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'red',
   },
+  groupUserNameStyle: {
+    margin: 7,
+    marginBottom: 0,
+    fontWeight: 'bold',
+    color: 'black',
+  },
   image: {
     backgroundColor: 'white',
-    justifyContent:"center",
+    justifyContent: "center",
     width: consts.ScreenWidth * 0.8 - 14,
     margin: 7,
     marginBottom: 0,

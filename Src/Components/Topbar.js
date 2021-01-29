@@ -1,15 +1,17 @@
-import {useNavigation} from '@react-navigation/native';
-import React, {useRef} from 'react';
+import { useNavigation } from '@react-navigation/native';
+import React, { useRef } from 'react';
 
-import {View, StyleSheet, Image, Text, Pressable} from 'react-native';
+import { View, StyleSheet, Image, Text, Pressable } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Menu, {MenuItem} from 'react-native-material-menu';
+import Menu, { MenuItem } from 'react-native-material-menu';
 
-import {colors} from '../Assets';
+import { colors } from '../Assets';
 
 export const Topbar = ({
+  type,
+  noavatar,
   title,
   subtitle = null,
   noBack = false,
@@ -19,9 +21,9 @@ export const Topbar = ({
   showOverlayComponent = false,
   OverlayComponent = null,
   style = null,
-  onPress = () => {},
+  onPress = () => { },
 }) => {
-  const {goBack} = useNavigation();
+  const { goBack } = useNavigation();
   const menuRef = useRef();
 
   const onPressMoreMenuItem = (onPress) => {
@@ -44,7 +46,9 @@ export const Topbar = ({
         />
       )}
       <Pressable style={styles.pressable} onPress={onPress}>
-        {avatar !== null && <Avatar avatar={avatar} />}
+
+        {noavatar ? null :
+          < Avatar avatar={avatar} type={type} />}
         <View style={styles.titleContainer}>
           <Text style={styles.title}>{title}</Text>
           {!!subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
@@ -88,23 +92,15 @@ export const Topbar = ({
   );
 };
 
-const Avatar = ({avatar}) => {
+const Avatar = ({ avatar, type }) => {
+  console.log('avatar', avatar)
   return (
     <View style={styles.avatarContainer}>
-      {/* {console.log('avatar', avatar)} */}
-      
-      {avatar=='group'?<MaterialCommunityIcons name="account-group" color="white" size={23} />:(avatar == '' ? (
-        <MaterialIcons name="person" color="white" size={23} />
-      ) : (
-        <Image source={{uri: avatar}} style={styles.avatar} />
-        ))}
-      
-
-      {/* {avatar == '' ? (
-        <MaterialIcons name="person" color="white" size={23} />
-      ) : (
-        <Image source={{uri: avatar}} style={styles.avatar} />
-      )} */}
+      { avatar ? <Image source={{ uri: avatar }} style={styles.avatar} /> : (
+        type == 'direct' ? <MaterialIcons name="person" color="white" size={23} /> :
+          <MaterialCommunityIcons name="account-group" color="white" size={23} />
+      )
+      }
     </View>
   );
 };

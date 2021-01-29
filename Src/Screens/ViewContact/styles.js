@@ -1,5 +1,5 @@
-import {StyleSheet, Dimensions} from 'react-native';
-const {height: SCREEN_HEIGHT} = Dimensions.get('window');
+import { StyleSheet, Dimensions } from 'react-native';
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   topbar: {
@@ -9,9 +9,41 @@ const styles = StyleSheet.create({
     flex: 1,
     minHeight: SCREEN_HEIGHT,
     backgroundColor: 'lightgray',
+    // backgroundColor: 'green',
+  },
+  innerContainer: {
+    flex: 1,
+    minHeight: SCREEN_HEIGHT,
+    backgroundColor: 'lightgray',
+    // backgroundColor: 'red',
+
   },
   contentContainer: {
     flexGrow: 1,
+  },
+  phoneNumberGroupContainer: {
+    flexDirection: "row",
+    // justifyContent:"center"
+    alignItems: "center",
+    marginVertical: 10
+  },
+  avatarContainer: {
+    justifyContent: 'center',
+    borderRadius: 30,
+    width: 39,
+    height: 39,
+    marginVertical: 8,
+    backgroundColor: '#D9E3E2',
+    alignItems: 'center',
+    marginRight: 15
+
+  },
+  avatar: {
+    borderRadius: 30,
+    width: 39,
+    height: 39,
+    marginRight: 15
+
   },
   titleContainer: {
     flex: 1,
@@ -21,7 +53,12 @@ const styles = StyleSheet.create({
   titleStyle: {
     color: 'white',
     fontWeight: 'bold',
+    paddingTop: 55,
     fontSize: 20,
+  },
+  topbar: {
+    paddingLeft: 15,
+    paddingTop: 15,
   },
   phoneNumberContainer: {
     backgroundColor: 'white',
