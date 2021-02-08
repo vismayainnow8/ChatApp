@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,35 +8,67 @@ import {
   Pressable,
   Alert
 } from 'react-native';
-import {consts} from '../../Assets/Consts';
-
+import { consts } from '../../Assets/Consts';
+import messaging from '@react-native-firebase/messaging';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import MDIcon from 'react-native-vector-icons/MaterialIcons';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import {SmallButton} from '../../Components';
+import { SmallButton } from '../../Components';
 import styles from './styles';
-import {StackActions} from '@react-navigation/native';
-import {useDispatch} from 'react-redux';
-import {generateContacts} from '../../StateManagement/Actions';
+import { StackActions } from '@react-navigation/native';
+import { useDispatch } from 'react-redux';
+import { generateContacts } from '../../StateManagement/Actions';
 import User from '../../Assets/user.png'
-const ProfileInfo = ({navigation}) => {
+const ProfileInfo = ({ navigation }) => {
   const [name, setName] = useState(null);
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState({});
+  const [fcmToken, setFcmToken] = useState(null);
   const pickerLstRef = useRef(null);
-  const {phoneNumber, uid} = auth().currentUser;
+  const { phoneNumber, uid } = auth().currentUser;
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(generateContacts());
+    getFirebaseToken()
   }, []);
+
+  async function getFirebaseToken() {
+    const permissionStatus = await messaging().hasPermission();
+    const hasPermission =
+      permissionStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      permissionStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (hasPermission) {
+      messaging().getToken()
+        .then((token) => {
+          console.log('error', token);
+          setFcmToken(token)
+        })
+    }
+    else {
+      const authStatus = await messaging().requestPermission();
+      const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+      if (enabled) {
+        messaging().getToken()
+          .then((token) => {
+            console.log('error', token);
+            setFcmToken(token)
+          })
+      }
+    }
+  }
+
 
   const next = async () => {
     // if (!name) return;
     if (image.path && name) {
-    setLoading(true);
+      setLoading(true);
       try {
         const imageStorageRef = storage().ref('images/dp/' + uid + '.jpeg');
         // await imageStorageRef.putFile(new File([""],'../../Assets/user.png'));
@@ -47,24 +79,28 @@ const ProfileInfo = ({navigation}) => {
         await firestore()
           .collection('Users')
           .doc(uid)
-          .set({phoneNumber, photoURL: url, displayName: name});
+          .set({ phoneNumber, photoURL: url, displayName: name, fcmToken: fcmToken });
+        await firestore()
+          .collection('FcmTokens')
+          .doc(uid)
+          .set({ fcmToken: fcmToken });
         await auth().currentUser.updateProfile({
           displayName: name,
           photoURL: url,
         });
         navigation.dispatch(StackActions.replace('WhatsApp'));
       } catch (error) {
-        console.log('error',error);
+        console.log('error', error);
       } finally {
         setLoading(false);
       }
     }
     else {
       Alert.alert('', 'Please provide your profile photo or name', [
-        {text: 'OK', onPress: () => console.log('Cancel Pressed')},
+        { text: 'OK', onPress: () => console.log('Cancel Pressed') },
       ]);
     }
-    
+
   };
 
   const changeProfilePic = () => {
@@ -102,11 +138,11 @@ const ProfileInfo = ({navigation}) => {
         <ImageBackground
           style={styles.imageBackgroundContainer}
           imageStyle={styles.imageBackground}
-        source={require('../../Assets/user.png')}
+          source={require('../../Assets/user.png')}
 
         >
           {image?.path && (
-            <Image source={{uri: image.path}} style={styles.image} />
+            <Image source={{ uri: image.path }} style={styles.image} />
           )}
         </ImageBackground>
       </Pressable>
@@ -116,7 +152,7 @@ const ProfileInfo = ({navigation}) => {
           placeholder="Type your name here ...."
           style={styles.phoneNumberContainer}
           onChangeText={setName}
-          placeholderStyle={{fontSize: 20}}
+          placeholderStyle={{ fontSize: 20 }}
         />
       </View>
 

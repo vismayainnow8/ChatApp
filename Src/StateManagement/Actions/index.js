@@ -4,6 +4,7 @@ export * from './textInput';
 export * from './country';
 export * from './firebaseUser';
 export * from './imageUri';
-
+export * from './search';
 export * from './contacts';
 export * from './viewedStatuses';
+export * from './searchBarVisible';

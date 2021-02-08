@@ -12,7 +12,7 @@ export const TabView = () => {
   return (
     <Tab.Navigator tabBarOptions={homeTabOptions}>
       {/* <Tab.Screen name="CAMERA" component={Status} /> */}
-      <Tab.Screen name="CHATS" component={Chats} />
+      <Tab.Screen name="CHATS" component={Chats}  />
       <Tab.Screen name="STATUS" component={Status} />
       {/* <Tab.Screen name="CALLS" component={Calls} /> */}
     </Tab.Navigator>

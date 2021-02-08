@@ -1,34 +1,39 @@
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
-import React, {useEffect, useState} from 'react';
-import {Image, SectionList, Text, TouchableOpacity, View} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Image, SectionList, Text, TouchableOpacity, View } from 'react-native';
 import ImageCropPicker from 'react-native-image-crop-picker';
-import {Circle} from 'react-native-progress';
+import { Circle } from 'react-native-progress';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useSelector, useStore} from 'react-redux';
-import {v4 as uuidv4} from 'uuid';
-import {BASE_STATUSES_SECTIONLIST_STRUCTURE} from '../../Assets/Consts';
-import {Screen} from '../../Components';
-import {StatusListImage} from './components/StatusListImage';
+import { useSelector, useDispatch, useStore } from 'react-redux';
+import { v4 as uuidv4 } from 'uuid';
+import { BASE_STATUSES_SECTIONLIST_STRUCTURE } from '../../Assets/Consts';
+import { Screen, EmptyListComponent } from '../../Components';
+import { searchBarVisible, search } from '../../StateManagement/Actions';
+import { StatusListImage } from './components/StatusListImage';
 import styles from './styles';
 
-const Status = ({navigation, route, ...props}) => {
-  const [statusData, setStatusData] = useState([]);
+const Status = ({ navigation, route, ...props }) => {
   const store = useStore();
+  const dispatch = useDispatch();
+  const [statusData, setStatusData] = useState([]);
+  const [statusSave, setStatusSave] = useState([]);
   const [myStatus, setMyStatus] = useState(myStatusData());
-  const [uploading, setUploading] = useState({status: false, fileNumber: ''});
-  // const dispatch = useDispatch();
+  const [uploading, setUploading] = useState({ status: false, fileNumber: '' });
+  var keyword = useSelector((state) => state.search.search);
+
   const selector = (state) =>
     statusData.reduce(
       (prev, data) =>
         reduceFunctionForStatusCategorising(state.viewedStatuses, prev, data),
       BASE_STATUSES_SECTIONLIST_STRUCTURE(),
     );
-
   const sectionListData = useSelector(selector);
+
+
 
   useEffect(() => {
     return firestore()
@@ -48,12 +53,28 @@ const Status = ({navigation, route, ...props}) => {
             }
           });
           formatAndSetMyStatusData(myData);
+          setStatusSave(formatStatusesData(data));
           setStatusData(formatStatusesData(data));
           // setStatusData(formatStatusesData(DATA2));
         },
-        (error) => {},
+        (error) => { },
       );
   }, []);
+
+  useEffect(() => {
+    let User = statusData.filter(function (e) {
+      return e.displayName.indexOf(keyword) > -1
+    });
+    if (!User.length || !keyword) {
+      console.log('empty')
+      setStatusData(statusSave)
+    }
+    else {
+      setStatusData(User)
+      console.log('valid')
+
+    }
+  }, [keyword])
 
   const formatAndSetMyStatusData = (myData) => {
     myData = formatStatusesData(myData);
@@ -79,18 +100,20 @@ const Status = ({navigation, route, ...props}) => {
 
   const uploadPhoto = async (photo) => {
     const contacts = Object.keys(store.getState().contacts.contacts);
-    const {photoURL, uid, displayName} = auth().currentUser;
+    console.log('contacts', contacts)
+    const { photoURL, uid, displayName, phoneNumber } = auth().currentUser;
     contacts.push(uid);
-    const user = {photoURL, uid, displayName};
+    const user = { photoURL, uid, displayName, phoneNumber };
     let status = {
       data: {},
       contacts,
       user,
     };
-    setUploading({status: 0.01, fileNumber: 1});
+    setUploading({ status: 0.01, fileNumber: 1 });
     status.data.uri = await uploadImageAsPromise(photo);
     status.data.type = photo.mime.split('/')[0];
     status.data.time = firestore.Timestamp.now().toMillis();
+    console.log('status', status)
     addStatus(status);
   };
 
@@ -120,7 +143,7 @@ const Status = ({navigation, route, ...props}) => {
           reject(err);
         },
         async () => {
-          setUploading({status: false, fileNumber: ''});
+          setUploading({ status: false, fileNumber: '' });
           const downloadURL = await imageStorageRef.getDownloadURL();
           resolve(downloadURL);
         },
@@ -175,23 +198,33 @@ const Status = ({navigation, route, ...props}) => {
       );
     }
   };
-
+  const reloadOnNavigate = () => {
+    dispatch(search(null))
+    setStatusData(statusSave)
+  }
   return (
     <Screen style={styles.screen}>
+      {/* {sectionListData ? */}
       <SectionList
         sections={sectionListData}
         ListHeaderComponent={renderHeader}
         keyExtractor={(item) => item.uid.toString()}
-        renderItem={({item, index, section}) => (
-          <Item item={item} time={item.time} index={index} section={section} />
+        renderItem={({ item, index, section }) => (
+          <Item item={item} time={item.time} index={index} section={section} reloadOnNavigate={() => reloadOnNavigate()} />
         )}
         ItemSeparatorComponent={renderSeparator}
-        renderSectionHeader={({section: {title}}) => (
+        renderSectionHeader={({ section: { title } }) => (
+
+          //  { sectionListData.data?<View style={styles.updateContainer}>
+          //     <Text style={styles.grey}>{title}</Text>
+          // </View> : null}
           <View style={styles.updateContainer}>
             <Text style={styles.grey}>{title}</Text>
           </View>
         )}
       />
+      {/* :null} */}
+
       <TouchableOpacity style={styles.contactsbuttonContainer}>
         {uploading.status ? (
           <Circle progress={uploading.status} size={48} color="white">
@@ -203,14 +236,14 @@ const Status = ({navigation, route, ...props}) => {
             </View>
           </Circle>
         ) : (
-          <IconMaterialCommunityIcons
-            name="camera"
-            color="white"
-            size={24}
-            style={styles.fabIcon}
-            onPress={openCamera}
-          />
-        )}
+            <IconMaterialCommunityIcons
+              name="camera"
+              color="white"
+              size={24}
+              style={styles.fabIcon}
+              onPress={openCamera}
+            />
+          )}
       </TouchableOpacity>
     </Screen>
   );
@@ -218,14 +251,20 @@ const Status = ({navigation, route, ...props}) => {
 
 export default Status;
 
-const Item = ({item, index, section}) => {
-  const {time, statuses} = item;
+const Item = ({ item, index, reloadOnNavigate, section }) => {
+  const { time, statuses } = item;
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
+  const navigateViewStatus = () => {
+    reloadOnNavigate()
+    dispatch(searchBarVisible(false))
+    navigation.navigate('ViewStatus', { section, index })
+  }
   return (
     <TouchableOpacity
       style={styles.listItemContainer}
-      onPress={() => navigation.navigate('ViewStatus', {section, index})}>
+      onPress={() => navigateViewStatus()}>
       <View style={styles.iconContainer}>
         <StatusListImage data={statuses} />
       </View>
@@ -260,14 +299,15 @@ const reduceFunctionForStatusCategorising = (viewedStatuses, prev, data) => {
   });
   const isAllSeen = statuses.every((status) => status.seen);
   if (isAllSeen) {
-    prev[1].data.push({...data, statuses});
+    prev[1].data.push({ ...data, statuses });
   } else {
-    prev[0].data.push({...data, statuses});
+    prev[0].data.push({ ...data, statuses });
   }
   return prev;
 };
 
 function formatStatusesData(statuses) {
+  console.log('formatStatusesData', statuses)
   const data = statuses.reduce((prev, newVal) => {
     const isNew = Boolean(!prev[newVal.user.uid]);
     if (isNew) {

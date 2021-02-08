@@ -14,13 +14,14 @@ import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommun
 import IconFontAwesome5 from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
-import { setUser, setChatId } from '../../StateManagement/Actions';
-import { useSelector } from 'react-redux';
+import { setUser, setChatId, search, searchBarVisible } from '../../StateManagement/Actions';
+import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import styles from './styles';
 
 const Chats = (props) => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const [searchPressedState, setSearchPressedState] = useState(false);
   const [tabState, setTabState] = useState(false);
   const [chats, setChats] = useState([]);
@@ -29,6 +30,24 @@ const Chats = (props) => {
   var newdata
   var searchPressed = useSelector((state) => state.searchPressed.searchPressed);
   var tab = useSelector((state) => state.searchPressed.tabState);
+  var keyword = useSelector((state) => state.search.search);
+
+  useEffect(() => {
+    let User = combinedChats?.filter(function (e) {
+      if (e.type == 'direct') {
+        return e.user.displayName.indexOf(keyword) > -1
+      }
+      else {
+        return e.groupName.indexOf(keyword) > -1
+      }
+    });
+    if (!User.length || !keyword) {
+      setChats(combinedChats)
+    }
+    else {
+      setChats(User)
+    }
+  }, [keyword])
 
   useEffect(() => {
     return firestore()
@@ -76,7 +95,7 @@ const Chats = (props) => {
           setGroup(groupVariable);
           newdata = [...data, ...groupVariable]
           setChats(newdata)
-          setCombinedChats(...newdata)
+          setCombinedChats(newdata)
           console.log('chats', chats)
           console.log('groupVariable', groupVariable)
           console.log('newdata', newdata)
@@ -92,9 +111,13 @@ const Chats = (props) => {
 
 
   const onPressed = (item) => {
+    dispatch(searchBarVisible(false))
+    dispatch(search(null))
     navigation.navigate('ChatScene', item);
     setUser(item.user);
     setChatId(item.chatId);
+    setChats(combinedChats)
+
   };
 
   return (

@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import 'react-native-gesture-handler';
+import firebase from '@react-native-firebase/app'
 import auth from '@react-native-firebase/auth';
-import {SignInStack} from './signinStack';
-import {AppStack} from './appStack';
+import { SignInStack } from './signinStack';
+import { AppStack } from './appStack';
 
 export const AppNavigation = () => {
   const [initializing, setInitializing] = useState(true);

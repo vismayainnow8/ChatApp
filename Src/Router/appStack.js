@@ -1,8 +1,9 @@
 import 'react-native-gesture-handler';
 import { consts } from '../Assets/Consts';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   View,
   TextInput,
@@ -45,6 +46,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import { TabView } from './homeTabs';
 import { appStackTopbar, noTopBar, signInStackTopbar } from './options';
+import { search, searchBarVisible } from '.././StateManagement/Actions';
 
 const Stack = createStackNavigator();
 
@@ -66,8 +68,7 @@ const HomeRightButtons = ({ openSearch }) => {
   };
   const MenuOptions = (
     <View style={{ backgroundColor: 'white' }}>
-      <MenuItem onPress={() => onPress()}
-      >
+      <MenuItem onPress={() => onPress()}  >
         Profile
       </MenuItem>
 
@@ -80,15 +81,15 @@ const HomeRightButtons = ({ openSearch }) => {
         alignItems: 'center',
         paddingHorizontal: 10,
       }}>
-      {/* <Feather
-        onPress={openSearch}r
+      <Feather
+        onPress={openSearch}
         name="search"
         size={24}
         color="#FFF"
         style={{
           paddingRight: 20,
         }}
-      /> */}
+      />
       <View>
         <Menu
           ref={(ref) => setMenuRef(ref)}
@@ -110,7 +111,26 @@ const HomeRightButtons = ({ openSearch }) => {
 };
 
 export const AppStack = ({ user }) => {
+  const dispatch = useDispatch();
+  var visibilityRedux = useSelector((state) => state.searchBarVisible.searchBarVisible);
   const [searchbarVisible, setSearchbarVisible] = useState(false);
+
+  const openSearch = () => {
+    setSearchbarVisible(true)
+    dispatch(searchBarVisible(true))
+
+  }
+
+  useEffect(() => {
+    // ChatScenePress()
+    setSearchbarVisible(visibilityRedux)
+  }, [visibilityRedux]);
+
+  const closeSearch = () => {
+    setSearchbarVisible(false)
+    dispatch(searchBarVisible(false))
+    dispatch(search(null))
+  }
   return (
     <>
       <Stack.Navigator>
@@ -128,7 +148,7 @@ export const AppStack = ({ user }) => {
             ...appStackTopbar('WhatsApp'),
             headerShown: !searchbarVisible,
             headerRight: () => (
-              <HomeRightButtons openSearch={() => setSearchbarVisible(true)} />
+              <HomeRightButtons openSearch={() => openSearch()} />
             ),
           }}
         />
@@ -185,13 +205,12 @@ export const AppStack = ({ user }) => {
           component={ChatScene}
           options={noTopBar}
         />
-        {/* <Stack.Screen name="Contacts" component={Contacts} options={noTopBar} /> */}
         <Stack.Screen name="CallingScreen" component={CallingScreen} />
         <Stack.Screen name="VideoCalling" component={VideoCalling} />
       </Stack.Navigator>
       <SearchBar
         visible={searchbarVisible}
-        closeSearch={() => setSearchbarVisible(false)}
+        closeSearch={() => closeSearch()}
       />
     </>
   );
@@ -206,6 +225,28 @@ if (
 
 const SearchBar = ({ visible, closeSearch }) => {
   LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+  const [textInput, setTextInput] = useState(null);
+  const dispatch = useDispatch();
+  var visibilityRedux = useSelector((state) => state.searchBarVisible.searchBarVisible);
+  var searchRedux = useSelector((state) => state.search.search);
+
+  const submit = () => {
+
+  }
+
+  const onChangeText = (text) => {
+    setTextInput(text)
+    dispatch(search(text));
+  }
+
+  const cross = () => {
+    setTextInput(null)
+    dispatch(search(null));
+  }
+
+  useEffect(() => {
+    setTextInput(searchRedux)
+  }, [searchRedux]);
 
   return (
     <>
@@ -219,6 +260,7 @@ const SearchBar = ({ visible, closeSearch }) => {
             backgroundColor: 'white',
             borderBottomWidth: 1,
             borderBottomColor: 'lightgray',
+            width: '100%'
           }}>
           <Feather
             onPress={closeSearch}
@@ -231,12 +273,17 @@ const SearchBar = ({ visible, closeSearch }) => {
           />
           <TextInput
             placeholder="Search..."
+            autoFocus={true}
             style={{
               width: consts.ScreenWidth / 1.35,
             }}
-          />
+            value={textInput}
+            onChangeText={(text) => onChangeText(text)}
+            onSubmitEditing={() => submit()} />
+          {/* <TabView screenProps={{ searchValue: textInput }} /> */}
+
           <Entypo
-            onPress={closeSearch}
+            onPress={() => cross()}
             name="cross"
             size={24}
             color="#128c7e"

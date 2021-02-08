@@ -67,7 +67,7 @@ export default ({
         onLongPress={onLongPress}
         style={{ backgroundColor: selected ? '#00BBFF30' : 'transparent' }}>
         <View style={[styles.chatNode, derivedContainerStyle]}>
-          {auth().currentUser.uid != item.uid && <Text style={styles.groupUserNameStyle}>{item.groupUserName}</Text>}
+          {auth().currentUser.uid != item.uid && item.groupUserName && <Text style={styles.groupUserNameStyle}>{item.groupUserName}</Text>}
 
           {/* <Text style={styles.title}>{item.type}</Text> */}
           {replyMessage && <ReplyMessage replyMessage={replyMessage} />}

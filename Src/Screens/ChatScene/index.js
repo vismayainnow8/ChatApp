@@ -66,16 +66,36 @@ const ChatScene = ({ route, navigation }) => {
 
   const sendMessage = (message) => {
     message.chatId = chatId;
-    message.groupUserName = auth().currentUser.displayName
-    message.groupUserPhone = auth().currentUser.phoneNumber
+    if (type == 'indirect') {
+      message.groupUserName = auth().currentUser.displayName
+      message.groupUserPhone = auth().currentUser.phoneNumber
+    }
     message = { ...message, time: firestore.Timestamp.now().toMillis() };
     console.log('lastMessage', message)
-
     database().ref('messages').push(message);
     // message = { ...message, time: firestore.Timestamp.now().toMillis() };
     firestore().collection('Chats').doc(chatId).update({
       lastMessage: message,
-    });
+    }).then(() => {
+      // const payload = {
+      //   notification: {
+      //     title: "Welcome",
+      //     body: "thank for installed our app",
+      //   },F
+      // };
+      // var admin = require("firebase-admin");
+      // admin
+      //   .messaging()
+      //   .sendToDevice(data.notification_token, payload)
+      //   .then(function (response) {
+      //     console.log("Notification sent successfully:", response);
+      //   })
+      //   .catch(function (error) {
+      //     console.log("Notification sent failed:", error);
+      //   })
+
+    }
+    )
     setReplyMessage(null);
   };
 
@@ -144,11 +164,7 @@ const ChatScene = ({ route, navigation }) => {
     [messages, selectedMessages],
   );
 
-  // const onPressTopbar = () => {
-  //   console.log('user',
-  //     user,
-  //     groupName, groupIcon, type)
-  // }
+
   const onPressTopbar = () => navigation.navigate('ViewContact', { user, groupName, groupIcon, type });
 
   return (
