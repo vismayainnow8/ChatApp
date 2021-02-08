@@ -257,7 +257,7 @@ const Item = ({ item, index, reloadOnNavigate, section }) => {
   const dispatch = useDispatch();
 
   const navigateViewStatus = () => {
-    reloadOnNavigate()
+    // reloadOnNavigate()
     dispatch(searchBarVisible(false))
     navigation.navigate('ViewStatus', { section, index })
   }
