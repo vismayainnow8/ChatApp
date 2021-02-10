@@ -1,28 +1,116 @@
-import React from 'react';
-import { Text, FlatList, Pressable, Image, View, TouchableOpacity, ActivityIndicator } from 'react-native';
-import IconAntDesign from 'react-native-vector-icons/AntDesign';
+import React, { useLayoutEffect, useState, useEffect } from 'react';
+import { Text, FlatList, Pressable, TextInput, Image, View, TouchableOpacity, ActivityIndicator } from 'react-native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Icon from 'react-native-vector-icons/Entypo';
+import Feather from 'react-native-vector-icons/Feather';
+import Entypo from 'react-native-vector-icons/Entypo';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import Contacts from 'react-native-contacts';
 import styles from './styles';
-// import {TouchableOpacity} from 'react-native-gesture-handler';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Screen, Topbar } from '../../Components';
 import { generateContacts } from '../../StateManagement/Actions';
+import { consts } from '../../Assets/Consts';
 
 const SelectContact = ({ navigation }) => {
-  const contacts = useSelector((state) =>
+  var contactState = useSelector((state) =>
     Object.keys(state.contacts.contacts).map(
       (key) => state.contacts.contacts[key],
     ),
   );
+  const [searchbarVisible, setSearchbarVisible] = useState(false);
+  const [contacts, setContacts] = useState(contactState);
+
+
   const loading = useSelector((state) => state.contacts.loading);
   const dispatch = useDispatch();
-  const reloadContacts = () => dispatch(generateContacts());
 
+  const reloadContacts = () => {
+    dispatch(generateContacts())
+  }
+
+
+
+  const searchClicked = () => {
+    setSearchbarVisible(true)
+  }
+
+  const closeSearch = () => {
+    setSearchbarVisible(false)
+    navigation.pop()
+  }
+
+  const SearchBar = ({ visible, closeSearch }) => {
+    const [textInput, setTextInput] = useState();
+
+    const onChangeText = (text) => {
+      let User = contacts?.filter(function (e) {
+        return e.displayName.indexOf(text) > -1
+      });
+      if (!User.length && !textInput) {
+        setContacts(contacts)
+        setTextInput(text)
+      }
+      else {
+        setTextInput(text)
+        setContacts(User)
+      }
+    }
+
+    const cross = () => {
+      setTextInput(null)
+      setContacts(contacts)
+    }
+
+
+
+    // useEffect(() => {
+    //   if (!textInput) {
+    //     setContacts(contacts)
+    //   }
+    // }, [contacts])
+
+
+    return (
+      <>
+        {visible && (<View style={styles.searchBarStyle}>
+          <Feather onPress={closeSearch} name="arrow-left" size={24} color="#128c7e" style={{ paddingRight: 20 }} />
+          <TextInput placeholder="Search..." autoFocus={true} value={textInput}
+            onChangeText={(text) => onChangeText(text)}
+            style={{ width: consts.ScreenWidth / 1.35, }} />
+          <Entypo onPress={() => cross()} name="cross" size={24} color="#128c7e" style={{ paddingLeft: 15 }} />
+        </View>
+        )}
+      </>
+    );
+  };
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: 'Contacts',
+      headerStyle: {
+        backgroundColor: '#075e54',
+        elevation: 0,
+      },
+      headerShown: !searchbarVisible,
+      headerTintColor: 'white',
+      headerRight: () => {
+
+        return (
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity onPress={() => searchClicked()}>
+              <MaterialIcons name="search" size={24} color="white" style={{ paddingRight: 15 }} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => reloadContacts()}>
+              <MaterialIcons name="refresh" size={24} color="white" style={{ paddingRight: 15 }} />
+            </TouchableOpacity>
+          </View>
+        );
+      },
+    });
+  });
 
   const openChat = useCallback((item) => {
     const key =
@@ -76,12 +164,15 @@ const SelectContact = ({ navigation }) => {
       })
   }, []);
 
-  const topbarMenus = [
-    { icon: 'refresh', onPress: reloadContacts, component: MaterialIcons },
-  ];
+
+
+
+  // const topbarMenus = [
+  //   { icon: 'search', onPress: searchContacts, component: MaterialIcons },
+  //   { icon: 'refresh', onPress: reloadContacts, component: MaterialIcons },
+  // ];
 
   const openContactPicker = () => {
-    console.log('jj')
     var newPerson = {
       phoneNumbers: [{
         label: "mobile",
@@ -97,7 +188,10 @@ const SelectContact = ({ navigation }) => {
 
   return (
     <Screen>
-      <Topbar title="Contacts" menus={topbarMenus} noavatar={'noavatar'} />
+      <SearchBar
+        visible={searchbarVisible}
+        closeSearch={() => closeSearch()}
+      />
       <FlatList
         style={styles.mainContainer}
         ListHeaderComponent={
@@ -182,7 +276,7 @@ const SelectContact = ({ navigation }) => {
             </View> */}
             <View style={styles.listItemContainer}>
               <View style={styles.iconContainerWoColor}>
-                <IconAntDesign
+                <AntDesign
                   name="questioncircle"
                   color="grey"
                   size={23}
@@ -235,3 +329,4 @@ const Item = ({ photoURL, displayName, phoneNumber, onPress }) => (
     </View>
   </TouchableOpacity>
 );
+

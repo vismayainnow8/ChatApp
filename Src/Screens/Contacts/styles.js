@@ -1,16 +1,13 @@
-import {StyleSheet} from 'react-native';
-import {consts} from '../../Assets/Consts';
-// import { Appearance } from 'react-native'
+import { StyleSheet } from 'react-native';
+import { consts } from '../../Assets/Consts';
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: '#F5FCFF',
+    backgroundColor: 'white',
   },
   callerDetailsContainer: {
     flex: 4,
     justifyContent: 'center',
-    // borderBottomColor: 'rgba(92,94,94,0.5)',
-    // borderBottomWidth: 0.25,
   },
   callerDetailsContainerWrap: {
     flex: 1,
@@ -18,10 +15,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   nameContainer: {
-    // alignItems: 'flex-start',
     flex: 4,
     justifyContent: 'center',
-    // backgroundColor: "pink"
   },
   headerContainer: {
     flex: 1,
@@ -55,14 +50,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 10,
   },
+  searchBarStyle: {
+    // position: 'absolute',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderBottomColor: 'lightgray',
+    width: '100%',
+    height: 44,
+    backgroundColor: "white"
+  },
   iconContainer: {
-    // flex: 1,
-    // alignItems: 'flex-start',
-    // alignItems: "center",
     justifyContent: 'center',
-    // // paddingRight: 20,
-    // backgroundColor: 'pink',
-
     borderRadius: 40,
     width: 40,
     height: 40,
@@ -71,27 +72,18 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   iconContainerWoColor: {
-    // flex: 1,
-    // alignItems: 'flex-start',
-    // alignItems: "center",
     justifyContent: 'center',
-    // // paddingRight: 20,
-    // backgroundColor: 'pink',
-
     borderRadius: 40,
     width: 40,
     height: 40,
-    // backgroundColor: "#25d366",
     alignItems: 'center',
     marginRight: 20,
   },
 
   iconContainerTop: {
     flex: 1,
-    // alignItems: 'flex-start',
     justifyContent: 'center',
     alignItems: 'center',
-    // backgroundColor: "#25d366",
   },
 
   dateContainer: {
@@ -105,13 +97,9 @@ const styles = StyleSheet.create({
   },
   newtime: {
     color: '#25d366',
-    // color: 'red',
-    // '#ed788b' : '#075e54'
   },
   numberCount: {
     color: 'white',
-    // color: 'red',
-    // '#ed788b' : '#075e54'
   },
   numbercountContainer: {
     backgroundColor: '#25d366',
