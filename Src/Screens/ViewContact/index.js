@@ -1,14 +1,22 @@
-import React, { useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import React, {useEffect} from 'react';
+import {View, Text, Image, TouchableOpacity} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { colors } from '../../Assets';
-import { Topbar } from '../../Components';
+import {colors} from '../../Assets';
+import {Topbar} from '../../Components';
 import styles from './styles';
 
-const ViewContact = ({ route, navigation }) => {
-  const { displayName, photoURL, user, groupName, image, groupIcon, type } = route.params;
+const ViewContact = ({route, navigation}) => {
+  const {
+    displayName,
+    photoURL,
+    user,
+    groupName,
+    image,
+    groupIcon,
+    type,
+  } = route.params;
 
   const renderNavBar = () => (
     <TouchableOpacity style={styles.topbar} onPress={() => navigation.pop()}>
@@ -20,42 +28,86 @@ const ViewContact = ({ route, navigation }) => {
     return (
       <View style={styles.contentContainer}>
         <View style={styles.phoneNumberContainer}>
-          {
-            user?.phoneNumber &&
+          {user?.phoneNumber && (
             <View>
               <Text style={styles.statusHeader}>About and phone number</Text>
               <View style={styles.phoneNumberSecondContainer}>
                 {<Text style={styles.numberText}>{user?.phoneNumber}</Text>}
-                <MaterialCommunityIcons name="android-messages" size={24} color="#128c7e" style={{ paddingLeft: 15, }}
-                  onPress={() => navigation.navigate('ChatScene')} />
+                <MaterialCommunityIcons
+                  name="android-messages"
+                  size={24}
+                  color="#128c7e"
+                  style={{paddingLeft: 15}}
+                  onPress={() => navigation.navigate('ChatScene')}
+                />
               </View>
             </View>
-          }
-          {
-            !user?.phoneNumber &&
+          )}
+          {!user?.phoneNumber && (
             <View>
               <Text style={styles.statusHeader}>Participants</Text>
-              {user.map((item) =>
-                <TouchableOpacity style={styles.phoneNumberGroupContainer}
-                // onPress={() => navigation.navigate('ChatScene', item)}
-                // onPress={() => console.log('ChatScene', item)}
-
+              {user.map((item) => (
+                <TouchableOpacity
+                  style={styles.phoneNumberGroupContainer}
+                  // onPress={() => navigation.navigate('ChatScene', item)}
+                  // onPress={() => console.log('ChatScene', item)}
                 >
-                  {item.photoURL ? <Image source={{ uri: item.photoURL }} style={styles.avatar} /> :
+                  {item.photoURL ? (
+                    <Image
+                      source={{uri: item.photoURL}}
+                      style={styles.avatar}
+                    />
+                  ) : (
                     <View style={styles.avatarContainer}>
                       <MaterialIcons name="person" color="white" size={23} />
-                    </View>}
-                  <Text >{item.displayName ?? item.phoneNumber}</Text>
+                    </View>
+                  )}
+                  <Text>{item.displayName ?? item.phoneNumber}</Text>
                 </TouchableOpacity>
-              )}
+              ))}
             </View>
-
-          }
+          )}
         </View>
+        {user?.phoneNumber && (
+          <>
+            <TouchableOpacity style={styles.exitGroupView}>
+              <Image
+                source={require('../../Assets/block.png')}
+                style={styles.image}
+              />
+              <Text>Block</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.reportGroupView}>
+              <Image
+                source={require('../../Assets/report.png')}
+                style={styles.image}
+              />
+              <Text>Report contact</Text>
+            </TouchableOpacity>
+          </>
+        )}
+        {!user?.phoneNumber && (
+          <>
+            <TouchableOpacity style={styles.exitGroupView}>
+              <Image
+                source={require('../../Assets/exit.png')}
+                style={styles.image}
+              />
+              <Text>Exit Group</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.reportGroupView}>
+              <Image
+                source={require('../../Assets/report.png')}
+                style={styles.image}
+              />
+              <Text>Report Group</Text>
+            </TouchableOpacity>
+          </>
+        )}
       </View>
     );
   };
-
 
   return (
     <ReactNativeParallaxHeader
@@ -63,22 +115,21 @@ const ViewContact = ({ route, navigation }) => {
       headerMaxHeight={350}
       extraScrollHeight={20}
       navbarColor={colors.themePrimary.dark}
-      title=
-      {
+      title={
         <View style={styles.titleContainer}>
           {groupName && <Text style={styles.titleStyle}>{groupName}</Text>}
-          {user?.displayName && <Text style={styles.titleStyle}>{user?.displayName}</Text>}
+          {user?.displayName && (
+            <Text style={styles.titleStyle}>{user?.displayName}</Text>
+          )}
         </View>
       }
-
       backgroundImage={
-        groupIcon == null && user?.photoURL == null ?
-          (type == 'direct' ? (require('../../Assets/user.png')) : (require('../../Assets/groups.png')))
-          :
-          { uri: groupIcon ?? user?.photoURL }
+        groupIcon == null && user?.photoURL == null
+          ? type == 'direct'
+            ? require('../../Assets/user.png')
+            : require('../../Assets/groups.png')
+          : {uri: groupIcon ?? user?.photoURL}
       }
-
-
       backgroundImageScale={1.2}
       renderNavBar={renderNavBar}
       renderContent={renderContent}

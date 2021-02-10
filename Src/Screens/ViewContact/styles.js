@@ -1,5 +1,5 @@
-import { StyleSheet, Dimensions } from 'react-native';
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+import {StyleSheet, Dimensions} from 'react-native';
+const {height: SCREEN_HEIGHT} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   topbar: {
@@ -16,16 +16,15 @@ const styles = StyleSheet.create({
     minHeight: SCREEN_HEIGHT,
     backgroundColor: 'lightgray',
     // backgroundColor: 'red',
-
   },
   contentContainer: {
     flexGrow: 1,
   },
   phoneNumberGroupContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     // justifyContent:"center"
-    alignItems: "center",
-    marginVertical: 10
+    alignItems: 'center',
+    marginVertical: 10,
   },
   avatarContainer: {
     justifyContent: 'center',
@@ -35,15 +34,13 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     backgroundColor: '#D9E3E2',
     alignItems: 'center',
-    marginRight: 15
-
+    marginRight: 15,
   },
   avatar: {
     borderRadius: 30,
     width: 39,
     height: 39,
-    marginRight: 15
-
+    marginRight: 15,
   },
   titleContainer: {
     flex: 1,
@@ -97,6 +94,24 @@ const styles = StyleSheet.create({
     color: 'red',
     textAlign: 'left',
     alignSelf: 'flex-start',
+  },
+  image: {
+    marginHorizontal: 20,
+    width: 20,
+    height: 20,
+  },
+  exitGroupView: {
+    backgroundColor: 'white',
+    height: 50,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  reportGroupView: {
+    backgroundColor: 'white',
+    height: 50,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 15,
   },
 });
 export default styles;
