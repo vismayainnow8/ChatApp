@@ -1,5 +1,5 @@
-import { StyleSheet } from 'react-native';
-import { consts } from '../../Assets/Consts';
+import {StyleSheet} from 'react-native';
+import {consts} from '../../Assets/Consts';
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     borderBottomColor: 'lightgray',
     width: '100%',
     height: 44,
-    backgroundColor: "white"
+    backgroundColor: 'white',
   },
   iconContainer: {
     justifyContent: 'center',
@@ -144,6 +144,43 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     width: 40,
     height: 40,
+  },
+  featherStyle: {
+    paddingRight: 20,
+  },
+  searchStyle: {
+    width: consts.ScreenWidth / 1.35,
+  },
+  entypoStyle: {
+    paddingLeft: 15,
+  },
+  searchView: {
+    flexDirection: 'row',
+  },
+  searchMaterialIcon: {
+    paddingRight: 15,
+  },
+  refreshMaterialIcon: {
+    paddingRight: 15,
+  },
+  newGroupText: {
+    fontWeight: '400',
+    color: '#666',
+    fontSize: 12,
+  },
+  newContactText: {
+    fontWeight: '400',
+    color: '#666',
+    fontSize: 12,
+  },
+  activityIndicator: {
+    height: 50,
+    alignSelf: 'center',
+  },
+  phoneNumberText: {
+    fontWeight: '400',
+    color: '#666',
+    fontSize: 12,
   },
 });
 
