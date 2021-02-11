@@ -1,4 +1,4 @@
-import React, {useLayoutEffect, useState, useEffect} from 'react';
+import React, {useLayoutEffect, useState, useEffect, useMemo} from 'react';
 import {
   Text,
   FlatList,
@@ -31,7 +31,7 @@ const SelectContact = ({navigation}) => {
   );
   const [searchbarVisible, setSearchbarVisible] = useState(false);
   const [contacts, setContacts] = useState(contactState);
-
+  const [textInput, setTextInput] = useState();
   const loading = useSelector((state) => state.contacts.loading);
   const dispatch = useDispatch();
 
@@ -39,24 +39,21 @@ const SelectContact = ({navigation}) => {
     dispatch(generateContacts());
   };
 
+  useEffect(() => {
+    dispatch(generateContacts());
+  }, []);
+
   const searchClicked = () => {
     setSearchbarVisible(true);
   };
 
-  const closeSearch = () => {
-    setSearchbarVisible(false);
-    navigation.pop();
-  };
-
-  const SearchBar = ({visible, closeSearch}) => {
-    const [textInput, setTextInput] = useState();
-
+  const SearchBar = ({visible}) => {
     const onChangeText = (text) => {
       let User = contacts?.filter(function (e) {
-        return e.displayName.indexOf(text) > -1;
+        return e.displayName.indexOf(text.toLowerCase()) > -1;
       });
       if (!User.length && !textInput) {
-        setContacts(contacts);
+        setContacts(contactState);
         setTextInput(text);
       } else {
         setTextInput(text);
@@ -66,25 +63,20 @@ const SelectContact = ({navigation}) => {
 
     const cross = () => {
       setTextInput(null);
-      setContacts(contacts);
+      setContacts(contactState);
+      setSearchbarVisible(false);
     };
-
-    // useEffect(() => {
-    //   if (!textInput) {
-    //     setContacts(contacts)
-    //   }
-    // }, [contacts])
 
     return (
       <>
         {visible && (
           <View style={styles.searchBarStyle}>
             <Feather
-              onPress={closeSearch}
+              onPress={() => cross()}
               name="arrow-left"
               size={24}
               color="#128c7e"
-              style={styles.featherStyle}
+              style={{paddingRight: 20}}
             />
             <TextInput
               placeholder="Search..."
@@ -213,10 +205,8 @@ const SelectContact = ({navigation}) => {
       // contact has been saved
     });
   };
-
-  return (
-    <Screen>
-      <SearchBar visible={searchbarVisible} closeSearch={() => closeSearch()} />
+  const contactView = useMemo(
+    () => (
       <FlatList
         style={styles.mainContainer}
         ListHeaderComponent={
@@ -275,22 +265,22 @@ const SelectContact = ({navigation}) => {
           <>
             <ListFooterLoader loading={loading} />
             {/* <View style={styles.listItemContainer}>
-              <View style={styles.iconContainerWoColor}>
-                <Icon
-                  name="share"
-                  color="grey"
-                  size={23}
-                  style={{padding: 5}}
-                />
+          <View style={styles.iconContainerWoColor}>
+            <Icon
+              name="share"
+              color="grey"
+              size={23}
+              style={{padding: 5}}
+            />
+          </View>
+          <View style={styles.callerDetailsContainer}>
+            <View style={styles.callerDetailsContainerWrap}>
+              <View style={styles.nameContainer}>
+                <Text>Invite friends</Text>
               </View>
-              <View style={styles.callerDetailsContainer}>
-                <View style={styles.callerDetailsContainerWrap}>
-                  <View style={styles.nameContainer}>
-                    <Text>Invite friends</Text>
-                  </View>
-                </View>
-              </View>
-            </View> */}
+            </View>
+          </View>
+        </View> */}
             <View style={styles.listItemContainer}>
               <View style={styles.iconContainerWoColor}>
                 <AntDesign
@@ -313,6 +303,13 @@ const SelectContact = ({navigation}) => {
           </>
         }
       />
+    ),
+    [contacts],
+  );
+  return (
+    <Screen>
+      <SearchBar visible={searchbarVisible} />
+      <View style={{flex: 1}}>{contactView}</View>
     </Screen>
   );
 };
