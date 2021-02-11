@@ -1,13 +1,15 @@
-import React, {useEffect} from 'react';
-import {View, Text, Image, TouchableOpacity} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Alert, Text, Image, TouchableOpacity } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ReactNativeParallaxHeader from 'react-native-parallax-header';
+import firestore from '@react-native-firebase/firestore';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {colors} from '../../Assets';
-import {Topbar} from '../../Components';
+import auth from '@react-native-firebase/auth';
+import { colors } from '../../Assets';
+import { Topbar } from '../../Components';
 import styles from './styles';
 
-const ViewContact = ({route, navigation}) => {
+const ViewContact = ({ route, navigation }) => {
   const {
     displayName,
     photoURL,
@@ -15,8 +17,11 @@ const ViewContact = ({route, navigation}) => {
     groupName,
     image,
     groupIcon,
+    chatId,
     type,
   } = route.params;
+  const [users, setUsers] = useState(user);
+  const [loading, setLoading] = useState(false);
 
   const renderNavBar = () => (
     <TouchableOpacity style={styles.topbar} onPress={() => navigation.pop()}>
@@ -24,6 +29,24 @@ const ViewContact = ({route, navigation}) => {
     </TouchableOpacity>
   );
 
+  const onExitPress = () => {
+    Alert.alert('', 'Are  you sure to exit group ?', [
+      { text: 'CANCEL', onPress: () => console.log('Cancel Pressed') },
+      { text: 'OK', onPress: () => exitGroup() },
+    ]);
+  }
+  const exitGroup = () => {
+    setLoading(true)
+    var object = user.find(x => x.uid === auth().currentUser._user.uid);
+    var currentUserIndex = user.indexOf(object);
+    user.splice(currentUserIndex, 1);
+    firestore().collection('Group').doc(chatId)
+      .update({
+        details: user
+      }).then(() => {
+        setLoading(false)
+      })
+  }
   const renderContent = () => {
     return (
       <View style={styles.contentContainer}>
@@ -37,7 +60,7 @@ const ViewContact = ({route, navigation}) => {
                   name="android-messages"
                   size={24}
                   color="#128c7e"
-                  style={{paddingLeft: 15}}
+                  style={{ paddingLeft: 15 }}
                   onPress={() => navigation.navigate('ChatScene')}
                 />
               </View>
@@ -49,19 +72,19 @@ const ViewContact = ({route, navigation}) => {
               {user.map((item) => (
                 <TouchableOpacity
                   style={styles.phoneNumberGroupContainer}
-                  // onPress={() => navigation.navigate('ChatScene', item)}
-                  // onPress={() => console.log('ChatScene', item)}
+                // onPress={() => navigation.navigate('ChatScene', item)}
+                // onPress={() => console.log('ChatScene', item)}
                 >
                   {item.photoURL ? (
                     <Image
-                      source={{uri: item.photoURL}}
+                      source={{ uri: item.photoURL }}
                       style={styles.avatar}
                     />
                   ) : (
-                    <View style={styles.avatarContainer}>
-                      <MaterialIcons name="person" color="white" size={23} />
-                    </View>
-                  )}
+                      <View style={styles.avatarContainer}>
+                        <MaterialIcons name="person" color="white" size={23} />
+                      </View>
+                    )}
                   <Text>{item.displayName ?? item.phoneNumber}</Text>
                 </TouchableOpacity>
               ))}
@@ -89,20 +112,20 @@ const ViewContact = ({route, navigation}) => {
         )}
         {!user?.phoneNumber && (
           <>
-            <TouchableOpacity style={styles.exitGroupView}>
+            <TouchableOpacity style={styles.exitGroupView} onPress={() => onExitPress()}>
               <Image
                 source={require('../../Assets/exit.png')}
                 style={styles.image}
               />
               <Text>Exit Group</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.reportGroupView}>
+            {/* <TouchableOpacity style={styles.reportGroupView}>
               <Image
                 source={require('../../Assets/report.png')}
                 style={styles.image}
               />
               <Text>Report Group</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </>
         )}
       </View>
@@ -128,7 +151,7 @@ const ViewContact = ({route, navigation}) => {
           ? type == 'direct'
             ? require('../../Assets/user.png')
             : require('../../Assets/groups.png')
-          : {uri: groupIcon ?? user?.photoURL}
+          : { uri: groupIcon ?? user?.photoURL }
       }
       backgroundImageScale={1.2}
       renderNavBar={renderNavBar}

@@ -125,6 +125,7 @@ const MakeNewGroup = ({ navigation, route }) => {
               displayName: auth().currentUser.displayName,
               phoneNumber: auth().currentUser.phoneNumber,
               photoURL: auth().currentUser.photoURL,
+              uid: auth().currentUser.uid,
             },
           },
 
