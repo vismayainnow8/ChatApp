@@ -49,7 +49,7 @@ const loadContacts = async () => {
 
 export const generateContacts = () => {
   return async (dispatch) => {
-    start = new Date().getTime();
+    // start = new Date().getTime();
     try {
       Platform.OS === 'android' &&
         (await PermissionsAndroid.request(
@@ -91,7 +91,6 @@ export const generateContacts = () => {
 };
 
 const checkContactsInServer = (chunk) => {
- 
   return (dispatch) => {
     return firestore()
       .collection('Users')
@@ -106,7 +105,9 @@ const checkContactsInServer = (chunk) => {
           };
         });
         if (Object.keys(data).length === 0) return;
-        else dispatch(addContacts(data));
+        
+        else {
+          dispatch(addContacts(data))};
       });
   };
 };
