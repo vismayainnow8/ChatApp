@@ -4,16 +4,10 @@ import {consts} from '../../Assets/Consts';
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    // backgroundColor: '#F5FCFF',
-    // height: consts.ScreenWidth * 0.024,
-    paddingHorizontal: consts.ScreenWidth * 0.024,
-    paddingVertical: consts.ScreenWidth * 0.02,
   },
   detailednameContainer: {
     alignItems: 'flex-start',
     justifyContent: 'center',
-    flex: 7,
-    // paddingLeft:
   },
 
   logoText: {
@@ -31,12 +25,15 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   detailedlistItemContainer: {
-    flex: 1,
-    // flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    // backgroundColor: "pink"
+    marginTop: 20,
+  },
+  dotView: {
+    flexDirection: 'row',
+    marginHorizontal:15
+  },
+  dotText: {
+    // fontSize:20,
+    marginHorizontal:5
   },
   statuslistItemContainer: {
     flex: 2,
@@ -105,7 +102,7 @@ const styles = StyleSheet.create({
   nameText: {
     fontSize: consts.textSizes(15),
     color: 'black',
-    paddingVertical:10
+    marginHorizontal: 15,
   },
   statusText: {
     fontSize: consts.textSizes(12),

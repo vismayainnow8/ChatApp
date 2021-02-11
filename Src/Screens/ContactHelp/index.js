@@ -16,17 +16,30 @@ const ContactHelp = ({navigation}) => {
       },
       headerTintColor: 'white',
     });
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   });
   return (
     <ScrollView style={styles.mainContainer}>
       <StatusBar backgroundColor="#075e54" barStyle="light-content" />
-                  <View style={styles.detailedlistItemContainer}>
-          <Text style={styles.nameText}>If some of your friends don't appear in the contacts list, we recommmend the following steps:</Text>
-          <Text style={styles.nameText}>1) Make sure that your friend's phone number is in your address book</Text>
-          <Text style={styles.nameText}>2) Make sure that your friend is using Whatsapp Messenger</Text>
-                          
-       
+      <View style={styles.detailedlistItemContainer}>
+        <Text style={styles.nameText}>
+          If some of your friends don't appear in the contacts list, we
+          recommmend the following steps:
+        </Text>
+        <View style={styles.dotView}>
+          <Text style={styles.dotStyle}>.</Text>
+          <Text style={styles.dotText}>
+            Make sure that your friend's phone number is in your address book
+          </Text>
+        </View>
+
+        <View style={styles.dotView}>
+          <Text style={styles.dotStyle}>.</Text>
+          <Text style={styles.dotText}>
+            Make sure that your friend is using Whatsapp Messenger
+          </Text>
+        </View>
       </View>
     </ScrollView>
   );
