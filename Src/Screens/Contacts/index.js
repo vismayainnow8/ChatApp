@@ -83,14 +83,14 @@ const SelectContact = ({navigation}) => {
               autoFocus={true}
               value={textInput}
               onChangeText={(text) => onChangeText(text)}
-              style={{width: consts.ScreenWidth / 1.35}}
+              style={styles.searchStyle}
             />
             <Entypo
               onPress={() => cross()}
               name="cross"
               size={24}
               color="#128c7e"
-              style={{paddingLeft: 15}}
+              style={styles.entypoStyle}
             />
           </View>
         )}
@@ -109,13 +109,13 @@ const SelectContact = ({navigation}) => {
       headerTintColor: 'white',
       headerRight: () => {
         return (
-          <View style={{flexDirection: 'row'}}>
+          <View style={styles.searchView}>
             <TouchableOpacity onPress={() => searchClicked()}>
               <MaterialIcons
                 name="search"
                 size={24}
                 color="white"
-                style={{paddingRight: 15}}
+                style={styles.searchMaterialIcon}
               />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => reloadContacts()}>
@@ -123,7 +123,7 @@ const SelectContact = ({navigation}) => {
                 name="refresh"
                 size={24}
                 color="white"
-                style={{paddingRight: 15}}
+                style={styles.refreshMaterialIcon}
               />
             </TouchableOpacity>
           </View>
@@ -225,14 +225,7 @@ const SelectContact = ({navigation}) => {
               <View style={styles.nameContainer}>
                 <Text>New Group</Text>
                 <View style={styles.dateContainer}>
-                  <Text
-                    numberOfLines={1}
-                    style={{
-                      fontWeight: '400',
-                      color: '#666',
-                      fontSize: 12,
-                    }}
-                  />
+                  <Text numberOfLines={1} style={styles.newGroupText}/>
                 </View>
               </View>
             </Pressable>
@@ -252,12 +245,7 @@ const SelectContact = ({navigation}) => {
                 <View style={styles.dateContainer}>
                   <Text
                     numberOfLines={1}
-                    style={{
-                      fontWeight: '400',
-                      color: '#666',
-                      fontSize: 12,
-                    }}
-                  />
+                    style={styles.newContactText}/>
                 </View>
               </View>
             </Pressable>
@@ -332,7 +320,7 @@ const ListFooterLoader = ({loading = false}) => (
   <ActivityIndicator
     color="#128c7e"
     animating={loading}
-    style={{height: 50, alignSelf: 'center'}}
+    style={styles.activityIndicator}
   />
 );
 
@@ -350,7 +338,7 @@ const Item = ({photoURL, displayName, phoneNumber, onPress}) => (
       <View style={styles.dateContainer}>
         <Text
           numberOfLines={1}
-          style={{fontWeight: '400', color: '#666', fontSize: 12}}>
+          style={styles.phoneNumberText}>
           {phoneNumber}
         </Text>
       </View>

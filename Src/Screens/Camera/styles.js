@@ -21,6 +21,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     margin: 20,
   },
+  captureView: {
+    flex: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  captureText:{
+    fontSize: 14
+  },
 });
 
 export default styles;
