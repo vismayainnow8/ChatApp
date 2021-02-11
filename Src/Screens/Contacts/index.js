@@ -20,7 +20,10 @@ import styles from './styles';
 import {useCallback} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Screen, Topbar} from '../../Components';
-import {generateContacts} from '../../StateManagement/Actions';
+import {
+  generateContacts,
+  setContactsLoading,
+} from '../../StateManagement/Actions';
 import {consts} from '../../Assets/Consts';
 
 const SelectContact = ({navigation}) => {
@@ -32,10 +35,10 @@ const SelectContact = ({navigation}) => {
   const [searchbarVisible, setSearchbarVisible] = useState(false);
   const [contacts, setContacts] = useState(contactState);
   const [textInput, setTextInput] = useState();
-  const loading = useSelector((state) => state.contacts.loading);
+  // const loading = useSelector((state) => state.contacts.loading);
   const dispatch = useDispatch();
-
   const reloadContacts = () => {
+    setContacts(contactState);
     dispatch(generateContacts());
   };
 
@@ -203,6 +206,7 @@ const SelectContact = ({navigation}) => {
 
     Contacts.openContactForm(newPerson).then((contact) => {
       // contact has been saved
+      dispatch(generateContacts());
     });
   };
   const contactView = useMemo(
@@ -225,7 +229,7 @@ const SelectContact = ({navigation}) => {
               <View style={styles.nameContainer}>
                 <Text>New Group</Text>
                 <View style={styles.dateContainer}>
-                  <Text numberOfLines={1} style={styles.newGroupText}/>
+                  <Text numberOfLines={1} style={styles.newGroupText} />
                 </View>
               </View>
             </Pressable>
@@ -243,9 +247,7 @@ const SelectContact = ({navigation}) => {
               <View style={styles.nameContainer}>
                 <Text>New Contact</Text>
                 <View style={styles.dateContainer}>
-                  <Text
-                    numberOfLines={1}
-                    style={styles.newContactText}/>
+                  <Text numberOfLines={1} style={styles.newContactText} />
                 </View>
               </View>
             </Pressable>
@@ -263,24 +265,7 @@ const SelectContact = ({navigation}) => {
         keyExtractor={(item) => item.uid}
         ListFooterComponent={
           <>
-            <ListFooterLoader loading={loading} />
-            {/* <View style={styles.listItemContainer}>
-          <View style={styles.iconContainerWoColor}>
-            <Icon
-              name="share"
-              color="grey"
-              size={23}
-              style={{padding: 5}}
-            />
-          </View>
-          <View style={styles.callerDetailsContainer}>
-            <View style={styles.callerDetailsContainerWrap}>
-              <View style={styles.nameContainer}>
-                <Text>Invite friends</Text>
-              </View>
-            </View>
-          </View>
-        </View> */}
+            <ListFooterLoader />
             <View style={styles.listItemContainer}>
               <View style={styles.iconContainerWoColor}>
                 <AntDesign
@@ -316,13 +301,17 @@ const SelectContact = ({navigation}) => {
 
 export default SelectContact;
 
-const ListFooterLoader = ({loading = false}) => (
-  <ActivityIndicator
-    color="#128c7e"
-    animating={loading}
-    style={styles.activityIndicator}
-  />
-);
+const ListFooterLoader = () => {
+  const loading = useSelector((state) => state.contacts.loading);
+  console.log(loading, 'loadingloading');
+  return (
+    <ActivityIndicator
+      color="#128c7e"
+      animating={loading}
+      style={styles.activityIndicator}
+    />
+  );
+};
 
 const Item = ({photoURL, displayName, phoneNumber, onPress}) => (
   <TouchableOpacity onPress={onPress} style={styles.listItemContainer}>
@@ -336,9 +325,7 @@ const Item = ({photoURL, displayName, phoneNumber, onPress}) => (
     <View style={styles.nameContainer}>
       <Text>{displayName}</Text>
       <View style={styles.dateContainer}>
-        <Text
-          numberOfLines={1}
-          style={styles.phoneNumberText}>
+        <Text numberOfLines={1} style={styles.phoneNumberText}>
           {phoneNumber}
         </Text>
       </View>
