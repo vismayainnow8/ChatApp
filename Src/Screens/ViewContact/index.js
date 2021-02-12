@@ -22,7 +22,16 @@ const ViewContact = ({ route, navigation }) => {
   } = route.params;
   const [users, setUsers] = useState(user);
   const [loading, setLoading] = useState(false);
+  const [exist, setExist] = useState();
 
+  useEffect(() => {
+    if (type == 'indirect') {
+      let usersIds = user.map(item => item.uid);
+      const foundInGroup = usersIds.some(el => el === auth().currentUser._user.uid);
+      setExist(foundInGroup)
+      console.log('foundInGroup', foundInGroup)
+    }
+  });
   const renderNavBar = () => (
     <TouchableOpacity style={styles.topbar} onPress={() => navigation.pop()}>
       <MaterialCommunityIcons name="arrow-left" color="white" size={33} />
@@ -37,13 +46,22 @@ const ViewContact = ({ route, navigation }) => {
   }
   const exitGroup = () => {
     setLoading(true)
+    console.log('user', user)
+
     var object = user.find(x => x.uid === auth().currentUser._user.uid);
+    console.log('object', object)
     var currentUserIndex = user.indexOf(object);
+    console.log('currentUserIndex', currentUserIndex)
+
     user.splice(currentUserIndex, 1);
+    console.log('user', user)
+
     firestore().collection('Group').doc(chatId)
       .update({
         details: user
       }).then(() => {
+        console.log('yes', yes)
+
         setLoading(false)
       })
   }
@@ -51,6 +69,9 @@ const ViewContact = ({ route, navigation }) => {
     return (
       <View style={styles.contentContainer}>
         <View style={styles.phoneNumberContainer}>
+          {!user?.phoneNumber && !exist && (<View>
+            <Text style={styles.numberText}>You are no longer a participant in this group</Text>
+          </View>)}
           {user?.phoneNumber && (
             <View>
               <Text style={styles.statusHeader}>About and phone number</Text>
@@ -110,7 +131,7 @@ const ViewContact = ({ route, navigation }) => {
             </TouchableOpacity>
           </>
         )}
-        {!user?.phoneNumber && (
+        {!user?.phoneNumber && exist && (
           <>
             <TouchableOpacity style={styles.exitGroupView} onPress={() => onExitPress()}>
               <Image
