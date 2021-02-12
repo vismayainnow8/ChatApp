@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Text,
   TouchableOpacity,
@@ -7,20 +7,22 @@ import {
   StatusBar,
   Image,
   View,
+  Pressable,
+  Alert,
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconFontAwesome5 from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import {
   setUser,
   setChatId,
   search,
   searchBarVisible,
 } from '../../StateManagement/Actions';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import styles from './styles';
 
@@ -66,7 +68,7 @@ const Chats = (props) => {
             };
             const userId =
               formatedItem.members[
-                formatedItem.members[1] == auth().currentUser.uid ? 0 : 1
+              formatedItem.members[1] == auth().currentUser.uid ? 0 : 1
               ];
             formatedItem.user = formatedItem.details[userId];
             delete formatedItem.details;
@@ -75,7 +77,7 @@ const Chats = (props) => {
           setChats(data);
           callGroupData(data);
         },
-        (error) => {},
+        (error) => { },
       );
   }, []);
 
@@ -112,19 +114,36 @@ const Chats = (props) => {
   const onPressed = (item) => {
     dispatch(searchBarVisible(false));
     dispatch(search(null));
-    navigation.navigate('ChatScene', item);
     setUser(item.user);
     setChatId(item.chatId);
+    navigation.navigate('ChatScene', item);
     setChats(combinedChats);
   };
+  const onLongPressing = (item) => {
+    Alert.alert('', 'Are you sure to delete this chat ?', [
+      { text: 'CANCEL', onPress: () => console.log('cancel delete') },
+      { text: 'OK', onPress: () => deleteChat(item) },
+    ]);
+  };
 
+  const deleteChat = (item) => {
+    if (item.type == 'indirect') {
+      firestore().collection('Group').doc(item.chatId).delete()
+        .then(() => {
+        })
+    }
+    else {
+      firestore().collection('Chats').doc(item.chatId).delete().then(() => {
+      })
+    }
+  }
   return (
     <SafeAreaView style={styles.screen}>
       <StatusBar backgroundColor="#075e54" />
       <View style={styles.mainContainer}>
         <FlatList
           data={chats}
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <ChatsListItem
               item={item}
               image={item.image}
@@ -138,6 +157,7 @@ const Chats = (props) => {
               groupName={item.groupName}
               groupIcon={item.groupIcon}
               onPressed={onPressed}
+              onLongPressing={onLongPressing}
             />
           )}
           keyExtractor={(item) => item.chatId}
@@ -160,32 +180,34 @@ const ChatsListItem = ({
   item,
   number,
   onPressed,
+  onLongPressing,
   type,
   groupIcon,
   groupName,
 }) => {
-  const {user, lastMessage} = item;
+  const { user, lastMessage } = item;
   return (
-    <TouchableOpacity
+    <Pressable
       style={styles.listItemContainer}
+      onLongPress={() => onLongPressing(item)}
       onPress={() => onPressed(item)}>
       <View style={styles.iconContainerperson}>
         {type == 'direct' &&
           (user.photoURL ? (
-            <Image source={{uri: user.photoURL}} style={styles.initStyle} />
+            <Image source={{ uri: user.photoURL }} style={styles.initStyle} />
           ) : (
-            <Ionicons name="person" color="white" size={23} />
-          ))}
+              <Ionicons name="person" color="white" size={23} />
+            ))}
         {type == 'indirect' &&
           (groupIcon ? (
-            <Image source={{uri: groupIcon}} style={styles.initStyle} />
+            <Image source={{ uri: groupIcon }} style={styles.initStyle} />
           ) : (
-            <IconMaterialCommunityIcons
-              name="account-group"
-              color="white"
-              size={33}
-            />
-          ))}
+              <IconMaterialCommunityIcons
+                name="account-group"
+                color="white"
+                size={33}
+              />
+            ))}
       </View>
 
       <View style={styles.messageContainer}>
@@ -215,7 +237,7 @@ const ChatsListItem = ({
           </View> */}
         </View>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
