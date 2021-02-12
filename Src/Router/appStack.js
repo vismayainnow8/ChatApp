@@ -261,7 +261,7 @@ const SearchBar = ({ visible, closeSearch }) => {
             borderBottomWidth: 1,
             borderBottomColor: 'lightgray',
             width: '100%',
-            marginTop:40
+            // marginTop: 40
           }}>
           <Feather
             onPress={closeSearch}
