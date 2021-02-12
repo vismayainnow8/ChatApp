@@ -1,4 +1,4 @@
-import React, {useLayoutEffect, useState, useEffect, useMemo} from 'react';
+import React, { useLayoutEffect, useState, useEffect, useMemo } from 'react';
 import {
   Text,
   FlatList,
@@ -17,16 +17,16 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import Contacts from 'react-native-contacts';
 import styles from './styles';
-import {useCallback} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {Screen, Topbar} from '../../Components';
+import { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Screen, Topbar } from '../../Components';
 import {
   generateContacts,
   setContactsLoading,
 } from '../../StateManagement/Actions';
-import {consts} from '../../Assets/Consts';
+import { consts } from '../../Assets/Consts';
 
-const SelectContact = ({navigation}) => {
+const SelectContact = ({ navigation }) => {
   var contactState = useSelector((state) =>
     Object.keys(state.contacts.contacts).map(
       (key) => state.contacts.contacts[key],
@@ -50,10 +50,12 @@ const SelectContact = ({navigation}) => {
     setSearchbarVisible(true);
   };
 
-  const SearchBar = ({visible}) => {
+  const SearchBar = ({ visible }) => {
+
     const onChangeText = (text) => {
+      console.log('contacts', contacts)
       let User = contacts?.filter(function (e) {
-        return e.displayName.indexOf(text.toLowerCase()) > -1;
+        return e.displayName.indexOf(text) > -1;
       });
       if (!User.length && !textInput) {
         setContacts(contactState);
@@ -67,19 +69,21 @@ const SelectContact = ({navigation}) => {
     const cross = () => {
       setTextInput(null);
       setContacts(contactState);
-      setSearchbarVisible(false);
     };
 
+    const goBack = () => {
+      setSearchbarVisible(false);
+    }
     return (
       <>
         {visible && (
           <View style={styles.searchBarStyle}>
             <Feather
-              onPress={() => cross()}
+              onPress={() => goBack()}
               name="arrow-left"
               size={24}
               color="#128c7e"
-              style={{paddingRight: 20}}
+              style={{ paddingRight: 20 }}
             />
             <TextInput
               placeholder="Search..."
@@ -254,7 +258,7 @@ const SelectContact = ({navigation}) => {
           </>
         }
         data={contacts}
-        renderItem={({item}) => (
+        renderItem={({ item }) => (
           <Item
             displayName={item.displayName}
             photoURL={item.photoURL}
@@ -272,7 +276,7 @@ const SelectContact = ({navigation}) => {
                   name="questioncircle"
                   color="grey"
                   size={23}
-                  style={{padding: 5}}
+                  style={{ padding: 5 }}
                 />
               </View>
               <TouchableOpacity
@@ -294,7 +298,7 @@ const SelectContact = ({navigation}) => {
   return (
     <Screen>
       <SearchBar visible={searchbarVisible} />
-      <View style={{flex: 1}}>{contactView}</View>
+      <View style={{ flex: 1 }}>{contactView}</View>
     </Screen>
   );
 };
@@ -313,14 +317,14 @@ const ListFooterLoader = () => {
   );
 };
 
-const Item = ({photoURL, displayName, phoneNumber, onPress}) => (
+const Item = ({ photoURL, displayName, phoneNumber, onPress }) => (
   <TouchableOpacity onPress={onPress} style={styles.listItemContainer}>
     <View style={styles.iconContainerperson}>
       {photoURL ? (
-        <Image source={{uri: photoURL}} style={styles.initStyle} />
+        <Image source={{ uri: photoURL }} style={styles.initStyle} />
       ) : (
-        <MaterialIcons name="person" color="white" size={23} />
-      )}
+          <MaterialIcons name="person" color="white" size={23} />
+        )}
     </View>
     <View style={styles.nameContainer}>
       <Text>{displayName}</Text>
