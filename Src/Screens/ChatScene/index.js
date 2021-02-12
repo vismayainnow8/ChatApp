@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { View, FlatList, ImageBackground, TouchableOpacity } from 'react-native';
+import { View, FlatList, Alert, ImageBackground, TouchableOpacity } from 'react-native';
 import { Screen, Topbar } from '../../Components';
 import styles from '../ChatScene/style';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -63,39 +63,66 @@ const ChatScene = ({ route, navigation }) => {
       return toggleSelect(id);
     }
   };
+  // useEffect(() => {
+  //   if (type == 'indirect') {
+  //     let usersIds = user.map(item => item.uid);
+  //     const foundInGroup = usersIds.some(el => el === auth().currentUser._user.uid);
+  //   }
+  // });
 
   const sendMessage = (message) => {
     message.chatId = chatId;
+    message.time = firestore.Timestamp.now().toMillis();
     if (type == 'indirect') {
-      message.groupUserName = auth().currentUser.displayName
-      message.groupUserPhone = auth().currentUser.phoneNumber
-    }
-    message = { ...message, time: firestore.Timestamp.now().toMillis() };
-    console.log('lastMessage', message)
-    database().ref('messages').push(message);
-    // message = { ...message, time: firestore.Timestamp.now().toMillis() };
-    firestore().collection('Chats').doc(chatId).update({
-      lastMessage: message,
-    }).then(() => {
-      // const payload = {
-      //   notification: {
-      //     title: "Welcome",
-      //     body: "thank for installed our app",
-      //   },F
-      // };
-      // var admin = require("firebase-admin");
-      // admin
-      //   .messaging()
-      //   .sendToDevice(data.notification_token, payload)
-      //   .then(function (response) {
-      //     console.log("Notification sent successfully:", response);
-      //   })
-      //   .catch(function (error) {
-      //     console.log("Notification sent failed:", error);
-      //   })
+      let usersIds = user.map(item => item.uid);
+      const foundInGroup = usersIds.some(el => el === auth().currentUser._user.uid);
+      if (foundInGroup) {
+        firestore().collection('Group').doc(chatId)
+          .update({
+            lastMessage: message,
+            senderPhone: auth().currentUser.phoneNumber,
+            senderName: auth().currentUser.phoneNumber
+          }).then(() => {
+
+          })
+      }
+      else {
+        Alert.alert('', 'You cannot send messages to this group because you are no longer a participant  ', [
+          { text: 'OK', onPress: () => console.log('ok') },
+        ]);
+      }
+
 
     }
-    )
+    else {
+      firestore().collection('Chats').doc(chatId).update({
+        lastMessage: message,
+      }).then(() => {
+      })
+
+
+    }
+    database().ref('messages').push(message);
+    // message = { ...message, time: firestore.Timestamp.now().toMillis() };
+
+    // const payload = {
+    //   notification: {
+    //     title: "Welcome",
+    //     body: "thank for installed our app",
+    //   },F
+    // };
+    // var admin = require("firebase-admin");
+    // admin
+    //   .messaging()
+    //   .sendToDevice(data.notification_token, payload)
+    //   .then(function (response) {
+    //     console.log("Notification sent successfully:", response);
+    //   })
+    //   .catch(function (error) {
+    //     console.log("Notification sent failed:", error);
+    //   })
+
+
     setReplyMessage(null);
   };
 
@@ -165,7 +192,7 @@ const ChatScene = ({ route, navigation }) => {
   );
 
 
-  const onPressTopbar = () => navigation.navigate('ViewContact', { user, groupName, groupIcon, type });
+  const onPressTopbar = () => navigation.navigate('ViewContact', { user, chatId, groupName, groupIcon, type });
 
   return (
     <Screen>
