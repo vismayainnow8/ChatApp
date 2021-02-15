@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, Pressable, Text,Image} from 'react-native';
-import {createThumbnail} from 'react-native-create-thumbnail';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Pressable, Text, Image } from 'react-native';
+import { createThumbnail } from 'react-native-create-thumbnail';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {attachmentTypes} from '../Screens/ChatScene/Components/Input';
-import {colors,consts} from '../Assets';
+import { attachmentTypes } from '../Screens/ChatScene/Components/Input';
+import { colors, consts } from '../Assets';
 
 export const MediaThumbnail = ({
   url,
@@ -11,7 +11,7 @@ export const MediaThumbnail = ({
   style,
   type,
   name,
-  onPress = () => {},
+  onPress = () => { },
 }) => {
   switch (type) {
     case attachmentTypes.video:
@@ -27,27 +27,33 @@ export const MediaThumbnail = ({
       return <ImageThumbnail url={url} style={style} onPress={onPress} />;
     default:
       // return <></>;
-    return <FileThumbnail url={url} name={name} style={style} onPress={onPress} />;
+      return <FileThumbnail url={url} name={name} style={style} onPress={onPress} />;
 
       break;
   }
 };
 
-const VideoThumbnail = ({url, iconSize, style, onPress = () => {}}) => {
+const VideoThumbnail = ({ url, iconSize, style, onPress = () => { } }) => {
+  console.log('thumbnailImage', thumbnailImage)
+  console.log('url', thumbnailImage)
   const [thumbnailImage, setThumbnailImage] = useState({});
-  // useEffect(() => {
-  // createThumbnail({
-  //   url,
-  // });
-  // .then((response) => setThumbnailImage(response))
-  // .catch((err) => console.log({err}));
-  // }, [url]);
+
+  useEffect(() => {
+    createThumbnail({
+      url: url,
+      timeStamp: 10000,
+    })
+      .then((response) => setThumbnailImage(response))
+      .catch(err => console.log({ err }));
+  }, [url]);
+
+
 
   return (
     <Pressable style={[styles.container, style]} onPress={onPress}>
       <Image
         style={styles.thumbnail}
-        source={{uri: thumbnailImage?.path}}
+        source={{ uri: thumbnailImage?.path }}
         resizeMode="cover"
       />
       <Ionicons
@@ -60,18 +66,18 @@ const VideoThumbnail = ({url, iconSize, style, onPress = () => {}}) => {
   );
 };
 
-const ImageThumbnail = ({url, style, onPress = () => {}}) => {
+const ImageThumbnail = ({ url, style, onPress = () => { } }) => {
   return (
     <Pressable style={[styles.container, style]} onPress={onPress}>
-      <Image style={styles.thumbnail} source={{uri: url}} resizeMode="cover" />
+      <Image style={styles.thumbnail} source={{ uri: url }} resizeMode="cover" />
     </Pressable>
   );
 };
 
-const FileThumbnail = ({url,name, style, onPress = () => {}}) => {
+const FileThumbnail = ({ url, name, style, onPress = () => { } }) => {
   return (
-    <Pressable style={[styles.fileContainer, {flexDirection:"row"}, style]} onPress={onPress}>
-      <Text style={{fontSize:11}}>{name} </Text>
+    <Pressable style={[styles.fileContainer, { flexDirection: "row" }, style]} onPress={onPress}>
+      <Text style={{ fontSize: 11 }}>{name} </Text>
     </Pressable>
   );
 };

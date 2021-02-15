@@ -1,15 +1,15 @@
-import React, {useState, useRef} from 'react';
-import {View, StyleSheet, Text, Pressable,Platform} from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, StyleSheet, Text, Pressable, Platform } from 'react-native';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import IconMaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import EmojiSelector,{Categories} from 'react-native-emoji-selector'
+import EmojiSelector, { Categories } from 'react-native-emoji-selector'
 import database from '@react-native-firebase/database';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import auth from '@react-native-firebase/auth';
 import FilePickerManager from 'react-native-file-picker';
 import DocumentPicker from 'react-native-document-picker';
 
-import {Input} from './Input';
+import { Input } from './Input';
 
 export const inputTypes = {
   none: 'none',
@@ -18,7 +18,7 @@ export const inputTypes = {
   attachment: 'attachment',
 };
 
-export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
+export const ChatInput = ({ textRef, sendMessage, replyMessage, closeReply }) => {
   const [inputType, setInputType] = useState(inputTypes.none);
   const [writtenMessage, setWrittenMessage] = useState(null);
   const [medias, setMedias] = useState([]);
@@ -62,11 +62,11 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
       .catch((error) => console.log(error));
   };
 
-  const openDocumentPicker = async() => {
+  const openDocumentPicker = async () => {
     pickerLstRef.current.close();
     // FilePickerManager.showFilePicker(null, (response) => {
     //   console.log('Response = ', response);
-     
+
     //   if (response.didCancel) {
     //     console.log('User cancelled file picker');
     //   }
@@ -79,19 +79,19 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
     // });
     try {
       const res = await DocumentPicker.pick({
-        type: [DocumentPicker.types. allFiles],
+        type: [DocumentPicker.types.allFiles],
       });
       res['path'] = res.uri
-        setMedias([{...res}])
+      setMedias([{ ...res }])
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         // User cancelled the picker, exit any dialogs or menus and move on
       } else {
         throw err;
       }
-    
+
+    }
   }
-}
 
   const openImageCamera = () => {
     pickerLstRef.current.close();
@@ -101,7 +101,7 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
       mediaType: 'image',
       cropping: true,
     })
-      .then((image) => setMedias([{...image}]))
+      .then((image) => setMedias([{ ...image }]))
       .catch((error) => console.log(error));
   };
 
@@ -111,7 +111,7 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
       mediaType: 'video',
       multiple: true,
     })
-      .then((video) => setMedias(video))
+      .then((video) => setMedias([{ ...video }]))
       .catch((error) => console.log(error));
   };
 
@@ -120,7 +120,7 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
     ImageCropPicker.openCamera({
       mediaType: 'video',
     })
-      .then((video) => setMedias([{...video}]))
+      .then((video) => setMedias([{ ...video }]))
       .catch((error) => console.log(error));
   };
 
@@ -173,18 +173,18 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
         showMenu={showMenu}
         openCamera={openImageCamera}
       />
-     
+
       <View style={{
         height: inputType == inputTypes.emoji ? 300 : 0,
-          backgroundColor: 'white',
+        backgroundColor: 'white',
       }}>
         <EmojiSelector
-        showTabs={inputType == inputTypes.emoji}
-        onEmojiSelected={emoji => onClick(emoji)}
-        showHistory={true}
-        showSearchBar	={false}
+          showTabs={inputType == inputTypes.emoji}
+          onEmojiSelected={emoji => onClick(emoji)}
+          showHistory={true}
+          showSearchBar={false}
         />
-        </View>
+      </View>
       <RBSheet
         ref={pickerLstRef}
         height={220}
@@ -196,7 +196,7 @@ export const ChatInput = ({textRef, sendMessage, replyMessage, closeReply}) => {
             key={option.icon + option.color}
             onPress={option.onPress}
             style={styles.attachmentItem}>
-            <View style={[styles.circle, {backgroundColor: option.color}]}>
+            <View style={[styles.circle, { backgroundColor: option.color }]}>
               <IconMaterialIcons name={option.icon} color="white" size={23} />
             </View>
             <Text style={styles.circleText}>{option.title}</Text>
