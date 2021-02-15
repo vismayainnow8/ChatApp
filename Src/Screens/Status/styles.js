@@ -1,5 +1,5 @@
-import {StyleSheet} from 'react-native';
-import {consts} from '../../Assets/Consts';
+import { StyleSheet } from 'react-native';
+import { consts } from '../../Assets/Consts';
 
 const styles = StyleSheet.create({
   screen: {
@@ -17,8 +17,8 @@ const styles = StyleSheet.create({
   contactsbuttonContainer: {
     bottom: 20,
     right: 10,
-    position: 'absolute',
-
+    // position: 'absolute',
+    margin: 5,
     borderRadius: 25,
     height: 48,
     width: 48,
@@ -27,6 +27,7 @@ const styles = StyleSheet.create({
       width: 0,
       height: 1,
     },
+    alignItems: "center",
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
     elevation: 2,
@@ -36,6 +37,11 @@ const styles = StyleSheet.create({
     margin: 12,
     height: 24,
     width: 24,
+  },
+  buttonsContainer: {
+    position: "absolute",
+    bottom: 0,
+    right: 0
   },
   percentageContainer: {
     position: 'absolute',

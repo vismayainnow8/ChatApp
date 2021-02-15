@@ -7,7 +7,8 @@ import React, { useEffect, useState } from 'react';
 import { Image, SectionList, Text, TouchableOpacity, View } from 'react-native';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { Circle } from 'react-native-progress';
-import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useSelector, useDispatch, useStore } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { BASE_STATUSES_SECTIONLIST_STRUCTURE } from '../../Assets/Consts';
@@ -21,6 +22,8 @@ const Status = ({ navigation, route, ...props }) => {
   const dispatch = useDispatch();
   const [statusData, setStatusData] = useState([]);
   const [statusSave, setStatusSave] = useState([]);
+  const [galleryPicker, setGalleryPicker] = useState(false);
+  const [cameraPicker, setCameraPicker] = useState(false);
   const [myStatus, setMyStatus] = useState(myStatusData());
   const [uploading, setUploading] = useState({ status: false, fileNumber: '' });
   var keyword = useSelector((state) => state.search.search);
@@ -87,6 +90,21 @@ const Status = ({ navigation, route, ...props }) => {
     !uploading && openCamera();
   };
 
+  const openGalleryPicker = () => {
+    ImageCropPicker.openPicker({
+      compressImageMaxWidth: 500,
+      compressImageMaxHeight: 500,
+      mediaType: 'image',
+      cropping: true,
+      // multiple: true,
+    })
+      .then(
+        uploadPhoto,
+        setGalleryPicker(true)
+      )
+      .catch((error) => console.log('error', error));
+  };
+
   const openCamera = () => {
     ImageCropPicker.openCamera({
       compressImageMaxWidth: 500,
@@ -94,7 +112,9 @@ const Status = ({ navigation, route, ...props }) => {
       mediaType: 'image',
       cropping: true,
     })
-      .then(uploadPhoto)
+      .then(uploadPhoto,
+        setCameraPicker(true)
+      )
       .catch((error) => console.log('error', error));
   };
 
@@ -224,27 +244,44 @@ const Status = ({ navigation, route, ...props }) => {
         )}
       />
       {/* :null} */}
-
-      <TouchableOpacity style={styles.contactsbuttonContainer}>
-        {uploading.status ? (
-          <Circle progress={uploading.status} size={48} color="white">
-            <View style={styles.percentageContainer}>
-              <Text style={styles.percentage}>
-                {Math.ceil(uploading.status * 100)}%
+      <View style={styles.buttonsContainer}>
+        <TouchableOpacity style={styles.contactsbuttonContainer}>
+          {galleryPicker && uploading.status ? (
+            <Circle progress={uploading.status} size={48} color="white">
+              <View style={styles.percentageContainer}>
+                <Text style={styles.percentage}>
+                  {Math.ceil(uploading.status * 100)}%
               </Text>
-              <Text style={styles.percentage}>of {uploading.fileNumber}</Text>
-            </View>
-          </Circle>
-        ) : (
-            <IconMaterialCommunityIcons
-              name="camera"
-              color="white"
-              size={24}
-              style={styles.fabIcon}
-              onPress={openCamera}
-            />
-          )}
-      </TouchableOpacity>
+                <Text style={styles.percentage}>of {uploading.fileNumber}</Text>
+              </View>
+            </Circle>
+          ) : (
+
+              <MaterialIcons name="photo" color="white" size={25}
+                style={styles.fabIcon} onPress={openGalleryPicker} />
+
+            )}
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.contactsbuttonContainer}>
+          {cameraPicker && uploading.status ? (
+            <Circle progress={uploading.status} size={48} color="white">
+              <View style={styles.percentageContainer}>
+                <Text style={styles.percentage}>
+                  {Math.ceil(uploading.status * 100)}%
+              </Text>
+                <Text style={styles.percentage}>of {uploading.fileNumber}</Text>
+              </View>
+            </Circle>
+          ) : (
+
+              <MaterialCommunityIcons name="camera" color="white" size={24}
+                style={styles.fabIcon} onPress={openCamera} />
+
+            )}
+        </TouchableOpacity>
+
+      </View>
+
     </Screen>
   );
 };

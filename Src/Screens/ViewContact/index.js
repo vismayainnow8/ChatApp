@@ -122,13 +122,13 @@ const ViewContact = ({ route, navigation }) => {
               <Text>Block</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.reportGroupView}>
+            {/* <TouchableOpacity style={styles.reportGroupView}>
               <Image
                 source={require('../../Assets/report.png')}
                 style={styles.image}
               />
               <Text>Report contact</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </>
         )}
         {!user?.phoneNumber && exist && (
