@@ -52,7 +52,7 @@ const VideoThumbnail = ({ url, iconSize, style, onPress = () => { } }) => {
   return (
     <Pressable style={[styles.container, style]} onPress={onPress}>
       <Image
-        style={styles.thumbnail}
+        style={[styles.thumbnail, { aspectRatio: 1 }]}
         source={{ uri: thumbnailImage?.path }}
         resizeMode="cover"
       />
@@ -69,7 +69,7 @@ const VideoThumbnail = ({ url, iconSize, style, onPress = () => { } }) => {
 const ImageThumbnail = ({ url, style, onPress = () => { } }) => {
   return (
     <Pressable style={[styles.container, style]} onPress={onPress}>
-      <Image style={styles.thumbnail} source={{ uri: url }} resizeMode="cover" />
+      <Image style={[styles.thumbnail, { aspectRatio: 1 }]} source={{ uri: url }} resizeMode="cover" />
     </Pressable>
   );
 };
@@ -85,8 +85,9 @@ const FileThumbnail = ({ url, name, style, onPress = () => { } }) => {
 export const styles = StyleSheet.create({
   container: {
     borderRadius: 3,
-    backgroundColor: 'black',
+    // backgroundColor: 'black',
     justifyContent: 'center',
+
   },
   fileContainer: {
     borderRadius: 3,
@@ -98,10 +99,18 @@ export const styles = StyleSheet.create({
   thumbnail: {
     flex: 1,
     borderRadius: 3,
+    borderWidth: 3,
+    borderColor: 'red',
+
 
   },
   thumbnailIcon: {
     position: 'absolute',
     alignSelf: 'center',
   },
+
+
+
+
+
 });

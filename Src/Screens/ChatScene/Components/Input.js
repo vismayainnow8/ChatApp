@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   TextInput,
@@ -12,12 +12,12 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {ReplyMessage} from './ReplyMessage';
+import { ReplyMessage } from './ReplyMessage';
 import storage from '@react-native-firebase/storage';
-import {v4 as uuidv4} from 'uuid';
-import {Circle} from 'react-native-progress';
-import {inputTypes} from './ChatInput';
-import {MediaThumbnail} from '../../../Components';
+import { v4 as uuidv4 } from 'uuid';
+import { Circle } from 'react-native-progress';
+import { inputTypes } from './ChatInput';
+import { MediaThumbnail } from '../../../Components';
 
 export const attachmentTypes = {
   video: 'video',
@@ -39,7 +39,7 @@ export const Input = ({
   setMedias,
   openCamera,
 }) => {
-  const [loading, setLoading] = useState({status: false, fileNumber: ''});
+  const [loading, setLoading] = useState({ status: false, fileNumber: '' });
   const keyboardIconPress = () => {
     if (Platform.OS == 'android') {
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -73,17 +73,17 @@ export const Input = ({
     };
     setWrittenMessage('');
     if (medias.length) {
-      console.log('media',medias)
+      console.log('media', medias)
       setMedias([]);
       medias.forEach(async (media, index) => {
-        setLoading({status: 0.01, fileNumber: index + '/' + medias.length});
+        setLoading({ status: 0.01, fileNumber: index + '/' + medias.length });
         message.media = {};
         message.media.name = media.name;
         message.media.path = media.path;
         message.media.url = await uploadImageAsPromise(media);
-        message.media.type = media.type?media.type.split('/')[0]:media.mime.split('/')[0];
+        message.media.type = media.type ? media.type.split('/')[0] : media.mime.split('/')[0];
         sendMessage(message);
-        console.log('message',message)
+        console.log('message', message)
       });
     } else {
       sendMessage(message);
@@ -112,7 +112,7 @@ export const Input = ({
           reject(err);
         },
         async () => {
-          setLoading({status: false, fileNumber: ''});
+          setLoading({ status: false, fileNumber: '' });
           const downloadURL = await imageStorageRef.getDownloadURL();
           resolve(downloadURL);
         },
@@ -128,10 +128,13 @@ export const Input = ({
   };
 
   const renderMediaThumbnail = (media, index) => {
+    // console.log('media', media)
     return (
-      <View style={[styles.mediaThumbnailContainer,{width:(media.type!='image' &&media.type!= 'video')?150:50}]}>
+      <View style={[styles.mediaThumbnailContainer,
+        // { width: (media.type != 'image' && media.type != 'video') ? 150 : 50 }
+      ]}>
         <MediaThumbnail
-          type={media.type?media.type.split('/')[0]:media.mime.split('/')[0]}
+          type={media.type ? media.type.split('/')[0] : media.mime.split('/')[0]}
           style={styles.videoThumbnail}
           iconSize={25}
           url={media.path}
@@ -174,7 +177,7 @@ export const Input = ({
             placeholder="Type a message ...."
             style={styles.textinput}
             onChangeText={setWrittenMessage}
-            placeholderStyle={{fontSize: 20}}
+            placeholderStyle={{ fontSize: 20 }}
             ref={textRef}
             value={writtenMessage}
             onFocus={onInputFocus}
@@ -207,14 +210,14 @@ export const Input = ({
             </View>
           </Circle>
         ) : (
-          <Ionicons
-            name="send"
-            size={24}
-            color="white"
-            onPress={onPressSend}
-            style={styles.sendIcon}
-          />
-        )}
+            <Ionicons
+              name="send"
+              size={24}
+              color="white"
+              onPress={onPressSend}
+              style={styles.sendIcon}
+            />
+          )}
       </TouchableOpacity>
     </View>
   );
@@ -247,11 +250,13 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     margin: 7,
     marginBottom: 0,
+    backgroundColor: "red"
   },
   mediaThumbnailContainer: {
     height: 50,
-    // width: 50,
+    width: 50,
     marginRight: 5,
+    backgroundColor: "green"
   },
   imageThumbnail: {
     borderRadius: 3,

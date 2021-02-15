@@ -75,7 +75,7 @@ export default ({
             <MediaThumbnail
               type={item.media.type}
               style={[styles.image,
-              { aspectRatio: (item.media.type != 'image' && item.media.type != 'video') ? 4.9 : 1 }
+                // { aspectRatio: (item.media.type != 'image' && item.media.type != 'video') ? 4.9 : 1 }
               ]}
               url={item.media.url}
               iconSize={100}
@@ -143,6 +143,7 @@ const styles = StyleSheet.create({
     margin: 7,
     marginBottom: 0,
     borderRadius: 3,
+    // aspectRatio: 1
   },
   videoThumbnail: {
     height: 10,
