@@ -21,6 +21,7 @@ export default ({
   const navigation = useNavigation();
   const isMine = item.uid == auth().currentUser.uid;
   const derivedContainerStyle = isMine ? styles.myNode : styles.othersNode;
+
   const LeftActions = (progress, dragX) => {
     const trans = dragX.interpolate({
       inputRange: [0, 48, 500],
@@ -40,19 +41,17 @@ export default ({
     onReply();
     textRef.current.focus();
   };
-
   const MediaThumbnailPress = () => {
-    if (item.media.type != 'image' && item.media.type != 'video') {
-      console.log('mediaaa', item.media)
-      FileViewer.open(item.media.path, { showOpenWithDialog: true })
-        .catch(error => {
-          console.log('docerror', error)
-        })
-    }
-    else {
-      navigation.navigate('ViewMedia', item)
-
-    }
+    // if (item.media.type != 'image' && item.media.type != 'video') {
+    console.log('mediaaa', item.media)
+    FileViewer.open(item.media.url, { showOpenWithDialog: true })
+      .catch(error => {
+        console.log('docerror', error)
+      })
+    // }
+    // else {
+    //   navigation.navigate('ViewMedia', item)
+    // }
   }
   return (
     <Swipable
@@ -67,21 +66,24 @@ export default ({
         onLongPress={onLongPress}
         style={{ backgroundColor: selected ? '#00BBFF30' : 'transparent' }}>
         <View style={[styles.chatNode, derivedContainerStyle]}>
-          {auth().currentUser.uid != item.uid && item.groupUserName && <Text style={styles.groupUserNameStyle}>{item.groupUserName}</Text>}
-
-          {/* <Text style={styles.title}>{item.type}</Text> */}
+          {item?.media?.type !== 'image' && item?.media?.type !== 'video' && <Text style={styles.chatNodeType}> {item.media?.type?.split('/')?.pop()?.toUpperCase()} </Text>}
+          {auth().currentUser.uid != item.uid && item.lastMessage.uid !== item.uid && item.type == 'indirect' && <Text style={styles.groupUserNameStyle}>{item.groupSenderName}</Text>}
+          {/*  && item.type == 'indirect' && item.lastMessage.senderName !== auth().currentUser.displayName && <Text style={styles.groupUserNameStyle}>{item.senderName}</Text>} */}
+          {/* <Text style={styles.title}>{item.uid}</Text> */}
+          {/* auth().currentUser.uid != item.uid && item.groupUserName && */}
           {replyMessage && <ReplyMessage replyMessage={replyMessage} />}
           {item.media && (
             <MediaThumbnail
-              type={item.media.type}
-              style={[styles.image,
-                // { aspectRatio: (item.media.type != 'image' && item.media.type != 'video') ? 4.9 : 1 }
-              ]}
-              url={item.media.url}
-              iconSize={100}
+              // type={item.media.type}
+              style={item.media.type !== 'image' && item.media.type !== 'video' ? null : styles.image}
               name={item.media.name}
               path={item.media.path}
-              onPress={() => MediaThumbnailPress()}
+              iconSize={100}
+              // onPress={() => MediaThumbnailPress()}
+              onPress={() => navigation.navigate('ViewMedia', item)}
+              type={item.media.mime ? item.media.mime.split('/')[0] : item.media.type.split('/')[0]}
+              url={item.media.url}
+            // url={item.media.path}
             />
           )}
           <View style={styles.messageContainer}>
@@ -138,8 +140,9 @@ const styles = StyleSheet.create({
   },
   image: {
     backgroundColor: 'white',
-    justifyContent: "center",
+    // justifyContent: "center",
     width: consts.ScreenWidth * 0.8 - 14,
+    aspectRatio: 1,
     margin: 7,
     marginBottom: 0,
     borderRadius: 3,
@@ -166,6 +169,15 @@ const styles = StyleSheet.create({
     padding: 9,
     color: '#777',
     fontSize: 10,
+  },
+  chatNodeType: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    padding: 9,
+    color: '#777',
+    fontSize: 10,
+    fontWeight: 'bold'
   },
   reply: {
     width: 32,

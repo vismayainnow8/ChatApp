@@ -13,6 +13,7 @@ export const MediaThumbnail = ({
   name,
   onPress = () => { },
 }) => {
+  console.log('mediathumbnainame', name)
   switch (type) {
     case attachmentTypes.video:
       return (
@@ -26,7 +27,6 @@ export const MediaThumbnail = ({
     case attachmentTypes.image:
       return <ImageThumbnail url={url} style={style} onPress={onPress} />;
     default:
-      // return <></>;
       return <FileThumbnail url={url} name={name} style={style} onPress={onPress} />;
 
       break;
@@ -34,11 +34,11 @@ export const MediaThumbnail = ({
 };
 
 const VideoThumbnail = ({ url, iconSize, style, onPress = () => { } }) => {
-  console.log('thumbnailImage', thumbnailImage)
-  console.log('url', thumbnailImage)
   const [thumbnailImage, setThumbnailImage] = useState({});
 
   useEffect(() => {
+    console.log('gotthumbnailurl', url)
+
     createThumbnail({
       url: url,
       timeStamp: 10000,
@@ -75,9 +75,26 @@ const ImageThumbnail = ({ url, style, onPress = () => { } }) => {
 };
 
 const FileThumbnail = ({ url, name, style, onPress = () => { } }) => {
+  const [thumbnailImage, setThumbnailImage] = useState({});
+
+  // useEffect(() => {
+  //   console.log('gotthumbnailurl', url)
+  //   createThumbnail({
+  //     url: url,
+  //     timeStamp: 10000,
+  //   })
+  //     .then((response) => setThumbnailImage(response))
+  //     .catch(err => console.log({ err }));
+  // }, [url]);
+  console.log('name', name)
   return (
     <Pressable style={[styles.fileContainer, { flexDirection: "row" }, style]} onPress={onPress}>
       <Text style={{ fontSize: 11 }}>{name} </Text>
+      {/* <Image
+        style={[styles.thumbnail]}
+        source={{ uri: thumbnailImage?.path }}
+        resizeMode="cover"
+      /> */}
     </Pressable>
   );
 };
@@ -85,24 +102,20 @@ const FileThumbnail = ({ url, name, style, onPress = () => { } }) => {
 export const styles = StyleSheet.create({
   container: {
     borderRadius: 3,
-    // backgroundColor: 'black',
+    backgroundColor: 'black',
     justifyContent: 'center',
 
   },
   fileContainer: {
     borderRadius: 3,
     padding: 10,
-    backgroundColor: '#dcf8c6',
+    backgroundColor: '#e3f9d2',
     alignItems: "center",
-    // aspectRatio:4.9,
+    // aspectRatio: 4.9,
   },
   thumbnail: {
     flex: 1,
     borderRadius: 3,
-    borderWidth: 3,
-    borderColor: 'red',
-
-
   },
   thumbnailIcon: {
     position: 'absolute',

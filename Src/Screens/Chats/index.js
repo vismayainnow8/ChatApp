@@ -40,14 +40,16 @@ const Chats = (props) => {
   var keyword = useSelector((state) => state.search.search);
 
   useEffect(() => {
-    let User = combinedChats?.filter(function (e) {
-      if (e.type == 'direct') {
-        return e.user.displayName.indexOf(keyword) > -1;
-      } else {
-        return e.groupName.indexOf(keyword) > -1;
-      }
+    let User = combinedChats?.filter(function (item) {
+      if (keyword && item.user || item.groupName) {
+        if (item.type == 'direct') {
+          return item.user?.displayName?.toLowerCase().indexOf(keyword?.toLowerCase()) > -1;
+        } else {
+          return item.groupName?.toLowerCase().indexOf(keyword?.toLowerCase()) > -1;
+        }
+      } else { return null }
     });
-    if (!User.length || !keyword) {
+    if (User.length == 0 || !keyword) {
       setChats(combinedChats);
     } else {
       setChats(User);
@@ -219,11 +221,11 @@ const ChatsListItem = ({
           {type == 'indirect' && <Text>{groupName ?? 'Group'}</Text>}
           <View style={styles.dateContainer}>
             <IconFontAwesome5
-              name={lastMessage?.status ? 'check-double' : 'check'}
+              name={lastMessage?.message == 'You deleted this message' ? null : lastMessage?.status ? 'check-double' : 'check'}
               size={10}
               color={lastMessage?.status ? '#ed788b' : '#666'}
             />
-            <Text numberOfLines={1} style={styles.lastMessage}>
+            <Text numberOfLines={1} style={lastMessage?.message == 'You deleted this message' ? styles.lastMessageStyle : styles.lastMessage}>
               {lastMessage?.message}
             </Text>
           </View>

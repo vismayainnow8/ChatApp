@@ -1,5 +1,5 @@
-import {StyleSheet} from 'react-native';
-import {consts} from '../../Assets/Consts';
+import { StyleSheet } from 'react-native';
+import { consts } from '../../Assets/Consts';
 // import { Appearance } from 'react-native'
 const styles = StyleSheet.create({
   screen: {
@@ -64,6 +64,12 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     color: '#666',
     fontSize: 12,
+  },
+  lastMessageStyle: {
+    paddingLeft: 10,
+    color: '#666',
+    fontSize: 12,
+    fontStyle: "italic"
   },
   dateContainer: {
     flexDirection: 'row',

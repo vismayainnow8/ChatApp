@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, StyleSheet, Text, Pressable, Platform } from 'react-native';
+import { View, StyleSheet, Text, Pressable, PermissionsAndroid, Platform } from 'react-native';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import IconMaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import EmojiSelector, { Categories } from 'react-native-emoji-selector'
@@ -7,18 +7,19 @@ import database from '@react-native-firebase/database';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import auth from '@react-native-firebase/auth';
 import FilePickerManager from 'react-native-file-picker';
+// import RNFetchBlob from 'rn-fetch-blob';
 import DocumentPicker from 'react-native-document-picker';
-
 import { Input } from './Input';
-
 export const inputTypes = {
   none: 'none',
   keyboard: 'keyboard',
   emoji: 'emoji',
   attachment: 'attachment',
 };
+// var RNFS = require('react-native-fs');
+// const { fs, fetch, wrap } = RNFetchBlob
 
-export const ChatInput = ({ textRef, sendMessage, replyMessage, closeReply }) => {
+export const ChatInput = ({ textRef, sendMessage, replyMessage, closeReply, name }) => {
   const [inputType, setInputType] = useState(inputTypes.none);
   const [writtenMessage, setWrittenMessage] = useState(null);
   const [medias, setMedias] = useState([]);
@@ -62,36 +63,38 @@ export const ChatInput = ({ textRef, sendMessage, replyMessage, closeReply }) =>
       .catch((error) => console.log(error));
   };
 
+
   const openDocumentPicker = async () => {
     pickerLstRef.current.close();
-    // FilePickerManager.showFilePicker(null, (response) => {
-    //   console.log('Response = ', response);
 
-    //   if (response.didCancel) {
-    //     console.log('User cancelled file picker');
-    //   }
-    //   else if (response.error) {
-    //     console.log('FilePickerManager Error: ', response.error);
-    //   }
-    //   else {
-    //     setMedias([{...response}])
-    //   }
-    // });
-    try {
-      const res = await DocumentPicker.pick({
-        type: [DocumentPicker.types.allFiles],
-      });
-      res['path'] = res.uri
-      setMedias([{ ...res }])
-    } catch (err) {
-      if (DocumentPicker.isCancel(err)) {
-        // User cancelled the picker, exit any dialogs or menus and move on
-      } else {
-        throw err;
-      }
+    // try {
+    //   const granted = await PermissionsAndroid.request(
+    //     PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+    //     {
+    //       title: ' Permission',
+    //       message:
+    //         'Cool Photo App needs access to your camera ',
+    //       buttonNegative: 'Cancel',
+    //       buttonPositive: 'OK',
+    //     },
+    //   );
+    //   if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+    //     console.log('yespermission')
+    //     const results = await DocumentPicker.pickMultiple({
+    //       type: [DocumentPicker.types.allFiles],
+    //     });
+    //     const absolutePath = await RNFetchBlob.fs.stat(results.uri)
+    //     console.log('absolutePath', absolutePath)
 
-    }
+    //     // RNFetchBlob.fs.stat(fs.asset(results.uri).then(stats => { console.log('stats', stats) }))
+    //     // results['path'] = absolutePath
+    //     // setMedias([{ ...results }])
+    //   }
+    // }
   }
+
+
+
 
   const openImageCamera = () => {
     pickerLstRef.current.close();
@@ -111,7 +114,7 @@ export const ChatInput = ({ textRef, sendMessage, replyMessage, closeReply }) =>
       mediaType: 'video',
       multiple: true,
     })
-      .then((video) => setMedias([{ ...video }]))
+      .then((video) => setMedias(video))
       .catch((error) => console.log(error));
   };
 
@@ -125,12 +128,12 @@ export const ChatInput = ({ textRef, sendMessage, replyMessage, closeReply }) =>
   };
 
   const attachmentOptions = [
-    // {
-    //   color: '#6F3CF6',
-    //   icon: 'note',
-    //   title: 'Document',
-    //   onPress: openDocumentPicker,
-    // },
+    {
+      color: '#6F3CF6',
+      icon: 'note',
+      title: 'Document',
+      onPress: openDocumentPicker
+    },
     {
       color: '#F9227A',
       icon: 'camera-alt',
@@ -160,6 +163,7 @@ export const ChatInput = ({ textRef, sendMessage, replyMessage, closeReply }) =>
   return (
     <>
       <Input
+        name={name}
         textRef={textRef}
         sendMessage={onPressSend}
         replyMessage={replyMessage}
@@ -173,7 +177,6 @@ export const ChatInput = ({ textRef, sendMessage, replyMessage, closeReply }) =>
         showMenu={showMenu}
         openCamera={openImageCamera}
       />
-
       <View style={{
         height: inputType == inputTypes.emoji ? 300 : 0,
         backgroundColor: 'white',

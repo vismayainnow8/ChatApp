@@ -16,8 +16,8 @@ const ChatScene = ({ route, navigation }) => {
   const [messages, setMessages] = useState([]);
   const [selectedMessages, setSelectedMessages] = useState([]);
   const [replyMessage, setReplyMessage] = useState(null);
+  const [lastObject, setLastObject] = useState(null);
   const textRef = useRef(null);
-
   useEffect(() => {
     return database()
       .ref()
@@ -31,15 +31,22 @@ const ChatScene = ({ route, navigation }) => {
 
         const value = snapshot.val();
         let formatedValues = [];
+        if (value) {
+          var objectArray = Object.values(value)
+          setLastObject(objectArray?.slice(-1)[0])
+          console.log('lastObject', lastObject)
+        }
         Object.keys(value ?? {}).forEach((item) => {
           formatedValues.push({
             ...value[item],
             id: item,
-            // type: type,
-            // groupUserName: user?.displayName,
+            lastMessage: lastObject,
+            type: value[item].type,
+            groupSenderName: value[item].senderName,
+            groupSenderPhone: value[item].senderPhone,
             displayName: groupName ? groupName :
               (value[item].uid == auth().currentUser.uid
-                ? 'You'
+                ? auth().currentUser.displayName
                 : user?.displayName ?? user?.phoneNumber)
 
           });
@@ -71,17 +78,19 @@ const ChatScene = ({ route, navigation }) => {
   // });
 
   const sendMessage = (message) => {
+    message.lastMessage = lastObject
     message.chatId = chatId;
+    message.type = type;
     message.time = firestore.Timestamp.now().toMillis();
     if (type == 'indirect') {
+      message.senderName = auth().currentUser.displayName,
+        message.senderPhone = auth().currentUser.phoneNumber
       let usersIds = user.map(item => item.uid);
       const foundInGroup = usersIds.some(el => el === auth().currentUser._user.uid);
       if (foundInGroup) {
         firestore().collection('Group').doc(chatId)
           .update({
             lastMessage: message,
-            senderPhone: auth().currentUser.phoneNumber,
-            senderName: auth().currentUser.phoneNumber
           }).then(() => {
 
           })
@@ -91,16 +100,12 @@ const ChatScene = ({ route, navigation }) => {
           { text: 'OK', onPress: () => console.log('ok') },
         ]);
       }
-
-
     }
     else {
       firestore().collection('Chats').doc(chatId).update({
         lastMessage: message,
       }).then(() => {
       })
-
-
     }
     database().ref('messages').push(message);
     // message = { ...message, time: firestore.Timestamp.now().toMillis() };
@@ -127,9 +132,26 @@ const ChatScene = ({ route, navigation }) => {
   };
 
   const deleteSelected = () => {
-    selectedMessages.forEach((message) => {
-      database().ref('messages').child(message).remove();
+    selectedMessages.forEach((item) => {
+      database().ref('messages').child(item).remove();
     });
+    if (type == 'indirect') {
+      firestore().collection('Group').doc(chatId)
+        .update({
+          lastMessage: {
+            time: firestore.Timestamp.now().toMillis(),
+            message: 'You deleted this message',
+          }
+        })
+    } else {
+      firestore().collection('Chats').doc(chatId)
+        .update({
+          lastMessage: {
+            time: firestore.Timestamp.now().toMillis(),
+            message: 'You deleted this message',
+          }
+        })
+    }
     setSelectedMessages([]);
   };
 
@@ -218,6 +240,7 @@ const ChatScene = ({ route, navigation }) => {
         <View style={{ flex: 1 }}>{chatView}</View>
         <ChatInput
           textRef={textRef}
+          name={groupName ? groupName : (user?.displayName ?? user?.phoneNumber)}
           sendMessage={sendMessage}
           replyMessage={replyMessage}
           closeReply={() => setReplyMessage(null)}
