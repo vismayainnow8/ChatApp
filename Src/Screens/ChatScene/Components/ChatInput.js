@@ -128,12 +128,12 @@ export const ChatInput = ({ textRef, sendMessage, replyMessage, closeReply, name
   };
 
   const attachmentOptions = [
-    {
-      color: '#6F3CF6',
-      icon: 'note',
-      title: 'Document',
-      onPress: openDocumentPicker
-    },
+    // {
+    //   color: '#6F3CF6',
+    //   icon: 'note',
+    //   title: 'Document',
+    //   onPress: openDocumentPicker
+    // },
     {
       color: '#F9227A',
       icon: 'camera-alt',
@@ -179,6 +179,7 @@ export const ChatInput = ({ textRef, sendMessage, replyMessage, closeReply, name
       />
       <View style={{
         height: inputType == inputTypes.emoji ? 300 : 0,
+        // height: 10,
         backgroundColor: 'white',
       }}>
         <EmojiSelector

@@ -25,12 +25,24 @@ const styles = StyleSheet.create({
     shadowRadius: 1.41,
     elevation: 2,
   },
+  rbSheet: {
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    padding: 10,
+    height: consts.ScreenHeight / 7,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   listItemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   iconContainer: {
     padding: 12,
+  },
+  gridHeader: {
+    fontSize: 20,
+    color: "#075e54"
   },
   iconContainerperson: {
     justifyContent: 'center',

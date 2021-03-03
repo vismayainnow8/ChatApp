@@ -15,21 +15,24 @@ import { setTextInput } from '../../StateManagement/Actions';
 
 
 const Profile = ({ navigation, route }) => {
+
   const _user = auth().currentUser._user;
   const { uid } = auth().currentUser;
   const pickerLstRef = useRef(null);
   const pickerNameRef = useRef(null);
   const [image, setImage] = useState({});
+  const [name, setName] = useState(auth().currentUser.displayName);
   const [textInputValue, setTextInputValue] = useState({});
   const [profileImage, setProfileImage] = useState(_user.photoURL);
   const [loading, setLoading] = useState(false);
   const [nameLoader, setNameLoader] = useState(false);
+  // const [nameLoader, setNameLoader] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log('displayName', _user)
 
-  })
+  }, [nameLoader])
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: 'Profile Info',
@@ -71,6 +74,11 @@ const Profile = ({ navigation, route }) => {
       .catch((error) => console.log('errorfffff', error));
   };
 
+  const onChangeText = (text) => {
+    setTextInputValue(text)
+    setName(text)
+
+  }
   const next = async () => {
     if (image.path) {
       setNameLoader(true);
@@ -245,8 +253,9 @@ const Profile = ({ navigation, route }) => {
             style={styles.textInput}
             color="black"
             placeholder="Type here..."
+            value={name}
             placeholderTextColor="grey"
-            onChangeText={(text) => setTextInputValue(text)}
+            onChangeText={(text) => onChangeText(text)}
           // onSubmitEditing={() => openChat()}
 
 

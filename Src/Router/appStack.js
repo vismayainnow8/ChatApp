@@ -39,6 +39,7 @@ import ViewContact from '../Screens/ViewContact';
 import ViewMedia from '../Screens/ViewMedia';
 import ContactHelp from '../Screens/ContactHelp';
 import MakeNewGroup from '../Screens/MakeNewGroup';
+import ManageMyStatus from '../Screens/ManageMyStatus';
 import { ImagePreview } from '../Screens/Camera/Components';
 import ProfileInfo from '../Screens/ProfileInfo';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -207,6 +208,7 @@ export const AppStack = ({ user }) => {
         />
         <Stack.Screen name="CallingScreen" component={CallingScreen} />
         <Stack.Screen name="VideoCalling" component={VideoCalling} />
+        <Stack.Screen name="ManageMyStatus" component={ManageMyStatus} />
       </Stack.Navigator>
       <SearchBar
         visible={searchbarVisible}

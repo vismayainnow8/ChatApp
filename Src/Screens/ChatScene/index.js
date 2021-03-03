@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import { View, FlatList, Alert, ImageBackground, TouchableOpacity } from 'react-native';
 import { Screen, Topbar } from '../../Components';
 import styles from '../ChatScene/style';
+import firebase from '@react-native-firebase/app'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
@@ -9,6 +10,7 @@ import database from '@react-native-firebase/database';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import { ChatInput, ChatNode } from './Components';
+import { firebaseNotificationApi } from '../../NotificationServices'
 import { colors } from '../../Assets';
 
 const ChatScene = ({ route, navigation }) => {
@@ -17,6 +19,7 @@ const ChatScene = ({ route, navigation }) => {
   const [selectedMessages, setSelectedMessages] = useState([]);
   const [replyMessage, setReplyMessage] = useState(null);
   const [lastObject, setLastObject] = useState(null);
+  const [userFcmToken, setUserFcmToken] = useState(null);
   const textRef = useRef(null);
   useEffect(() => {
     return database()
@@ -70,6 +73,20 @@ const ChatScene = ({ route, navigation }) => {
       return toggleSelect(id);
     }
   };
+
+
+
+  useEffect(() => {
+    return firestore()
+      .collection('FcmTokens')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(querySnapshot => {
+        setUserFcmToken(querySnapshot._data.fcmToken)
+      });
+  }, []);
+
+
   // useEffect(() => {
   //   if (type == 'indirect') {
   //     let usersIds = user.map(item => item.uid);
@@ -77,6 +94,31 @@ const ChatScene = ({ route, navigation }) => {
   //   }
   // });
 
+
+  const callApi = async () => {
+    const token = await firebase.messaging().getToken();
+    console.log('notificationMessagetoken', token)
+    const payload = {
+      message: {
+        to: token,
+        notification: {
+          title: "This is a Notification",
+          boby: "This is the body of the Notification",
+          vibrate: 1,
+          sound: 1,
+          show_in_foreground: true,
+          priority: "high",
+          content_available: true,
+        }
+      }
+    }
+
+    firebaseNotificationApi({ payload }).then(res => {
+      console.log('firebaseNotificationApires', res)
+    }).catch(err => {
+      console.log(err);
+    })
+  }
   const sendMessage = (message) => {
     message.lastMessage = lastObject
     message.chatId = chatId;
@@ -109,24 +151,7 @@ const ChatScene = ({ route, navigation }) => {
     }
     database().ref('messages').push(message);
     // message = { ...message, time: firestore.Timestamp.now().toMillis() };
-
-    // const payload = {
-    //   notification: {
-    //     title: "Welcome",
-    //     body: "thank for installed our app",
-    //   },F
-    // };
-    // var admin = require("firebase-admin");
-    // admin
-    //   .messaging()
-    //   .sendToDevice(data.notification_token, payload)
-    //   .then(function (response) {
-    //     console.log("Notification sent successfully:", response);
-    //   })
-    //   .catch(function (error) {
-    //     console.log("Notification sent failed:", error);
-    //   })
-
+    callApi()
 
     setReplyMessage(null);
   };
@@ -183,8 +208,8 @@ const ChatScene = ({ route, navigation }) => {
     { title: 'test2', onPress: () => alert('test2') },
   ];
   const topbarMenus = [
-    { icon: 'videocam', onPress: () => { }, component: Ionicons },
-    { icon: 'phone', onPress: () => { }, component: MaterialIcons },
+    // { icon: 'videocam', onPress: () => { }, component: Ionicons },
+    // { icon: 'phone', onPress: () => { }, component: MaterialIcons },
   ];
 
   const chatView = useMemo(

@@ -38,6 +38,13 @@ const styles = StyleSheet.create({
     height: 24,
     width: 24,
   },
+  optionsIcon: {
+    height: 24,
+    width: 24,
+    position: "absolute",
+    right: 9,
+    top: 20
+  },
   buttonsContainer: {
     position: "absolute",
     bottom: 0,
@@ -59,7 +66,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   iconContainer: {
-    paddingHorizontal: 10,
+    // paddingHorizontal: 10,
     paddingVertical: 8,
   },
   initStyle: {
@@ -83,8 +90,9 @@ const styles = StyleSheet.create({
     fontSize: consts.textSizes(20),
   },
   messageContainer: {
-    flex: 1,
+    // flex: 1,
     justifyContent: 'center',
+
   },
   firstContainer: {
     flexDirection: 'row',

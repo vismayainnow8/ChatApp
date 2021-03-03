@@ -48,6 +48,16 @@ const Status = ({ navigation, route, ...props }) => {
           let myData = [];
           res.forEach((item) => {
             let formatedItem = item.data();
+
+            // firestore()
+            // .collection('Statuses')
+            // .where('contacts', 'array-contains', auth().currentUser.uid)
+            // if (new Date(formatedItem.data.time) > new Date(24 * 60 * 60 * 1000)) {
+            //   console.log('yesd')
+
+
+            // }
+
             formatedItem.data.id = item.id;
             if (formatedItem.user.uid == auth().currentUser.uid) {
               myData.push(formatedItem);
@@ -56,6 +66,8 @@ const Status = ({ navigation, route, ...props }) => {
             }
           });
           formatAndSetMyStatusData(myData);
+          console.log('formatStatusesData(data)', formatStatusesData(data))
+          console.log('formatStatusesData(data)', formatStatusesData(data))
           setStatusSave(formatStatusesData(data));
           setStatusData(formatStatusesData(data));
           // setStatusData(formatStatusesData(DATA2));
@@ -64,18 +76,19 @@ const Status = ({ navigation, route, ...props }) => {
       );
   }, []);
 
+
   useEffect(() => {
     let User = statusData.filter(function (e) {
-      return e.displayName.indexOf(keyword) > -1
+      if (keyword && e.displayName) {
+        return e.displayName?.toLowerCase().indexOf(keyword?.toLowerCase()) > -1
+      }
+      else { return null }
     });
-    if (!User.length || !keyword) {
-      console.log('empty')
+    if (User.length == 0 || !keyword) {
       setStatusData(statusSave)
     }
     else {
       setStatusData(User)
-      console.log('valid')
-
     }
   }, [keyword])
 
@@ -183,7 +196,8 @@ const Status = ({ navigation, route, ...props }) => {
   const renderHeader = () => {
     if (myStatus?.data[0]?.statuses?.length) {
       const item = myStatus.data[0];
-      return <Item item={item} time={item.time} index={0} section={myStatus} />;
+      return <Item item={item} time={item.time} index={0}
+        myStatus={myStatus} section={myStatus} />;
     } else {
       return (
         <TouchableOpacity
@@ -214,6 +228,7 @@ const Status = ({ navigation, route, ...props }) => {
               </View>
             </View>
           </View>
+
         </TouchableOpacity>
       );
     }
@@ -288,7 +303,7 @@ const Status = ({ navigation, route, ...props }) => {
 
 export default Status;
 
-const Item = ({ item, index, reloadOnNavigate, section }) => {
+const Item = ({ item, index, myStatus, reloadOnNavigate, section }) => {
   const { time, statuses } = item;
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -318,6 +333,10 @@ const Item = ({ item, index, reloadOnNavigate, section }) => {
           </View>
         </View>
       </View>
+
+      <MaterialCommunityIcons name="dots-horizontal" color="#128c7e" size={25}
+        style={styles.optionsIcon} onPress={() => navigation.navigate('ManageMyStatus', { myStatus: myStatus })} />
+
     </TouchableOpacity>
   );
 };

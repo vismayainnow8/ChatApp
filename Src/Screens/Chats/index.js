@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Text,
   TouchableOpacity,
@@ -14,6 +14,7 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconFontAwesome5 from 'react-native-vector-icons/MaterialCommunityIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import {
@@ -22,6 +23,7 @@ import {
   search,
   searchBarVisible,
 } from '../../StateManagement/Actions';
+import RBSheet from 'react-native-raw-bottom-sheet';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import styles from './styles';
@@ -34,6 +36,9 @@ const Chats = (props) => {
   const [chats, setChats] = useState([]);
   const [group, setGroup] = useState([]);
   const [combinedChats, setCombinedChats] = useState([]);
+  const [chatItemToDelete, setChatItemToDelete] = useState();
+  const pickerLstRef = useRef(null);
+
   var newdata;
   var searchPressed = useSelector((state) => state.searchPressed.searchPressed);
   var tab = useSelector((state) => state.searchPressed.tabState);
@@ -122,21 +127,31 @@ const Chats = (props) => {
     setChats(combinedChats);
   };
   const onLongPressing = (item) => {
-    Alert.alert('', 'Are you sure to delete this chat ?', [
-      { text: 'CANCEL', onPress: () => console.log('cancel delete') },
-      { text: 'OK', onPress: () => deleteChat(item) },
-    ]);
+    setChatItemToDelete(item)
+    pickerLstRef.current.open();
   };
 
-  const deleteChat = (item) => {
-    if (item.type == 'indirect') {
-      firestore().collection('Group').doc(item.chatId).delete()
+  const callAlert = () => {
+    Alert.alert('', 'Are you sure to delete this chat ?', [
+      { text: 'CANCEL', onPress: () => pickerLstRef.current.close() },
+      { text: 'OK', onPress: () => deleteChat() },
+    ]);
+  }
+
+  const deleteChat = () => {
+    pickerLstRef.current.close();
+
+    if (chatItemToDelete.type == 'indirect') {
+      firestore().collection('Group').doc(chatItemToDelete.chatId).delete()
         .then(() => {
+          pickerLstRef.current.close();
         })
     }
     else {
-      firestore().collection('Chats').doc(item.chatId).delete().then(() => {
-      })
+      firestore().collection('Chats').doc(chatItemToDelete.chatId).delete()
+        .then(() => {
+          pickerLstRef.current.close();
+        })
     }
   }
   return (
@@ -173,6 +188,24 @@ const Chats = (props) => {
             size={28}
           />
         </TouchableOpacity>
+        <RBSheet
+          ref={pickerLstRef}
+          height={560}
+          customStyles={{
+            container: styles.rbSheet,
+          }}>
+          <TouchableOpacity style={{ flexDirection: "row" }} onPress={() => callAlert()}>
+            <AntDesign
+              name="delete"
+              color="#075e54"
+              size={20}
+              style={{ padding: 5 }}
+            />
+            <Text style={styles.gridHeader}>Delete</Text>
+          </TouchableOpacity>
+
+
+        </RBSheet>
       </View>
     </SafeAreaView>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   TextInput,
@@ -7,6 +7,7 @@ import {
   LayoutAnimation,
   Keyboard,
   Text,
+  Alert,
   Pressable,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -18,6 +19,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Circle } from 'react-native-progress';
 import { inputTypes } from './ChatInput';
 import { MediaThumbnail } from '../../../Components';
+import auth from '@react-native-firebase/auth';
 
 export const attachmentTypes = {
   video: 'video',
@@ -38,7 +40,51 @@ export const Input = ({
   medias,
   setMedias,
   openCamera,
+  name
 }) => {
+
+  const [type, setType] = useState();
+  const [mediaArray, setMediaArray] = useState(medias);
+
+
+  useEffect(() => {
+    medias.forEach(async (media, index) => {
+      const type = media.mime ? media.mime.split('/')[0] : media.type.split('/').pop()
+      setType(type)
+      if (type !== 'video' && type !== 'image') {
+        console.log('forEach', type)
+        Alert.alert('', 'Send ' + media.name + ' to ' + name, [
+          { text: 'CANCEL', onPress: () => console.log('cancel delete') },
+          // { text: 'OK', onPress: () => console.log('yh') },
+          { text: 'OK', onPress: () => onPressSend() },
+        ]);
+      }
+      else { console.log('dfg') }
+
+    });
+  }, [medias]);
+
+  // useEffect(() => {
+  //   medias.forEach(async (media, index) => {
+  //     setType(media.mime ? media.mime.split('/')[0] : media.type.split('/').pop())
+  //   });
+  // }, [medias]);
+  // useEffect(() => {
+  //   if (medias.length !== 0) {
+  //     medias.forEach(async (media, index) => {
+  //       if (type !== 'video' && type !== 'image') {
+  //         console.log('forEach', type)
+  //         Alert.alert('', 'Send ' + media.name + ' to ' + name, [
+  //           { text: 'CANCEL', onPress: () => console.log('cancel delete') },
+  //           { text: 'OK', onPress: () => onPressSend() },
+  //         ]);
+  //       }
+  //       else { console.log('dfg') }
+  //     });
+  //   } else {
+  //   }
+
+  // }, [medias, type]);
   const [loading, setLoading] = useState({ status: false, fileNumber: '' });
   const keyboardIconPress = () => {
     if (Platform.OS == 'android') {
@@ -73,17 +119,17 @@ export const Input = ({
     };
     setWrittenMessage('');
     if (medias.length) {
-      console.log('media', medias)
       setMedias([]);
       medias.forEach(async (media, index) => {
         setLoading({ status: 0.01, fileNumber: index + '/' + medias.length });
         message.media = {};
         message.media.name = media.name;
         message.media.path = media.path;
+        message.media.name = media.name;
         message.media.url = await uploadImageAsPromise(media);
-        message.media.type = media.type ? media.type.split('/')[0] : media.mime.split('/')[0];
+        message.media.type = media.mime ? media.mime.split('/')[0] : media.type.split('/').pop()
+        console.log(message);
         sendMessage(message);
-        console.log('message', message)
       });
     } else {
       sendMessage(message);
@@ -92,11 +138,20 @@ export const Input = ({
 
   const uploadImageAsPromise = async (image) => {
     return new Promise((resolve, reject) => {
-      const imageStorageRef = storage().ref(
-        'images/attachments/' + uuidv4() + '.jpeg',
-      );
-      const task = imageStorageRef.putFile(image.path);
+      // image param means media
+      let typeToCheck = image.mime ? image.mime.split('/')[0] : image.type.split('/').pop()
+      var imageStorageRef
+      if (typeToCheck !== 'image' && typeToCheck !== 'video') {
+        imageStorageRef = storage().ref(
+          'documents/attachments/' + uuidv4() + '.' + typeToCheck,
+        );
+      } else {
+        imageStorageRef = storage().ref(
+          'images/attachments/' + uuidv4() + '.jpeg',
+        );
+      }
 
+      const task = imageStorageRef.putFile(image.path);
       task.on(
         'state_changed',
         (taskSnapshot) => {
@@ -128,13 +183,10 @@ export const Input = ({
   };
 
   const renderMediaThumbnail = (media, index) => {
-    // console.log('media', media)
     return (
-      <View style={[styles.mediaThumbnailContainer,
-        // { width: (media.type != 'image' && media.type != 'video') ? 150 : 50 }
-      ]}>
+      <View style={styles.mediaThumbnailContainer}>
         <MediaThumbnail
-          type={media.type ? media.type.split('/')[0] : media.mime.split('/')[0]}
+          type={media.mime ? media.mime.split('/')[0] : media.type.split('/')[0]}
           style={styles.videoThumbnail}
           iconSize={25}
           url={media.path}
@@ -160,8 +212,15 @@ export const Input = ({
         {replyMessage && (
           <ReplyMessage replyMessage={replyMessage} closeReply={closeReply} />
         )}
-        {!!medias?.length && (
+        {/* {medias.length !== 0 && (type == 'video' && type == 'image') && (
           <View style={styles.mediaContainer}>
+            {console.log('typist', type)}
+            {medias.map(renderMediaThumbnail)}
+          </View>
+        )} */}
+        {medias.length !== 0 && (type == 'video' || type == 'image') && (
+          <View style={styles.mediaContainer}>
+            {console.log('typist', type)}
             {medias.map(renderMediaThumbnail)}
           </View>
         )}
@@ -250,13 +309,11 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     margin: 7,
     marginBottom: 0,
-    backgroundColor: "red"
   },
   mediaThumbnailContainer: {
     height: 50,
     width: 50,
     marginRight: 5,
-    backgroundColor: "green"
   },
   imageThumbnail: {
     borderRadius: 3,

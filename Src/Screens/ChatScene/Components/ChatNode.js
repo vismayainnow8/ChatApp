@@ -36,7 +36,6 @@ export default ({
       </Animated.View>
     );
   };
-
   const leftAction = async () => {
     onReply();
     textRef.current.focus();
@@ -67,14 +66,12 @@ export default ({
         style={{ backgroundColor: selected ? '#00BBFF30' : 'transparent' }}>
         <View style={[styles.chatNode, derivedContainerStyle]}>
           {item?.media?.type !== 'image' && item?.media?.type !== 'video' && <Text style={styles.chatNodeType}> {item.media?.type?.split('/')?.pop()?.toUpperCase()} </Text>}
-          {auth().currentUser.uid != item.uid && item.lastMessage.uid !== item.uid && item.type == 'indirect' && <Text style={styles.groupUserNameStyle}>{item.groupSenderName}</Text>}
-          {/*  && item.type == 'indirect' && item.lastMessage.senderName !== auth().currentUser.displayName && <Text style={styles.groupUserNameStyle}>{item.senderName}</Text>} */}
-          {/* <Text style={styles.title}>{item.uid}</Text> */}
-          {/* auth().currentUser.uid != item.uid && item.groupUserName && */}
+          {auth().currentUser.uid !== item?.uid
+            // && item.lastMessage?.uid !== item?.uid
+            && item?.type == 'indirect' && <Text style={styles.groupUserNameStyle}>{item.groupSenderName}</Text>}
           {replyMessage && <ReplyMessage replyMessage={replyMessage} />}
           {item.media && (
             <MediaThumbnail
-              // type={item.media.type}
               style={item.media.type !== 'image' && item.media.type !== 'video' ? null : styles.image}
               name={item.media.name}
               path={item.media.path}
@@ -83,7 +80,6 @@ export default ({
               onPress={() => navigation.navigate('ViewMedia', item)}
               type={item.media.mime ? item.media.mime.split('/')[0] : item.media.type.split('/')[0]}
               url={item.media.url}
-            // url={item.media.path}
             />
           )}
           <View style={styles.messageContainer}>

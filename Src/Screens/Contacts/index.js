@@ -42,9 +42,9 @@ const SelectContact = ({ navigation }) => {
     dispatch(generateContacts());
   };
 
-  useEffect(() => {
-    dispatch(generateContacts());
-  }, []);
+  // useEffect(() => {
+  //   dispatch(generateContacts());
+  // }, []);
 
   const searchClicked = () => {
     setSearchbarVisible(true);
@@ -55,9 +55,9 @@ const SelectContact = ({ navigation }) => {
     const onChangeText = (text) => {
       console.log('contacts', contacts)
       let User = contacts?.filter(function (e) {
-        return e.displayName.indexOf(text) > -1;
+        return e.displayName.toLowerCase().indexOf(text.toLowerCase()) > -1;
       });
-      if (!User.length && !textInput) {
+      if (!User.length || !text) {
         setContacts(contactState);
         setTextInput(text);
       } else {
